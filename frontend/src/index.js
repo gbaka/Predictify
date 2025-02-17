@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import './styles.css';  // подключаем стили, если нужно
 
-function App() {
-  return (
-    <div>
-      <h1>Привет, мир!</h1>
-    </div>
-  );
-}
+import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <h1>Test</h1>
+    <App />
+  </React.StrictMode>
+);
