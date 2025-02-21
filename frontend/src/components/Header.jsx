@@ -10,21 +10,6 @@ const navItems = [
   { name: "Прогнозирование", path: "/forecast", icon: BarChart3 },
 ];
 
-// function Logo() {
-//     return (
-//       <motion.div
-//         initial={{ opacity: 0, y: -10 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         className="flex items-center space-x-2"
-//       >
-//          {/* Здесь можно изменить размер */}
-//         <Link to="/" className="text-2xl font-semibold tracking-wide text-white">
-//           Predictify
-//         </Link>
-//       </motion.div>
-//     );
-//   }
-
 function Logo() {
     return (
       <motion.div
@@ -156,7 +141,7 @@ export default function Header({ children }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden bg-gray-700 py-2 absolute w-full"
+              className="md:hidden bg-gray-700 py-2 absolute w-full shadow-md"
             >
               {/* Поиск в бургер-меню */}
               <div className="px-4">
