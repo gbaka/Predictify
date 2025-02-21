@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Wiki from "./pages/Wiki";
 import Home from "./pages/Home";
 import Forecast from "./pages/Forecasting";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/forecast" element={<Forecast />} />
         </Routes>
       </Header>
+      <Footer />
     </Router>
   );
 }

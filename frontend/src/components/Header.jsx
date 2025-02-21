@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Home, BookOpen, BarChart3 } from "lucide-react";
 import LogoSvg from "../assets/logo4.svg?react";
 
+
 const navItems = [
   { name: "Главная", path: "/", icon: Home },
   { name: "Вики", path: "/wiki", icon: BookOpen },
