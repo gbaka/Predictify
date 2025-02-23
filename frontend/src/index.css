@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  @apply transition-all;
+  @apply transition-all font-mono; /* Моноширный шрифт */
 }
 
 body.light {
@@ -11,7 +11,6 @@ body.light {
 body.dark {
   @apply bg-gray-800 text-gray-200;
 }
-
 
 /* body {
   font-family: 'Fira Code', monospace !important;
