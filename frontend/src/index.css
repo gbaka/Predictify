@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+body {
+  @apply transition-all;
+}
+
+body.light {
+  @apply bg-gray-100 text-gray-900;
+}
+
+body.dark {
+  @apply bg-gray-800 text-gray-200;
+}
+
+
 /* body {
   font-family: 'Fira Code', monospace !important;
 } */
