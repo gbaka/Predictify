@@ -1,0 +1,15 @@
+# Используем официальный образ с Node.js
+FROM node:20
+LABEL author="gbaka <geo.m2019@mail.ru>"
+
+# Копируем все файлы проекта (кроме тех, что в .dockerignore)
+COPY . .
+
+# Устанавливаем зависимости (описаны в package.json)
+RUN npm install 
+
+# Собираем проект с помощью Vite
+RUN npm run build
+
+# Запускаем сервер, чтобы обслуживать статику
+CMD ["npm", "run", "preview"]
