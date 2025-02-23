@@ -11,7 +11,8 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <Router>
-      <Header>
+      <Header />
+      <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/wiki" element={<Wiki />} />
@@ -20,7 +21,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/help" element={<Help />} />
         </Routes>
-      </Header>
+      </main>
       <Footer />
     </Router>
   );
