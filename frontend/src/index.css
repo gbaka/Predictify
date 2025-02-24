@@ -19,7 +19,12 @@ body.dark {
 }
 
 .bg-gray-150 {
-  background-color: #eceef1; /* Цвет между gray-800 и gray-900 */
+  background-color: #eceef1; /* Цвет между gray-100 и gray-150 */
+}
+
+
+section {
+  scroll-margin-top: 6rem; /* Высота шапки + 1.5 rem */
 }
 
 
