@@ -1,9 +1,9 @@
 export default function Home() {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold">Wiki</h1>
+    <div className="container mx-auto p-6 px-8">
+      <h1 className="text-3xl font-bold">Главная</h1>
       <p className="mt-4 text-gray-600">
-        Здесь будет информация о методах прогнозирования.
+        Здесь будет что-то.
       </p>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugiat qui,

@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Header />
-      <main>
+      <main className="pt-16">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/wiki" element={<Wiki />} />

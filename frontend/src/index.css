@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.bg-gray-850 {
+  background-color: #172131; /* Цвет между gray-800 и gray-900 */
+}
+
 body {
   @apply transition-all font-mono; /* Моноширный шрифт */
 }

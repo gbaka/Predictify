@@ -143,7 +143,7 @@ function BurgerMenu({ menuOpen, setMenuOpen }) {
   );
 }
 
-export default function Header({ children }) {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const { theme } = useTheme();
@@ -213,7 +213,6 @@ export default function Header({ children }) {
   )}
 </AnimatePresence>
       </header>
-      <main className="pt-16">{children}</main>
     </>
   );
 }
