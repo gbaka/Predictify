@@ -31,7 +31,7 @@ export default function Footer() {
 
   return (
     <footer className={`
-      ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-200 text-black"} 
+      ${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-200 text-gray-900"} 
       py-8 mt-16 font-mono shadow-[0_-2px_4px_-1px_rgba(0,0,0,0.1)] z-1 relative
     `} >
   <div className="max-w-7xl mx-auto px-6">
