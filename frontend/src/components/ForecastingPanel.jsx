@@ -356,7 +356,7 @@ export default function ForecastingPanel() {
   };
 
   return (
-    <div className={`p-4 border border-gray-300 rounded-xl w-full h-[82vh] flex flex-col ${theme === 'dark' ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"}`}>
+    <div className={`shadow-md p-4 border border-gray-300 rounded-xl w-full h-[82vh] flex flex-col ${theme === 'dark' ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"}`}>
       {/* Первый ряд: ModelSelector */}
       <div className="w-full">
         <ModelSelector onChange={handleModelChange} />
