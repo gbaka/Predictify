@@ -48,7 +48,7 @@ export default function Forecasting() {
               }`}
               onClick={() => setActiveTab("forecasting")}
             >
-              Прогнозирование
+              Попробовать
             </button>
           </div>
         </div>
