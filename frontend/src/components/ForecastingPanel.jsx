@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import * as echarts from "echarts";
 import { useTheme } from "../context/ThemeContext";
+import { FileText, Sheet, X } from "lucide-react";
 import Split from "react-split";
+import * as echarts from "echarts";
 
 
 function ModelSelector({ onChange }) {
@@ -51,8 +52,8 @@ function ModelSelector({ onChange }) {
   return (
     <div
       className={`
-        ${isOpen ? `outline outline-2 ${theme==='dark' ? 'outline-gray-100' : 'outline-gray-100'}` : ""} // Жирная обводка при активном состоянии
-        ${isHovered ? "outline outline-2 outline-gray-900" : ""} // Жирная обводка при наведении
+        ${isOpen ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при активном состоянии
+        ${isHovered ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при наведении
         relative w-full p-1 outline  ${theme==='dark' ? "outline-gray-600" : "outline-gray-300"} rounded-lg z-20 cursor-pointer mb-3
         
       `}
@@ -69,7 +70,7 @@ function ModelSelector({ onChange }) {
       {/* Выпадающий список */}
       {isOpen && (
         <div
-          className="absolute top-full left-0 w-full mt-1 border border-gray-400 rounded-lg bg-white shadow-lg z-10"
+          className={`absolute top-full left-0 w-full mt-1 border  ${theme === "dark" ? "text-gray-300 border-gray-600 bg-gray-850" : "text-gray-900 border-gray-400 bg-gray-50"}  rounded-lg shadow-lg z-10`}
           style={{ maxHeight: "60vh", overflowY: "auto" }}
         >
           {Object.keys(models).map((category) => (
@@ -81,7 +82,7 @@ function ModelSelector({ onChange }) {
                   {models[category][subcategory].map((model) => (
                     <div
                       key={model}
-                      className="p-1 pl-4 cursor-pointer hover:bg-gray-100"
+                      className={`p-1 pl-4 cursor-pointer ${theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100" }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSelect(model);
@@ -100,20 +101,112 @@ function ModelSelector({ onChange }) {
   );
 }
 
+
 // Загрузка данных
 function DataUploader({ onUpload }) {
+  const { theme } = useTheme();
+  const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбранного файла
+
+  // Обработчик клика по области загрузки
+  const handleClick = () => {
+    document.getElementById("file-input").click(); // Программно вызываем клик по input
+  };
+
+  // Обработчик изменения файла
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+      if (allowedTypes.includes(file.type)) {
+        setSelectedFile(file); // Сохраняем выбранный файл
+        onUpload(event); // Вызываем переданный обработчик
+      } else {
+        alert("Пожалуйста, выберите файл в формате CSV или Excel.");
+      }
+    }
+  };
+
+  // Обработчик удаления файла
+  const handleRemoveFile = () => {
+    setSelectedFile(null); // Удаляем выбранный файл
+    document.getElementById("file-input").value = ""; // Сбрасываем значение input
+  };
+
+  // Функция для обрезки длинных имен файлов
+  const truncateFileName = (fileName, maxLength = 18) => {
+    if (fileName.length > maxLength) {
+      return `${fileName.substring(0, maxLength)}...`; // Обрезаем имя и добавляем многоточие
+    }
+    return fileName;
+  };
+
   return (
-    <div className="p-2 border border-dashed rounded-lg w-full h-full flex flex-col justify-center">
-      <input type="file" className="w-full" onChange={onUpload} />
-      <p className="text-center mt-1">Загрузите CSV или Excel файл</p>
+    <div
+      className={`p-4 border-2 border-dashed cursor-pointer ${
+        theme === "dark" ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
+      } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors`}
+      onClick={handleClick} // Открываем проводник при клике на область
+    >
+      {/* Скрытый input для выбора файла */}
+      <input
+        id="file-input"
+        type="file"
+        className="hidden"
+        onChange={handleFileChange}
+        accept=".csv, .xls, .xlsx" // Указываем допустимые форматы
+      />
+
+      {/* Если файл выбран, отображаем его имя и кнопку удаления */}
+      {selectedFile ? (
+        <div className="flex flex-col items-center space-y-2">
+          <div className="flex items-center space-x-2">
+            <span
+              className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+              title={selectedFile.name} // Всплывающая подсказка с полным именем файла
+            >
+              {truncateFileName(selectedFile.name)}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Предотвращаем всплытие события
+                handleRemoveFile();
+              }}
+              className={`p-1 rounded-full ${
+                theme === "dark" ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-200"
+              } transition-colors`}
+            >
+              <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
+            </button>
+          </div>
+          <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}>
+            Файл успешно выбран
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Иконки и текст, если файл не выбран */}
+          <div className="flex space-x-4 text-gray-500">
+            <Sheet className="w-8 h-8" /> {/* Иконка для Excel */}
+            <FileText className="w-8 h-8" /> {/* Иконка для CSV */}
+          </div>
+          <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+            Перетащите файл сюда или нажмите для загрузки
+          </p>
+          <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}>
+            Поддерживаются форматы: CSV, Excel
+          </p>
+        </>
+      )}
     </div>
   );
 }
 
+
 // Настройки модели
 function ModelSettings({ model, onStart }) {
+  const {theme} = useTheme()
   return (
-    <div className="p-2 border rounded-lg w-full h-full flex flex-col">
+    <div className={`p-2 border  ${theme === 'dark' ? 'border-gray-700' : 'border-gray-300'} rounded-lg w-full h-full flex flex-col`}>
       <div className="overflow-y-auto flex-grow">
         {model ? `Настройки модели: ${model}` : "Выберите модель"}
         {/* Пример длинного контента для скролла */}
@@ -140,13 +233,16 @@ function ModelSettings({ model, onStart }) {
 
 // Сводка данных
 function DataSummary({ summary }) {
+  const {theme} = useTheme()
   return (
-    <div className="p-2 border rounded-lg w-full h-full bg-gray-100 overflow-y-auto">
+    <div className={`p-2 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-300'} rounded-lg w-full h-full overflow-y-auto`}>
       <h3 className="font-bold">Сводка данных:</h3>
       <pre className="whitespace-pre-wrap text-sm">{summary || "Нет данных"}</pre>
     </div>
   );
 }
+
+
 
 // График
 function BaseChart({ options }) {
@@ -210,23 +306,27 @@ function BaseChart({ options }) {
 
   return (
     <div
-      className={`p-2 rounded-lg shadow-md border transition-all ${
+      className={`rounded-lg shadow-md border transition-all ${
         theme === "dark"
           ? "bg-gray-850 border border-gray-700"
           : "bg-gray-50 border border-gray-300"
       } h-full w-full`}
     >
-      <div ref={chartRef} className="w-full h-full" />
+      <div ref={chartRef} className="w-full h-full mt-3" />
     </div>
   );
 }
 
-// Основной компонент
+
 export default function ForecastingPanel() {
   const [selectedModel, setSelectedModel] = useState(null);
   const [uploadedData, setUploadedData] = useState(null);
   const [dataSummary, setDataSummary] = useState("");
   const { theme } = useTheme();
+
+  // Состояние для хранения размеров панелей
+  const [verticalSizes, setVerticalSizes] = useState([80, 20]); // Начальные размеры для вертикального Split
+  const [horizontalSizes, setHorizontalSizes] = useState([15, 70, 15]); // Начальные размеры для горизонтального Split
 
   const handleModelChange = (model) => setSelectedModel(model);
   const handleFileUpload = (event) => setUploadedData(event.target.files[0]);
@@ -245,8 +345,18 @@ export default function ForecastingPanel() {
     ]
   };
 
+  // Функция для создания разделителей с учетом текущей темы
+  const createGutter = (direction) => {
+    const gutter = document.createElement("div");
+    gutter.className = `gutter gutter-${direction} ${theme === 'dark' ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"} transition-colors rounded-lg`;
+    if (direction === "vertical") {
+      gutter.style.height = "8px"; // Укороченные разделители для вертикального направления
+    }
+    return gutter;
+  };
+
   return (
-    <div className={`p-4 border border-gray-300 rounded-xl  w-full h-screen flex flex-col ${theme === 'dark' ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"}`}>
+    <div className={`p-4 border border-gray-300 rounded-xl w-full h-[82vh] flex flex-col ${theme === 'dark' ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"}`}>
       {/* Первый ряд: ModelSelector */}
       <div className="w-full">
         <ModelSelector onChange={handleModelChange} />
@@ -254,31 +364,26 @@ export default function ForecastingPanel() {
 
       {/* Второй и третий ряды: DataUploader, BaseChart, ModelSettings и DataSummary */}
       <Split
+        key={theme} // Пересоздаем Split при изменении темы
         className="flex-grow flex flex-col w-full"
         direction="vertical"
-        sizes={[70, 30]} // Начальные размеры (70% для второго ряда, 30% для DataSummary)
+        sizes={verticalSizes} // Используем состояние для размеров
         minSize={[200, 100]} // Минимальные размеры
-        gutterSize={8} // Размер перегородки
+        gutterSize={7} // Размер перегородки
         snapOffset={0} // Отключение привязки
-        gutter={(index, direction) => {
-          const gutter = document.createElement("div");
-          gutter.className = `gutter gutter-${direction} ${theme==='dark' ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"} transition-colors rounded-lg`;
-          gutter.style.height = "8px"; // Укороченные разделители
-          return gutter;
-        }}
+        onDragEnd={(sizes) => setVerticalSizes(sizes)} // Сохраняем размеры после перемещения
+        gutter={(index, direction) => createGutter(direction)}
       >
         {/* Второй ряд: DataUploader, BaseChart, ModelSettings */}
         <Split
+          key={theme} // Пересоздаем Split при изменении темы
           className="flex w-full mb-2"
-          sizes={[25, 50, 25]} // Начальные размеры (25%, 50%, 25%)
-          minSize={[200, 300, 200]} // Минимальные размеры
-          gutterSize={8} // Размер перегородки
+          sizes={horizontalSizes} // Используем состояние для размеров
+          minSize={[200, 300, 210]} // Минимальные размеры
+          gutterSize={7} // Размер перегородки
           snapOffset={0} // Отключение привязки
-          gutter={(index, direction) => {
-            const gutter = document.createElement("div");
-            gutter.className = `gutter gutter-${direction} ${theme==='dark' ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"} transition-colors rounded-lg`;
-            return gutter;
-          }}
+          onDragEnd={(sizes) => setHorizontalSizes(sizes)} // Сохраняем размеры после перемещения
+          gutter={(index, direction) => createGutter(direction)}
         >
           <div className="h-full mr-1"> {/* Добавлен отступ справа */}
             <DataUploader onUpload={handleFileUpload} />
