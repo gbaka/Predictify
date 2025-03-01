@@ -23,7 +23,7 @@ export default function Forecasting() {
     return (
       <div className="w-full">
         <div
-          className={`w-full flex items-center p-4 sticky top-0 z-10 ${
+          className={`w-full flex items-center p-4 mt-2 top-0 z-10 ${
             theme === "dark"
               ? "shadow-[0_2px_4px_-1px_rgba(0,0,0,0.1)] bg-gray-850 text-gray-100"
               : "shadow-[0_2px_4px_-1px_rgba(0,0,0,0.07)] bg-gray-150 text-gray-900"
