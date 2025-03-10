@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import BaseChart from "../components/charts/BaseChart";
 import ForecastingPanel from "../components/ForecastingPanel";
