@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import json
@@ -20,12 +20,6 @@ class Forecast(BaseModel):
     date: str
     value: float
 
-@app.get("/api/forecast", response_model=list[Forecast])
-async def get_forecast():
-    # Пример данных, которые можно получить из базы или другого источника
-    forecast_data = [
-        {"date": "2026-02-18", "value": 1.235},
-        {"date": "2025-02-19", "value": 1.25},
-        {"date": "2025-12-20", "value": 1.27},
-    ]
-    return forecast_data
+@app.get("/test")
+async def test_endpoint(query: str = Query(None, description="Тестовый параметр")):
+    return {"message": "Полученные данные", "query": query}

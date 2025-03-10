@@ -1,23 +1,52 @@
+import { useState } from "react";
+import axios from "axios";
+
 export default function Home() {
+  const [data, setData] = useState(null);
+  const [param, setParam] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/test", {
+        params: { query: param }, // передаем параметр "query"
+      });
+      setData(response.data);
+    } catch (error) {
+      console.error("Ошибка при загрузке данных", error);
+    }
+  };
+
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold">Wiki</h1>
-      <p className="mt-4 text-gray-600">
-        Здесь будет информация о методах прогнозирования.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugiat qui,
-        quam maxime fugit dolores quibusdam a illum sint sunt porro delectus
-        consectetur, labore soluta doloremque omnis! Saepe similique aliquid est
-        ab neque voluptatum necessitatibus voluptatem deleniti provident atque
-        adipisci officiis reiciendis quos dignissimos pariatur nemo vel sunt
-        dolorum sapiente delectus eius unde, velit inventore ipsum! Id animi
-        sunt voluptatem ratione corporis eaque, nobis vitae totam aspernatur
-        quibusdam quo magni commodi! Commodi placeat repellendus illum incidunt
-        obcaecati atque nam eum deserunt, suscipit optio eligendi accusamus
-        possimus, odio neque ex quod, est adipisci animi vitae. Quisquam
-        expedita commodi porro sit eum. Necessitatibus?
-      </p>
+    <div className="mt-3 container mx-auto p-6 px-8">
+      <div className="mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
+        <h1 className="text-3xl font-bold text-center">Главная</h1>
+        <p className="mt-4">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit...
+        </p>
+        <div className="mt-6 text-center">
+          <input
+            type="text"
+            value={param}
+            onChange={(e) => setParam(e.target.value)}
+            placeholder="Введите параметр"
+            className="border px-3 py-2 rounded mr-2"
+          />
+          <button
+            onClick={fetchData}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Загрузить данные
+          </button>
+        </div>
+        {data && (
+          <div className="mt-4 p-4 border rounded bg-gray-100">
+            <h2 className="text-xl font-semibold">Полученные данные:</h2>
+            <pre className="mt-2 text-sm text-gray-700">
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
