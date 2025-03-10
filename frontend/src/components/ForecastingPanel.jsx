@@ -324,8 +324,8 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
     <button
       onClick={onClick}
       className={`${
-        theme === 'dark' ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"
-      } relative ml-2 mb-3 transition-colors p-2.5 rounded-lg`}
+        theme === 'dark' ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
+      } border relative ml-2 mb-3 transition-colors p-2.5 rounded-lg`}
     >
       {isFullScreen ? (
         <Minimize2 className="w-5 h-5" /> // Иконка для сворачивания
@@ -414,7 +414,7 @@ export default function ForecastingPanel() {
       {/* Затемнение фона */}
       {isFullScreen && (
         <div
-          className="fixed inset-0 z-100 bg-gray-500/75  backdrop-blur-sm "
+          className={`fixed inset-0 z-100 backdrop-blur-sm ${theme === 'dark' ? "bg-gray-950/60" : "bg-gray-500/60"}`}
           onClick={() => setIsFullScreen(false)} // Закрыть по клику на затемнение
         />
       )}

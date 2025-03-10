@@ -69,12 +69,13 @@ export default function Wiki() {
         </ul>
       </nav>
 
-      <div className="container mx-auto p-6 px-8">
-        <h1 id="main" className="text-3xl font-bold">
-          Главная
+
+      {/* <div className="mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">  */}
+      <div className="container mt-3 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 p-6 px-8">
+        <h1 id="main" className="text-3xl font-bold text-center">
+          Вики
         </h1>
-        <p className="mt-4 text-gray-600">Здесь будет что-то.</p>
-        <p>
+        <p className='mt-4'>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugiat qui,
           quam maxime fugit dolores quibusdam a illum sint sunt porro delectus
           consectetur, labore soluta doloremque omnis! Saepe similique aliquid

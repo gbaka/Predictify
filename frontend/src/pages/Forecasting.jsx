@@ -64,7 +64,7 @@ export default function Forecasting() {
               <h1 className="text-3xl font-bold mb-4 text-center">
                 Прогнозирование
               </h1>
-              <p className="text-center mb-10">
+              <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
                 Здесь будет интерфейс для прогнозирования. Lorem ipsum, dolor
                 sit amet consectetur adipisicing elit. Labore maxime, soluta
                 ratione hic libero vero ducimus illum voluptatem aut quos.
@@ -72,28 +72,14 @@ export default function Forecasting() {
               <ForecastingPanel />
 
               {/* Добавленные параграфы о сервисе */}
-              <div className="mt-12 space-y-6">
-                
-
-                {/* Блок про безопасность */}
-                <div
-                  className={`p-6 text-center ${
-                    theme === "dark"
-                      ? "bg-gray-850 text-gray-200"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  
-                  <p className="text-gray-600">
-                    Мы уделяем особое внимание безопасности ваших данных. Все
-                    файлы, загруженные в наш сервис, обрабатываются в
-                    зашифрованном виде и хранятся на защищенных серверах. Мы не
-                    передаем ваши данные третьим лицам и гарантируем их
-                    конфиденциальность.
-                  </p>
-                </div>
-
-    
+              <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
+                <p>
+                  Мы уделяем особое внимание безопасности ваших данных. Все
+                  файлы, загруженные в наш сервис, обрабатываются в
+                  зашифрованном виде и хранятся на защищенных серверах. Мы не
+                  передаем ваши данные третьим лицам и гарантируем их
+                  конфиденциальность.
+                </p>
               </div>
             </>
           )}
