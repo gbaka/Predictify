@@ -52,7 +52,7 @@ function ModelSelector({ onChange }) {
 
   return (
     <div
-      className={`
+      className={`min-w-[530px]
         ${isOpen ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при активном состоянии
         ${isHovered ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при наведении
         relative w-full p-1 outline  ${theme==='dark' ? "outline-gray-600" : "outline-gray-300"} rounded-lg z-20 cursor-pointer mb-3
@@ -64,14 +64,14 @@ function ModelSelector({ onChange }) {
       onClick={handleClick}
     >
       {/* Кастомный элемент для отображения выбранной модели */}
-      <div className="p-1 w-full">
+      <div className="p-1  w-full ">
         {selectedModel || "Выберите модель"}
       </div>
 
       {/* Выпадающий список */}
       {isOpen && (
         <div
-          className={`absolute top-full left-0 w-full mt-1 border  ${theme === "dark" ? "text-gray-300 border-gray-600 bg-gray-850" : "text-gray-900 border-gray-400 bg-gray-50"} rounded-lg shadow-lg z-10`}
+          className={`absolute top-full left-0 w-full mt-1 border   ${theme === "dark" ? "text-gray-300 border-gray-600 bg-gray-850" : "text-gray-900 border-gray-400 bg-gray-50"} rounded-lg shadow-lg z-10`}
           style={{ maxHeight: "60vh", overflowY: "auto" }}
         >
           {Object.keys(models).map((category) => (
@@ -313,7 +313,7 @@ function BaseChart({ options }) {
           : "bg-gray-50 border border-gray-300"
       } h-full w-full`}
     >
-      <div ref={chartRef} className="w-full h-full mt-3" />
+      <div ref={chartRef} className="flex w-full h-full mt-3" />
     </div>
   );
 }
@@ -427,7 +427,9 @@ export default function ForecastingPanel() {
           theme === "dark"
             ? "bg-gray-850 border-gray-700"
             : "bg-gray-50 border-gray-300"
-        } transition-all duration-300`} // Анимация перехода
+        } transition-all duration-300`
+      }
+      style={{'overflow': "auto"}} // Анимация перехода
       >
         <div className="flex justify-between items-center">
           <ModelSelector onChange={handleModelChange} />
@@ -459,13 +461,13 @@ export default function ForecastingPanel() {
             onDragEnd={(sizes) => setHorizontalSizes(sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
-            <div className="h-full mr-1">
+            <div className="h-full mr-1 min-w-[130px]">
               <DataUploader onUpload={handleFileUpload} />
             </div>
-            <div className="h-full mx-1">
+            <div className="h-full min-w-[300px] mx-1">
               <BaseChart options={options} />
             </div>
-            <div className="h-full ml-1">
+            <div className="h-full ml-1 min-w-[130px]">
               <ModelSettings
                 model={selectedModel}
                 onStart={handleStartForecast}
@@ -473,7 +475,7 @@ export default function ForecastingPanel() {
             </div>
           </Split>
 
-          <div className="w-full h-full mt-2">
+          <div className="w-full h-full mt-2 min-w-[560px]">
             <DataSummary summary={dataSummary} />
           </div>
         </Split>
