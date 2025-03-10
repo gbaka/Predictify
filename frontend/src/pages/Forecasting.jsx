@@ -73,21 +73,17 @@ export default function Forecasting() {
 
               {/* Добавленные параграфы о сервисе */}
               <div className="mt-12 space-y-6">
-                <h2 className="text-2xl font-semibold text-center">
-                  О нашем сервисе
-                </h2>
+                
 
                 {/* Блок про безопасность */}
                 <div
-                  className={`p-6 rounded-lg shadow-sm ${
+                  className={`p-6 text-center ${
                     theme === "dark"
                       ? "bg-gray-850 text-gray-200"
                       : "bg-gray-100 text-gray-700"
                   }`}
                 >
-                  <h3 className="text-xl font-medium mb-2">
-                    Безопасность данных
-                  </h3>
+                  
                   <p className="text-gray-600">
                     Мы уделяем особое внимание безопасности ваших данных. Все
                     файлы, загруженные в наш сервис, обрабатываются в
@@ -97,41 +93,7 @@ export default function Forecasting() {
                   </p>
                 </div>
 
-                {/* Блок про время обработки */}
-                <div
-                  className={`p-6 rounded-lg shadow-sm ${
-                    theme === "dark"
-                      ? "bg-gray-850 text-gray-200"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  <h3 className="text-xl font-medium mb-2">Время обработки</h3>
-                  <p className="text-gray-600">
-                    Наш сервис обеспечивает быструю обработку данных. В
-                    зависимости от объема загруженного файла, прогнозы будут
-                    готовы в течение нескольких минут. Мы используем современные
-                    алгоритмы и мощные серверы для ускорения обработки.
-                  </p>
-                </div>
-
-                {/* Блок про точность прогнозов */}
-                <div
-                  className={`p-6 rounded-lg shadow-sm ${
-                    theme === "dark"
-                      ? "bg-gray-850 text-gray-200"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  <h3 className="text-xl font-medium mb-2">
-                    Точность прогнозов
-                  </h3>
-                  <p className="text-gray-600">
-                    Мы используем передовые методы машинного обучения и
-                    статистического анализа для обеспечения высокой точности
-                    прогнозов. Наши модели постоянно улучшаются, чтобы
-                    предоставлять вам наиболее достоверные результаты.
-                  </p>
-                </div>
+    
               </div>
             </>
           )}
