@@ -1,9 +1,9 @@
+import { FileText, Sheet, X, Maximize2, Minimize2, Play } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useTheme } from "../context/ThemeContext";
-import { FileText, Sheet, X, Maximize2, Minimize2  } from "lucide-react";
-import Split from "react-split";
 import * as echarts from "echarts";
-
+import Split from "react-split";
+import { useTheme } from "../context/ThemeContext";
+import { ARIMASettings, SARIMASettings } from "./ModelSettings"
 
 
 function ModelSelector({ onChange }) {
@@ -203,34 +203,29 @@ function DataUploader({ onUpload }) {
 }
 
 
-// Настройки модели
-function ModelSettings({ model, onStart }) {
-  const {theme} = useTheme()
+function ModelSettings({ selectedModel }) {
+  const { theme } = useTheme();
+
+  const renderSettings = () => {
+    switch (selectedModel) {
+      case "ARIMA":
+        return <ARIMASettings />;
+      case "SARIMA":
+        return <SARIMASettings />;
+      default:
+        return <div className="text-center text-gray-500">Модель не выбрана</div>;
+    }
+  };
+
   return (
-    <div className={`p-2 border  ${theme === 'dark' ? 'border-gray-700' : 'border-gray-300'} rounded-lg w-full h-full flex flex-col`}>
-      <div className="overflow-y-auto flex-grow">
-        {model ? `Настройки модели: ${model}` : "Выберите модель"}
-        {/* Пример длинного контента для скролла */}
-        <div className="mt-2">
-          <p>Параметр 1: Значение</p>
-          <p>Параметр 2: Значение</p>
-          <p>Параметр 3: Значение</p>
-          <p>Параметр 4: Значение</p>
-          <p>Параметр 5: Значение</p>
-          <p>Параметр 6: Значение</p>
-          <p>Параметр 7: Значение</p>
-          <p>Параметр 8: Значение</p>
-        </div>
-      </div>
-      <button
-        className="p-1 w-full bg-blue-500 text-white rounded-lg mt-2"
-        onClick={onStart}
-      >
-        Начать
-      </button>
+    <div
+      className={`overflow-y-scroll parent p-4 border rounded-lg w-full h-full flex-grow flex flex-col ${theme === 'dark' ? 'border-gray-700 bg-gray-850 text-gray-100' : 'border-gray-300 bg-gray-50 text-gray-700'}`}
+    >  
+        {renderSettings()}       
     </div>
   );
 }
+
 
 // Сводка данных
 function DataSummary({ summary }) {
@@ -242,7 +237,6 @@ function DataSummary({ summary }) {
     </div>
   );
 }
-
 
 
 // График
@@ -337,6 +331,25 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
 }
 
 
+function StartButton({ onClick, theme }) {
+  return (
+    <button
+      className={`w-full h-1/4 mt-2 rounded-lg font-medium flex items-center justify-center gap-2
+                  shadow-md transition duration-200 border 
+                  ${
+                    theme === "dark"
+                      ? "bg-gray-850 text-gray-100 border-gray-700 custom-dark-button"
+                      : "bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100 shadow-sm"
+                  }`}
+      onClick={onClick}
+    >
+      <Play className="w-5 h-5 text-gray-600" />
+      Начать
+    </button>
+  );
+}
+
+
 export default function ForecastingPanel() {
   const [selectedModel, setSelectedModel] = useState(null);
   const [uploadedData, setUploadedData] = useState(null);
@@ -408,13 +421,14 @@ export default function ForecastingPanel() {
     }
     return gutter;
   };
-
   return (
     <>
       {/* Затемнение фона */}
       {isFullScreen && (
         <div
-          className={`fixed inset-0 z-100 backdrop-blur-sm ${theme === 'dark' ? "bg-gray-950/60" : "bg-gray-500/60"}`}
+          className={`fixed inset-0 z-100 backdrop-blur-sm ${
+            theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
+          }`}
           onClick={() => setIsFullScreen(false)} // Закрыть по клику на затемнение
         />
       )}
@@ -427,9 +441,8 @@ export default function ForecastingPanel() {
           theme === "dark"
             ? "bg-gray-850 border-gray-700"
             : "bg-gray-50 border-gray-300"
-        } transition-all duration-300`
-      }
-      style={{'overflow': "auto"}} // Анимация перехода
+        } transition-all duration-300`}
+        style={{ overflow: "auto" }} // Анимация перехода
       >
         <div className="flex justify-between items-center">
           <ModelSelector onChange={handleModelChange} />
@@ -461,17 +474,18 @@ export default function ForecastingPanel() {
             onDragEnd={(sizes) => setHorizontalSizes(sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
-            <div className="h-full mr-1 min-w-[130px]">
-              <DataUploader onUpload={handleFileUpload} />
+            <div className="h-full mr-1 min-w-[130px] flex flex-col">
+              <div className="flex-grow">
+                <DataUploader onUpload={handleFileUpload} />
+              </div>   
+              <StartButton onClick={handleStartForecast} theme={theme} />
             </div>
+
             <div className="h-full min-w-[300px] mx-1">
               <BaseChart options={options} />
             </div>
             <div className="h-full ml-1 min-w-[130px]">
-              <ModelSettings
-                model={selectedModel}
-                onStart={handleStartForecast}
-              />
+              <ModelSettings selectedModel={selectedModel} />
             </div>
           </Split>
 

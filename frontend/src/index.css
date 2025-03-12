@@ -22,6 +22,9 @@ body.dark {
   background-color: #eceef1; /* Цвет между gray-100 и gray-150 */
 }
 
+.custom-dark-button:hover {
+  background-color: #1f2937; /* Соответствует bg-gray-800 */
+}
 
 section {
   scroll-margin-top: 6rem; /* Высота шапки + 1.5 rem */
