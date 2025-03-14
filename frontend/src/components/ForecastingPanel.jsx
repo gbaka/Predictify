@@ -353,184 +353,6 @@ function StartButton({ onClick }) {
 }
 
 
-// export default function ForecastingPanel() {
-//   // to sent to backend
-//   const [modelSettings, setModelSettings] = useState(null)
-//   const [selectedModel, setSelectedModel] = useState(null);
-//   const [uploadedData, setUploadedData] = useState(null);
-
-//   const [dataSummary, setDataSummary] = useState("");
-//   const [isFullScreen, setIsFullScreen] = useState(true);
-//   const { theme } = useTheme();
-
-//   const [verticalSizes, setVerticalSizes] = useState([80, 20]);
-//   const [horizontalSizes, setHorizontalSizes] = useState([15, 70, 15]);
-
-//   const handleModelSettingsChange = (settings) => setModelSettings(settings);
-//   const handleModelChange = (model) => setSelectedModel(model);
-//   const handleFileUpload = (event) => setUploadedData(event.target.files[0]);
- 
-//   const handleStartForecast = async () => {
-//     setDataSummary("Здесь будет сводка данных...");
-//     if (!selectedModel || !modelSettings || !uploadedData) {
-//       alert("Please fill out all settings.");
-//       return;
-//     }
-  
-//     const forecastRequest = {
-//       selectedModel,
-//       modelSettings,
-//       uploadedData,
-//     };
-
-//     console.log("!!!", forecastRequest)
-  
-//     try {
-//       const response = await axios.post("http://localhost:8000/api/test", forecastRequest, {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-  
-//       console.log("Settings saved:", response.data);
-//     } catch (error) {
-//       console.error("Error sending request:", error);
-//     }
-//   };
-
-//   const options = {
-//     title: { text: "Простой график №1" },
-//     tooltip: { trigger: "axis" },
-//     xAxis: {
-//       type: "category",
-//       data: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-//     },
-//     yAxis: { type: "value" },
-//     series: [
-//       {
-//         name: "Значения 1",
-//         type: "line",
-//         data: [120, 200, 150, 190, 70, 110, 130],
-//         smooth: true,
-//         lineStyle: { width: 2 },
-//         itemStyle: { color: "#42A5F5" },
-//       },
-//       {
-//         name: "Значения 2",
-//         type: "line",
-//         data: [120, 20, 160, 80, 60, 110, 130],
-//         smooth: true,
-//         lineStyle: { width: 2 },
-//         itemStyle: { color: "#4245F5" },
-//       },
-//       {
-//         name: "Значения 3",
-//         type: "line",
-//         data: [120, 20, 1, 140, 10, 110, 190],
-//         smooth: true,
-//         lineStyle: { width: 2 },
-//         itemStyle: { color: "#2245F5" },
-//       },
-//       {
-//         name: "Значения 4",
-//         type: "line",
-//         data: [110, 20, 1, 10, 60, 110, 190],
-//         smooth: true,
-//         lineStyle: { width: 2 },
-//         itemStyle: { color: "#AA45F5" },
-//       },
-//     ],
-//   };
-
-//   const createGutter = (direction) => {
-//     const gutter = document.createElement("div");
-//     gutter.className = `gutter gutter-${direction} ${
-//       theme === "dark"
-//         ? "bg-gray-700 hover:bg-gray-600"
-//         : "bg-gray-200 hover:bg-gray-300"
-//     } transition-colors rounded-lg`;
-//     if (direction === "vertical") {
-//       gutter.style.height = "8px";
-//     }
-//     return gutter;
-//   };
-//   return (
-//     <>
-//       {/* Затемнение фона */}
-//       {isFullScreen && (
-//         <div
-//           className={`fixed inset-0 z-100 backdrop-blur-sm ${
-//             theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
-//           }`}
-//           onClick={() => setIsFullScreen(false)} // Закрыть по клику на затемнение
-//         />
-//       )}
-//       <div
-//         className={`shadow-md p-4 border border-gray-300 rounded-xl ${
-//           isFullScreen
-//             ? "fixed inset-4  h-[calc(100vh-2rem)] z-150 bg-black bg-opacity-10 backdrop-blur-sm" // Отступы по 1rem и затемнение
-//             : "h-[82vh]"
-//         } flex flex-col ${
-//           theme === "dark"
-//             ? "bg-gray-850 border-gray-700"
-//             : "bg-gray-50 border-gray-300"
-//         } transition-all duration-300`}
-//         style={{ overflow: "auto" }} // Анимация перехода
-//       >
-//         <div className="flex justify-between items-center">
-//           <ModelSelector onChange={handleModelChange} />
-//           <FullScreenToggleButton
-//             isFullScreen={isFullScreen}
-//             onClick={() => setIsFullScreen(!isFullScreen)}
-//             theme={theme}
-//           />
-//         </div>
-
-//         <Split
-//           key={theme}
-//           className="flex-grow flex flex-col w-full"
-//           direction="vertical"
-//           sizes={verticalSizes}
-//           minSize={[200, 100]}
-//           gutterSize={7}
-//           snapOffset={0}
-//           onDragEnd={(sizes) => setVerticalSizes(sizes)}
-//           gutter={(index, direction) => createGutter(direction)}
-//         >
-//           <Split
-//             key={theme}
-//             className="flex w-full mb-2"
-//             sizes={horizontalSizes}
-//             minSize={[200, 300, 210]}
-//             gutterSize={7}
-//             snapOffset={0}
-//             onDragEnd={(sizes) => setHorizontalSizes(sizes)}
-//             gutter={(index, direction) => createGutter(direction)}
-//           >
-//             <div className="h-full mr-1 min-w-[130px] flex flex-col">
-//               <div className="flex-grow">
-//                 <DataUploader onUpload={handleFileUpload} />
-//               </div>   
-//               <StartButton onClick={handleStartForecast}/>
-//             </div>
-
-//             <div className="h-full min-w-[300px] mx-1">
-//               <BaseChart options={options} />
-//             </div>
-//             <div className="h-full ml-1 min-w-[130px]">
-//               <ModelSettingsPanel selectedModel={selectedModel} onChange={handleModelSettingsChange} />
-//             </div>
-//           </Split>
-
-//           <div className="w-full h-full mt-2 min-w-[560px]">
-//             <DataSummary summary={dataSummary} />
-//           </div>
-//         </Split>
-//       </div>
-//     </>
-//   );
-// }
-
 export default function ForecastingPanel() {
   const modelSettingsRef = useRef(null);
   const [selectedModel, setSelectedModel] = useState(null); // Возвращён useState
@@ -557,29 +379,26 @@ export default function ForecastingPanel() {
 
   const handleStartForecast = async () => {
     dataSummaryRef.current = "Здесь будет сводка данных...";
-
+  
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
       alert("Please fill out all settings.");
       return;
     }
-
-    const forecastRequest = {
-      selectedModel,
-      modelSettings: modelSettingsRef.current,
-      uploadedData: uploadedDataRef.current,
-    };
-
-    console.log("!!!", forecastRequest);
-
+  
+    const formData = new FormData();
+    formData.append("selectedModel", selectedModel);
+    formData.append("modelSettings", JSON.stringify(modelSettingsRef.current)); // Оборачиваем настройки в JSON строку
+    formData.append("uploadedData", uploadedDataRef.current); // Файл
+  
     try {
-      const response = await axios.post("http://localhost:8000/api/test", forecastRequest, {
-        headers: { "Content-Type": "application/json" },
+      const response = await axios.post("http://localhost:8000/api/test", formData, {
+        headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
       });
       console.log("Settings saved:", response.data);
     } catch (error) {
       console.error("Error sending request:", error);
     }
-  };
+  };  
 
   const options = {
     title: { text: "Простой график №1" },
@@ -636,7 +455,7 @@ export default function ForecastingPanel() {
           className="flex-grow flex flex-col w-full"
           direction="vertical"
           sizes={verticalSizesRef.current}
-          minSize={[200, 100]}
+          minSize={[250, 80]}
           gutterSize={7}
           snapOffset={0}
           onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}

@@ -8,7 +8,7 @@ API-эндпоинты для взаимодействия с пользоват
 - get_forecast: Обрабатывает запрос на прогноз и возвращает результаты.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, File, Form, UploadFile
 from api.models import ForecastRequest, ForecastResponse
 from forecasting.predictor import forecast
 
@@ -32,6 +32,18 @@ async def get_forecast(request: ForecastRequest):
 
 
 @router.post("/test")
-async def test(request: dict):
-    print(request)
-    return request
+async def test(
+    selectedModel: str = Form(...),
+    modelSettings: str = Form(...),
+    uploadedData: UploadFile = File(...)
+):
+    print(f"Selected model: {selectedModel}")
+    print(f"Model settings: {modelSettings}")
+    print(f"File filename: {uploadedData.filename}")
+    print(f"file:", type(uploadedData))
+
+    return {
+        "selectedModel": selectedModel,
+        "modelSettings": modelSettings,
+        "filename": uploadedData.filename
+    }

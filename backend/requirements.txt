@@ -48,6 +48,8 @@ pyproject-hooks==1.2.0
     #   pip-tools
 python-dateutil==2.9.0.post0
     # via pandas
+python-multipart==0.0.20
+    # via -r requirements.in
 pytz==2025.1
     # via pandas
 scipy==1.15.2
