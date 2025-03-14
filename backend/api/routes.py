@@ -29,3 +29,9 @@ async def get_forecast(request: ForecastRequest):
     """
     prediction = forecast(request.data, model_type=request.model)
     return ForecastResponse(model=request.model, prediction=prediction)
+
+
+@router.post("/test")
+async def test(request: dict):
+    print(request)
+    return request

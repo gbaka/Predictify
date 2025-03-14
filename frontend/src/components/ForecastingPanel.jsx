@@ -2,8 +2,9 @@ import { FileText, Sheet, X, Maximize2, Minimize2, Play } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import Split from "react-split";
+import axios from "axios"
 import { useTheme } from "../context/ThemeContext";
-import { ARIMASettings, SARIMASettings } from "./ModelSettings"
+import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
 
 
 function ModelSelector({ onChange }) {
@@ -203,15 +204,15 @@ function DataUploader({ onUpload }) {
 }
 
 
-function ModelSettings({ selectedModel }) {
+function ModelSettingsPanel({ selectedModel, onChange }) {
   const { theme } = useTheme();
 
   const renderSettings = () => {
     switch (selectedModel) {
       case "ARIMA":
-        return <ARIMASettings />;
+        return <ARIMASettings onChange={onChange} />;
       case "SARIMA":
-        return <SARIMASettings />;
+        return <SARIMASettings onChange={onChange}/>;
       default:
         return <div className="text-center text-gray-500">Модель не выбрана</div>;
     }
@@ -331,7 +332,9 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
 }
 
 
-function StartButton({ onClick, theme }) {
+function StartButton({ onClick }) {
+  const { theme } = useTheme()
+
   return (
     <button
       className={`w-full h-1/4 mt-2 rounded-lg font-medium flex items-center justify-center gap-2
@@ -350,147 +353,324 @@ function StartButton({ onClick, theme }) {
 }
 
 
+// export default function ForecastingPanel() {
+//   // to sent to backend
+//   const [modelSettings, setModelSettings] = useState(null)
+//   const [selectedModel, setSelectedModel] = useState(null);
+//   const [uploadedData, setUploadedData] = useState(null);
+
+//   const [dataSummary, setDataSummary] = useState("");
+//   const [isFullScreen, setIsFullScreen] = useState(true);
+//   const { theme } = useTheme();
+
+//   const [verticalSizes, setVerticalSizes] = useState([80, 20]);
+//   const [horizontalSizes, setHorizontalSizes] = useState([15, 70, 15]);
+
+//   const handleModelSettingsChange = (settings) => setModelSettings(settings);
+//   const handleModelChange = (model) => setSelectedModel(model);
+//   const handleFileUpload = (event) => setUploadedData(event.target.files[0]);
+ 
+//   const handleStartForecast = async () => {
+//     setDataSummary("Здесь будет сводка данных...");
+//     if (!selectedModel || !modelSettings || !uploadedData) {
+//       alert("Please fill out all settings.");
+//       return;
+//     }
+  
+//     const forecastRequest = {
+//       selectedModel,
+//       modelSettings,
+//       uploadedData,
+//     };
+
+//     console.log("!!!", forecastRequest)
+  
+//     try {
+//       const response = await axios.post("http://localhost:8000/api/test", forecastRequest, {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       });
+  
+//       console.log("Settings saved:", response.data);
+//     } catch (error) {
+//       console.error("Error sending request:", error);
+//     }
+//   };
+
+//   const options = {
+//     title: { text: "Простой график №1" },
+//     tooltip: { trigger: "axis" },
+//     xAxis: {
+//       type: "category",
+//       data: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+//     },
+//     yAxis: { type: "value" },
+//     series: [
+//       {
+//         name: "Значения 1",
+//         type: "line",
+//         data: [120, 200, 150, 190, 70, 110, 130],
+//         smooth: true,
+//         lineStyle: { width: 2 },
+//         itemStyle: { color: "#42A5F5" },
+//       },
+//       {
+//         name: "Значения 2",
+//         type: "line",
+//         data: [120, 20, 160, 80, 60, 110, 130],
+//         smooth: true,
+//         lineStyle: { width: 2 },
+//         itemStyle: { color: "#4245F5" },
+//       },
+//       {
+//         name: "Значения 3",
+//         type: "line",
+//         data: [120, 20, 1, 140, 10, 110, 190],
+//         smooth: true,
+//         lineStyle: { width: 2 },
+//         itemStyle: { color: "#2245F5" },
+//       },
+//       {
+//         name: "Значения 4",
+//         type: "line",
+//         data: [110, 20, 1, 10, 60, 110, 190],
+//         smooth: true,
+//         lineStyle: { width: 2 },
+//         itemStyle: { color: "#AA45F5" },
+//       },
+//     ],
+//   };
+
+//   const createGutter = (direction) => {
+//     const gutter = document.createElement("div");
+//     gutter.className = `gutter gutter-${direction} ${
+//       theme === "dark"
+//         ? "bg-gray-700 hover:bg-gray-600"
+//         : "bg-gray-200 hover:bg-gray-300"
+//     } transition-colors rounded-lg`;
+//     if (direction === "vertical") {
+//       gutter.style.height = "8px";
+//     }
+//     return gutter;
+//   };
+//   return (
+//     <>
+//       {/* Затемнение фона */}
+//       {isFullScreen && (
+//         <div
+//           className={`fixed inset-0 z-100 backdrop-blur-sm ${
+//             theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
+//           }`}
+//           onClick={() => setIsFullScreen(false)} // Закрыть по клику на затемнение
+//         />
+//       )}
+//       <div
+//         className={`shadow-md p-4 border border-gray-300 rounded-xl ${
+//           isFullScreen
+//             ? "fixed inset-4  h-[calc(100vh-2rem)] z-150 bg-black bg-opacity-10 backdrop-blur-sm" // Отступы по 1rem и затемнение
+//             : "h-[82vh]"
+//         } flex flex-col ${
+//           theme === "dark"
+//             ? "bg-gray-850 border-gray-700"
+//             : "bg-gray-50 border-gray-300"
+//         } transition-all duration-300`}
+//         style={{ overflow: "auto" }} // Анимация перехода
+//       >
+//         <div className="flex justify-between items-center">
+//           <ModelSelector onChange={handleModelChange} />
+//           <FullScreenToggleButton
+//             isFullScreen={isFullScreen}
+//             onClick={() => setIsFullScreen(!isFullScreen)}
+//             theme={theme}
+//           />
+//         </div>
+
+//         <Split
+//           key={theme}
+//           className="flex-grow flex flex-col w-full"
+//           direction="vertical"
+//           sizes={verticalSizes}
+//           minSize={[200, 100]}
+//           gutterSize={7}
+//           snapOffset={0}
+//           onDragEnd={(sizes) => setVerticalSizes(sizes)}
+//           gutter={(index, direction) => createGutter(direction)}
+//         >
+//           <Split
+//             key={theme}
+//             className="flex w-full mb-2"
+//             sizes={horizontalSizes}
+//             minSize={[200, 300, 210]}
+//             gutterSize={7}
+//             snapOffset={0}
+//             onDragEnd={(sizes) => setHorizontalSizes(sizes)}
+//             gutter={(index, direction) => createGutter(direction)}
+//           >
+//             <div className="h-full mr-1 min-w-[130px] flex flex-col">
+//               <div className="flex-grow">
+//                 <DataUploader onUpload={handleFileUpload} />
+//               </div>   
+//               <StartButton onClick={handleStartForecast}/>
+//             </div>
+
+//             <div className="h-full min-w-[300px] mx-1">
+//               <BaseChart options={options} />
+//             </div>
+//             <div className="h-full ml-1 min-w-[130px]">
+//               <ModelSettingsPanel selectedModel={selectedModel} onChange={handleModelSettingsChange} />
+//             </div>
+//           </Split>
+
+//           <div className="w-full h-full mt-2 min-w-[560px]">
+//             <DataSummary summary={dataSummary} />
+//           </div>
+//         </Split>
+//       </div>
+//     </>
+//   );
+// }
+
 export default function ForecastingPanel() {
-  const [selectedModel, setSelectedModel] = useState(null);
-  const [uploadedData, setUploadedData] = useState(null);
-  const [dataSummary, setDataSummary] = useState("");
+  const modelSettingsRef = useRef(null);
+  const [selectedModel, setSelectedModel] = useState(null); // Возвращён useState
+  const uploadedDataRef = useRef(null);
+
+  const dataSummaryRef = useRef("");
   const [isFullScreen, setIsFullScreen] = useState(true);
   const { theme } = useTheme();
 
-  const [verticalSizes, setVerticalSizes] = useState([80, 20]);
-  const [horizontalSizes, setHorizontalSizes] = useState([15, 70, 15]);
+  const verticalSizesRef = useRef([80, 20]);
+  const horizontalSizesRef = useRef([15, 70, 15]);
 
-  const handleModelChange = (model) => setSelectedModel(model);
-  const handleFileUpload = (event) => setUploadedData(event.target.files[0]);
-  const handleStartForecast = () =>
-    setDataSummary("Здесь будет сводка данных...");
+  const handleModelSettingsChange = (settings) => {
+    modelSettingsRef.current = settings;
+  };
+
+  const handleModelChange = (model) => {
+    setSelectedModel(model); // Обновление состояния
+  };
+
+  const handleFileUpload = (event) => {
+    uploadedDataRef.current = event.target.files[0];
+  };
+
+  const handleStartForecast = async () => {
+    dataSummaryRef.current = "Здесь будет сводка данных...";
+
+    if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
+      alert("Please fill out all settings.");
+      return;
+    }
+
+    const forecastRequest = {
+      selectedModel,
+      modelSettings: modelSettingsRef.current,
+      uploadedData: uploadedDataRef.current,
+    };
+
+    console.log("!!!", forecastRequest);
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/test", forecastRequest, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Settings saved:", response.data);
+    } catch (error) {
+      console.error("Error sending request:", error);
+    }
+  };
 
   const options = {
     title: { text: "Простой график №1" },
     tooltip: { trigger: "axis" },
-    xAxis: {
-      type: "category",
-      data: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-    },
+    xAxis: { type: "category", data: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] },
     yAxis: { type: "value" },
     series: [
-      {
-        name: "Значения 1",
-        type: "line",
-        data: [120, 200, 150, 190, 70, 110, 130],
-        smooth: true,
-        lineStyle: { width: 2 },
-        itemStyle: { color: "#42A5F5" },
-      },
-      {
-        name: "Значения 2",
-        type: "line",
-        data: [120, 20, 160, 80, 60, 110, 130],
-        smooth: true,
-        lineStyle: { width: 2 },
-        itemStyle: { color: "#4245F5" },
-      },
-      {
-        name: "Значения 3",
-        type: "line",
-        data: [120, 20, 1, 140, 10, 110, 190],
-        smooth: true,
-        lineStyle: { width: 2 },
-        itemStyle: { color: "#2245F5" },
-      },
-      {
-        name: "Значения 4",
-        type: "line",
-        data: [110, 20, 1, 10, 60, 110, 190],
-        smooth: true,
-        lineStyle: { width: 2 },
-        itemStyle: { color: "#AA45F5" },
-      },
+      { name: "Значения 1", type: "line", data: [120, 200, 150, 190, 70, 110, 130], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#42A5F5" } },
+      { name: "Значения 2", type: "line", data: [120, 20, 160, 80, 60, 110, 130], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#4245F5" } },
+      { name: "Значения 3", type: "line", data: [120, 20, 1, 140, 10, 110, 190], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#2245F5" } },
+      { name: "Значения 4", type: "line", data: [110, 20, 1, 10, 60, 110, 190], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#AA45F5" } },
     ],
   };
 
   const createGutter = (direction) => {
     const gutter = document.createElement("div");
     gutter.className = `gutter gutter-${direction} ${
-      theme === "dark"
-        ? "bg-gray-700 hover:bg-gray-600"
-        : "bg-gray-200 hover:bg-gray-300"
+      theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"
     } transition-colors rounded-lg`;
-    if (direction === "vertical") {
-      gutter.style.height = "8px";
-    }
+    
+    if (direction === "vertical") gutter.style.height = "8px";
+    
     return gutter;
   };
+
   return (
     <>
-      {/* Затемнение фона */}
       {isFullScreen && (
         <div
           className={`fixed inset-0 z-100 backdrop-blur-sm ${
             theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
           }`}
-          onClick={() => setIsFullScreen(false)} // Закрыть по клику на затемнение
+          onClick={() => setIsFullScreen(false)}
         />
       )}
+
       <div
         className={`shadow-md p-4 border border-gray-300 rounded-xl ${
           isFullScreen
-            ? "fixed inset-4  h-[calc(100vh-2rem)] z-150 bg-black bg-opacity-10 backdrop-blur-sm" // Отступы по 1rem и затемнение
+            ? "fixed inset-4 h-[calc(100vh-2rem)] z-150 bg-black bg-opacity-10 backdrop-blur-sm"
             : "h-[82vh]"
         } flex flex-col ${
-          theme === "dark"
-            ? "bg-gray-850 border-gray-700"
-            : "bg-gray-50 border-gray-300"
+          theme === "dark" ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"
         } transition-all duration-300`}
-        style={{ overflow: "auto" }} // Анимация перехода
+        style={{ overflow: "auto" }}
       >
         <div className="flex justify-between items-center">
           <ModelSelector onChange={handleModelChange} />
-          <FullScreenToggleButton
-            isFullScreen={isFullScreen}
-            onClick={() => setIsFullScreen(!isFullScreen)}
-            theme={theme}
-          />
+          <FullScreenToggleButton isFullScreen={isFullScreen} onClick={() => setIsFullScreen(!isFullScreen)} theme={theme} />
         </div>
 
         <Split
           key={theme}
           className="flex-grow flex flex-col w-full"
           direction="vertical"
-          sizes={verticalSizes}
+          sizes={verticalSizesRef.current}
           minSize={[200, 100]}
           gutterSize={7}
           snapOffset={0}
-          onDragEnd={(sizes) => setVerticalSizes(sizes)}
+          onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
             key={theme}
             className="flex w-full mb-2"
-            sizes={horizontalSizes}
+            sizes={horizontalSizesRef.current}
             minSize={[200, 300, 210]}
             gutterSize={7}
             snapOffset={0}
-            onDragEnd={(sizes) => setHorizontalSizes(sizes)}
+            onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">
               <div className="flex-grow">
                 <DataUploader onUpload={handleFileUpload} />
-              </div>   
-              <StartButton onClick={handleStartForecast} theme={theme} />
+              </div>
+              
+              <StartButton onClick={handleStartForecast} />
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
               <BaseChart options={options} />
             </div>
+
             <div className="h-full ml-1 min-w-[130px]">
-              <ModelSettings selectedModel={selectedModel} />
+              <ModelSettingsPanel selectedModel={selectedModel} onChange={handleModelSettingsChange} />
             </div>
           </Split>
 
           <div className="w-full h-full mt-2 min-w-[560px]">
-            <DataSummary summary={dataSummary} />
+            <DataSummary summary={dataSummaryRef.current} />
           </div>
         </Split>
       </div>

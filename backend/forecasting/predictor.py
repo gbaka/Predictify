@@ -8,7 +8,7 @@
 """
 
 
-from models import ARIMAModel
+from .models import ARIMAModel
 
 def forecast(data, model_type="ARIMA", steps=10):
     """
