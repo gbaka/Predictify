@@ -131,6 +131,7 @@ function DataUploader({ onUpload }) {
   // Обработчик удаления файла
   const handleRemoveFile = () => {
     setSelectedFile(null); // Удаляем выбранный файл
+    onUpload(null)
     document.getElementById("file-input").value = ""; // Сбрасываем значение input
   };
 
@@ -374,7 +375,11 @@ export default function ForecastingPanel() {
   };
 
   const handleFileUpload = (event) => {
-    uploadedDataRef.current = event.target.files[0];
+    if (event) {
+      uploadedDataRef.current = event.target.files[0];
+    } else {
+      uploadedDataRef.current = null
+    }
   };
 
   const handleStartForecast = async () => {
