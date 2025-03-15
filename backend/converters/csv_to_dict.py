@@ -11,7 +11,7 @@ def csv_to_dict(file: UploadFile) -> dict:
     """
     content = file.file.read().decode('utf-8')  # Читаем и декодируем файл в строку
     file.file.seek(0)  # Возвращаем указатель в начало файла
-    
+
     reader = csv.DictReader(StringIO(content))  # Создаем объект DictReader
     data = {"date": [], "values": []}  # Инициализируем структуру словаря
 
@@ -20,10 +20,8 @@ def csv_to_dict(file: UploadFile) -> dict:
     for i, row in enumerate(reader):
         if use_index:
             data["date"].append(i)  # Если "date" нет, используем индекс строки
+            data["values"].append(list(row.values())[0])
         else:
             data["date"].append(row["date"])  # Используем "date" из файла
-
-        values = {key: float(value) for key, value in row.items() if key != "date"}  # Числовые данные
-        data["values"].append(values)  # Добавляем значения
-
+            data["values"].append([val for key, val in row.items() if key != "date"][0])
     return data  # Возвращаем словарь
