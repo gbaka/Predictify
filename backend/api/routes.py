@@ -11,24 +11,25 @@ API-эндпоинты для взаимодействия с пользоват
 from fastapi import APIRouter, File, Form, UploadFile
 from api.models import ForecastRequest, ForecastResponse
 from forecasting.predictor import forecast
+from converters import convert_to_dict
 
 
 router = APIRouter()
 
-@router.post("/forecast", response_model=ForecastResponse)
-async def get_forecast(request: ForecastRequest):
-    """
-    Эндпоинт для получения прогноза на основе временного ряда.
+# @router.post("/forecast", response_model=ForecastResponse)
+# async def get_forecast(request: ForecastRequest):
+#     """
+#     Эндпоинт для получения прогноза на основе временного ряда.
 
-    Параметры:
-        request (ForecastRequest): Объект запроса, содержащий данные для прогнозирования
-                                    и выбор модели.
+#     Параметры:
+#         request (ForecastRequest): Объект запроса, содержащий данные для прогнозирования
+#                                     и выбор модели.
 
-    Возвращаемое значение:
-        ForecastResponse: Объект ответа с моделью и прогнозом.
-    """
-    prediction = forecast(request.data, model_type=request.model)
-    return ForecastResponse(model=request.model, prediction=prediction)
+#     Возвращаемое значение:
+#         ForecastResponse: Объект ответа с моделью и прогнозом.
+#     """
+#     prediction = forecast(request.data, model_type=request.model)
+#     return ForecastResponse(model=request.model, prediction=prediction)
 
 
 @router.post("/test")
@@ -41,6 +42,8 @@ async def test(
     print(f"Model settings: {modelSettings}")
     print(f"File filename: {uploadedData.filename}")
     print(f"file:", type(uploadedData))
+    converted_file = convert_to_dict(uploadedData)
+    print(f"file to dict:", converted_file)
 
     return {
         "selectedModel": selectedModel,
