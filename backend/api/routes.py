@@ -8,10 +8,11 @@ API-эндпоинты для взаимодействия с пользоват
 - get_forecast: Обрабатывает запрос на прогноз и возвращает результаты.
 """
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, File, Form, UploadFile, HTTPException
 from api.models import ForecastRequest, ForecastResponse
-from forecasting.predictor import forecast
+from forecasting import forecast
 from converters import convert_to_dict
+from json import loads
 
 
 router = APIRouter()
@@ -38,15 +39,27 @@ async def test(
     modelSettings: str = Form(...),
     uploadedData: UploadFile = File(...)
 ):
+    
+    model_settings_dict = loads(modelSettings)
+
+
     print(f"Selected model: {selectedModel}")
-    print(f"Model settings: {modelSettings}")
+    print(f"Model settings: {model_settings_dict}")
     print(f"File filename: {uploadedData.filename}")
     print(f"file:", type(uploadedData))
-    converted_file = convert_to_dict(uploadedData)
-    print(f"file to dict:", converted_file)
 
-    return {
-        "selectedModel": selectedModel,
-        "modelSettings": modelSettings,
-        "filename": uploadedData.filename
-    }
+
+    try:
+        file_data_dict = convert_to_dict(uploadedData)
+        print(f"File converted to dict:", file_data_dict)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error processing file: {str(e)}"
+        )
+    
+    res = forecast(data=file_data_dict, model_type=selectedModel, settings=model_settings_dict)
+    print(res)
+    
+        
+    return res

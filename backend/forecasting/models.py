@@ -25,19 +25,28 @@ class ARIMAModel:
         fit(data): Обучение модели на данных.
         predict(steps=10): Прогнозирование на заданное количество шагов вперёд.
     """
-    def __init__(self, order=(5, 1, 0)):
-        self.order = order
+
+    def __init__(self, p: float, d: float, q: float, trend: str, enforce_stationarity: bool, enforce_invertibility: bool):
+        self.settings = {
+            "order" : (p,d,q), 
+            "trend" : trend, 
+            "enforce_stationarity" : enforce_stationarity,
+            "enforce_invertibility" : enforce_invertibility
+        }
         self.model = None
 
-    def fit(self, data):
+    def fit(self, data: dict):
         """
         Обучение модели ARIMA на данных.
 
         Параметры:
             data (List[float]): Данные временного ряда для обучения.
         """
-        self.model = ARIMA(data, order=self.order)
+
+        print("FIT", data)
+        self.model = ARIMA(endog=[1,2,3,4,1], **self.settings)
         self.model = self.model.fit()
+        return self.model
 
     def predict(self, steps=10):
         """

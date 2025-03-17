@@ -7,7 +7,10 @@ export function ARIMASettings({ onChange }) {
     const { theme } = useTheme();
 
     const handleInputChange = (e, key) => {
-        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        let value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        if (e.target.type === "number") {
+            value = Number(value);
+        }
         settingsRef.current[key] = value;
         onChange(settingsRef.current); // Вызываем onChange сразу после изменения
     };
@@ -19,7 +22,7 @@ export function ARIMASettings({ onChange }) {
     return (
         <div className="max-h-[200px] flex-grow space-y-4">
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Параметр P :</label>
+                <label className="font-medium">Параметр p:</label>
                 <input
                     type="number"
                     defaultValue={settingsRef.current.p}
@@ -31,7 +34,7 @@ export function ARIMASettings({ onChange }) {
             </div>
             
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Параметр D :</label>
+                <label className="font-medium">Параметр d:</label>
                 <input
                     type="number"
                     defaultValue={settingsRef.current.d}
@@ -43,7 +46,7 @@ export function ARIMASettings({ onChange }) {
             </div>
             
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Параметр Q :</label>
+                <label className="font-medium">Параметр q :</label>
                 <input
                     type="number"
                     defaultValue={settingsRef.current.q}
@@ -79,6 +82,17 @@ export function ARIMASettings({ onChange }) {
                 />
                 <label className="font-medium">Принудительная стационарность</label>
             </div>
+
+
+            <div className="flex items-center space-x-2">
+                <input
+                    type="checkbox"
+                    defaultChecked={settingsRef.current.enforceStationarity}
+                    onChange={(e) => handleInputChange(e, "enforceInvertibility")}
+                    className="h-5 w-5"
+                />
+                <label className="font-medium">Принудительная обратимость</label>
+            </div>
         </div>
     );
 }
@@ -88,7 +102,12 @@ export function SARIMASettings({ onChange }) {
     const { theme } = useTheme();
 
     const handleInputChange = (e, key) => {
-        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        let value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        console.log(typeof(value))
+        if (e.target.type === "number") {
+            value = Number(value);
+        }
+        console.log(typeof(value))
         settingsRef.current[key] = value;
         onChange(settingsRef.current); // Отправляем изменения сразу
     };

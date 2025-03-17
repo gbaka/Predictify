@@ -3,11 +3,8 @@ export const ARIMA_DEFAULTS = {
     d: 1,
     q: 1,
     trend: 'c',
-    enforceStationarity: false,
-    enforceInvertibility: false,
-    method: 'css-mle',
-    maxiter: 50,
-    useExactDiffuse: false,
+    enforceStationarity: true,
+    enforceInvertibility: true,
 };
 
 export const SARIMA_DEFAULTS = {

@@ -3,18 +3,24 @@ from starlette.datastructures import UploadFile
 
 def excel_to_dict(file: UploadFile) -> dict:
     """
-    Конвертирует загруженный Excel-файл в словарь со столбцами "date" (если есть) или "index".
-    
+    Конвертирует загруженный Excel-файл в словарь со столбцами "dates" (если есть) или None.
+
     `param file`: Загруженный Excel-файл (UploadFile)\n
-    `return`: Словарь с разделением по датам (если есть) или индексам
+    `return`: Словарь с "dates" (список дат или None) и "endog" (список значений)
     """
     df = pd.read_excel(file.file)  # Загружаем Excel-файл в DataFrame
-    
-    use_index = "date" not in df.columns  # Проверяем, есть ли столбец "date"
 
-    data = {
-        "date": df.index.tolist() if use_index else df["date"].astype(str).tolist(),  # Индексы или даты
-        "values": df.drop(columns=["date"], errors="ignore").astype(float).to_dict(orient="records")  # Остальные данные
-    }
+    if "dates" not in df.columns:
+        # Если столбца "dates" нет, устанавливаем dates в None
+        data = {
+            "dates": None,
+            "endog": df.astype(float).to_dict(orient="records")  # Конвертируем значения
+        }
+    else:
+        # Если столбец "dates" есть, преобразуем даты в строки и извлекаем значения
+        data = {
+            "dates": pd.to_datestime(df["dates"]).tolist(),  # Преобразуем даты в datetime объекты
+            "endog": df.drop(columns=["dates"]).astype(float).to_dict(orient="records")
+        }
 
-    return data  # Возвращаем словарь
+    return data

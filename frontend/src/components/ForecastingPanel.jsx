@@ -242,7 +242,7 @@ function DataSummary({ summary }) {
 
 
 // График
-function BaseChart({ options }) {
+function BaseChart({ options, isLoading }) {
   const chartRef = useRef(null);
   const { theme } = useTheme();
   const chartInstanceRef = useRef(null);
@@ -284,7 +284,21 @@ function BaseChart({ options }) {
         },
     };
 
-    chartInstanceRef.current.setOption(updatedOptions);
+    // Загрузка при отправке данных
+    if (isLoading) {
+      chartInstanceRef.current.showLoading('default', {
+        text: 'Загрузка...',
+        fontFamily: defaultFontFamily,
+        fontSize: 16,
+        textColor: `${theme === "dark" ? "#FFF" : "#000"}`,
+        spinnerRadius: 16,
+        color: '#409EFF',
+        maskColor: 'rgba(0, 0, 0, 0)',
+      });
+    } else {
+      chartInstanceRef.current.hideLoading();
+      chartInstanceRef.current.setOption(updatedOptions);
+    }
 
     // Используем ResizeObserver для автоматического изменения размера графика
     const resizeObserver = new ResizeObserver(() => {
@@ -363,6 +377,8 @@ export default function ForecastingPanel() {
   const [isFullScreen, setIsFullScreen] = useState(true);
   const { theme } = useTheme();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const verticalSizesRef = useRef([80, 20]);
   const horizontalSizesRef = useRef([15, 70, 15]);
 
@@ -394,7 +410,9 @@ export default function ForecastingPanel() {
     formData.append("selectedModel", selectedModel);
     formData.append("modelSettings", JSON.stringify(modelSettingsRef.current)); // Оборачиваем настройки в JSON строку
     formData.append("uploadedData", uploadedDataRef.current); // Файл
-  
+    setIsLoading(true); 
+    console.log(isLoading)
+
     try {
       const response = await axios.post("http://localhost:8000/api/test", formData, {
         headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
@@ -402,6 +420,9 @@ export default function ForecastingPanel() {
       console.log("Settings saved:", response.data);
     } catch (error) {
       console.error("Error sending request:", error);
+    } finally {
+      setIsLoading(false);
+      console.log(isLoading)
     }
   };  
 
@@ -485,7 +506,7 @@ export default function ForecastingPanel() {
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
-              <BaseChart options={options} />
+              <BaseChart options={options} isLoading={isLoading} />
             </div>
 
             <div className="h-full ml-1 min-w-[130px]">
