@@ -43,12 +43,12 @@ class ARIMAModel:
             data (List[float]): Данные временного ряда для обучения.
         """
 
-        print("FIT", data)
-        self.model = ARIMA(endog=[1,2,3,4,1], **self.settings)
+        print("FIT", data["endog"], type(data["endog"]))
+        self.model = ARIMA(**data, **self.settings)
         self.model = self.model.fit()
         return self.model
 
-    def predict(self, steps=10):
+    def predict(self, steps: int):
         """
         Прогнозирование значений на заданное количество шагов вперёд.
 

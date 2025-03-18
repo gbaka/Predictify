@@ -24,9 +24,8 @@ def csv_to_dict(file: UploadFile) -> dict:
     
     for i, row in enumerate(reader):
         if use_index:
-            # data["date"].append(i)  # Если "date" нет, используем индекс строки
-            data["endog"].append(list(row.values())[0])
+            data["endog"].append(float(list(row.values())[0]))
         else:
             data["dates"].append(datetime.fromisoformat(row["dates"]))  # Используем "date" из файла
-            data["endog"].append([val for key, val in row.items() if key != "dates"][0])
+            data["endog"].append([float(val) for key, val in row.items() if key != "dates"][0])
     return data  # Возвращаем словарь

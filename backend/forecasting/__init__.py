@@ -9,6 +9,7 @@
 
 
 from .models import ARIMAModel
+from .utils import extend_dates
 
 def forecast(data: dict, model_type: str, settings: dict):
     """
@@ -27,19 +28,21 @@ def forecast(data: dict, model_type: str, settings: dict):
     """
     print('----------------\n',data, model_type, settings, sep="\n-----------\n")
 
+    steps = settings.pop('steps')
     if model_type == "ARIMA":
         settings["enforce_stationarity"] = settings.pop("enforceStationarity")
         settings["enforce_invertibility"] = settings.pop("enforceInvertibility")
-        # print("[1] forecasting.__init__.py: HEREEEEE")
+ 
         model = ARIMAModel(**settings)
-        # print("[2] forecasting.__init__.py: HEREEEEE")
         summary = model.fit(data).summary().as_text()
-        prediction = model.predict().tolist()
+        prediction = model.predict(steps).tolist()
+        full_dates = extend_dates(data, steps)
         
-        # print("[3] forecasting.__init__.py: HEREEEEE")
         return {
             "summary" : summary,
-            "prediction" : prediction
+            "prediction" : prediction, 
+            "full_dates" : full_dates, 
+            "endog" : data.get("endog")
         }
     
     # # elif model_type == "LSTM":
