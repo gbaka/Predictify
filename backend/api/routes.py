@@ -58,8 +58,13 @@ async def test(
             detail=f"Error processing file: {str(e)}"
         )
     
-    res = forecast(data=file_data_dict, model_type=selectedModel, settings=model_settings_dict)
-    print(res)
-    
+    try:
+        res = forecast(data=file_data_dict, model_type=selectedModel, settings=model_settings_dict)
+        print(res)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating forecast: {str(e)}"
+        )
         
     return res
