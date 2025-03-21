@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
-import { ARIMA_DEFAULTS, SARIMA_DEFAULTS } from "./DefaultModelSettings";
+import { ARIMA_DEFAULTS, SARIMA_DEFAULTS } from "./defaultModelSettings";
 
-
-// import { useState, useEffect } from "react";
-// import { useTheme } from "some-theme-context"; // Убедись, что импорт темы правильный
 
 export function ARIMASettings({ onChange }) {
     const { theme } = useTheme();
-
-    // Храним все параметры в useState, чтобы ререндер происходил корректно
     const [settings, setSettings] = useState({ ...ARIMA_DEFAULTS });
 
     const handleInputChange = (e, key) => {
@@ -66,7 +61,7 @@ export function ARIMASettings({ onChange }) {
                         min={0}
                         value={settings[param]}
                         onChange={(e) => handleInputChange(e, param)}
-                        className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
+                        className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
                             theme === "dark" ? "border-gray-600" : "border-gray-400"
                         }`}
                     />
@@ -79,8 +74,8 @@ export function ARIMASettings({ onChange }) {
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
-                    className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === "dark" ? "border-gray-600" : "border-gray-400"
+                    className={`border rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 ${
+                        theme === "dark" ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
                     <option value="n">Нет тренда</option>

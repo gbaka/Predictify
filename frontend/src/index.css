@@ -30,4 +30,31 @@ section {
   scroll-margin-top: 6rem; /* Высота шапки + 1.5 rem */
 }
 
+:root {
+  /* scrollbar для Firefox  */
+  scrollbar-color: #c2c2c6c5 #e7e7eb;
+
+  /* scrollbar для Chromium */
+  --scrollbar-track: #e7e7eb;
+  --scrollbar-thumb: #c2c2c6c5;
+
+  /* split-gutter */
+  --gutter-bg: #e7e7eb; 
+  --gutter-hover-bg: #d1d5db; 
+  --gutter-border-radius: 0.3rem; 
+  --gutter-transition: background-color 0.3s; 
+}
+
+.dark {
+  /* scrollbar для Firefox */
+  scrollbar-color: #374151 #202837;
+
+  /* scrollbar для Chromium */
+  --scrollbar-track: #202837;
+  --scrollbar-thumb: #374151;
+
+  /* split-gutter */
+  --gutter-bg: #374151; 
+  --gutter-hover-bg: #4b5563; 
+}
 

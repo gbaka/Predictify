@@ -5,6 +5,8 @@ import Split from "react-split";
 import axios from "axios"
 import { useTheme } from "../context/ThemeContext";
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
+
 
 
 function ModelSelector({ onChange }) {
@@ -104,10 +106,113 @@ function ModelSelector({ onChange }) {
 }
 
 
-// Загрузка данных
+// // Загрузка данных
+// function DataUploader({ onUpload }) {
+//   const { theme } = useTheme();
+//   const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбранного файла
+
+//   // Обработчик клика по области загрузки
+//   const handleClick = () => {
+//     document.getElementById("file-input").click(); // Программно вызываем клик по input
+//   };
+
+//   // Обработчик изменения файла
+//   const handleFileChange = (event) => {
+//     const file = event.target.files[0];
+//     if (file) {
+//       const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+//       if (allowedTypes.includes(file.type)) {
+//         setSelectedFile(file); // Сохраняем выбранный файл
+//         onUpload(event); // Вызываем переданный обработчик
+//       } else {
+//         alert("Пожалуйста, выберите файл в формате CSV или Excel.");
+//       }
+//     }
+//   };
+
+//   // Обработчик удаления файла
+//   const handleRemoveFile = () => {
+//     setSelectedFile(null); // Удаляем выбранный файл
+//     onUpload(null)
+//     document.getElementById("file-input").value = ""; // Сбрасываем значение input
+//   };
+
+//   // Функция для обрезки длинных имен файлов
+//   const truncateFileName = (fileName, maxLength = 18) => {
+//     if (fileName.length > maxLength) {
+//       return `${fileName.substring(0, maxLength)}...`; // Обрезаем имя и добавляем многоточие
+//     }
+//     return fileName;
+//   };
+
+//   return (
+//     <div
+//       className={`p-4 border-2 border-dashed cursor-pointer ${
+//         theme === "dark" ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
+//       } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors`}
+//       onClick={handleClick} // Открываем проводник при клике на область
+//     >
+//       {/* Скрытый input для выбора файла */}
+//       <input
+//         id="file-input"
+//         type="file"
+//         className="hidden"
+//         onChange={handleFileChange}
+//         accept=".csv, .xls, .xlsx" // Указываем допустимые форматы
+//       />
+
+//       {/* Если файл выбран, отображаем его имя и кнопку удаления */}
+//       {selectedFile ? (
+//         <div className="flex flex-col items-center space-y-2">
+//           <div className="flex items-center space-x-2">
+//             <span
+//               className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+//               title={selectedFile.name} // Всплывающая подсказка с полным именем файла
+//             >
+//               {truncateFileName(selectedFile.name)}
+//             </span>
+//             <button
+//               onClick={(e) => {
+//                 e.stopPropagation(); // Предотвращаем всплытие события
+//                 handleRemoveFile();
+//               }}
+//               className={`p-1 rounded-full ${
+//                 theme === "dark" ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-200"
+//               } transition-colors`}
+//             >
+//               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
+//             </button>
+//           </div>
+//           <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
+//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+//             Файл успешно выбран
+//           </p>
+//         </div>
+//       ) : (
+//         <>
+//           {/* Иконки и текст, если файл не выбран */}
+//           <div className="flex space-x-4 text-gray-500">
+//             <Sheet className="w-8 h-8" /> {/* Иконка для Excel */}
+//             <FileText className="w-8 h-8" /> {/* Иконка для CSV */}
+//           </div>
+//           <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
+//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+//             Перетащите файл сюда или нажмите для загрузки
+//           </p>
+//           <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}
+//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+//             Поддерживаются форматы: CSV, Excel
+//           </p>
+//         </>
+//       )}
+//     </div>
+//   );
+// }
+
 function DataUploader({ onUpload }) {
   const { theme } = useTheme();
   const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбранного файла
+  const [isDragging, setIsDragging] = useState(false); // Состояние для отслеживания перетаскивания
 
   // Обработчик клика по области загрузки
   const handleClick = () => {
@@ -117,22 +222,48 @@ function DataUploader({ onUpload }) {
   // Обработчик изменения файла
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
-      if (allowedTypes.includes(file.type)) {
-        setSelectedFile(file); // Сохраняем выбранный файл
-        onUpload(event); // Вызываем переданный обработчик
-      } else {
-        alert("Пожалуйста, выберите файл в формате CSV или Excel.");
-      }
-    }
+    processFile(file); // Обрабатываем файл
   };
 
   // Обработчик удаления файла
   const handleRemoveFile = () => {
     setSelectedFile(null); // Удаляем выбранный файл
-    onUpload(null)
+    onUpload(null);
     document.getElementById("file-input").value = ""; // Сбрасываем значение input
+  };
+
+  // Обработчик перетаскивания файла
+  const handleDrop = (event) => {
+    event.preventDefault();
+    setIsDragging(false); // Сбрасываем состояние перетаскивания
+
+    const file = event.dataTransfer.files[0]; // Получаем перетащенный файл
+    processFile(file); // Обрабатываем файл
+  };
+
+  // Обработчик наведения на область
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    setIsDragging(true); // Указываем, что файл можно перетащить
+  };
+
+  // Обработчик выхода из области
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setIsDragging(false); // Сбрасываем состояние перетаскивания
+  };
+
+  // Функция для обработки файла
+  const processFile = (file) => {
+    if (file) {
+      const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+      if (allowedTypes.includes(file.type)) {
+        setSelectedFile(file); // Сохраняем выбранный файл
+        onUpload({ target: { files: [file] } }); // Вызываем переданный обработчик
+      } else {
+        alert("Пожалуйста, выберите файл в формате CSV или Excel.");
+      }
+    }
   };
 
   // Функция для обрезки длинных имен файлов
@@ -147,8 +278,13 @@ function DataUploader({ onUpload }) {
     <div
       className={`p-4 border-2 border-dashed cursor-pointer ${
         theme === "dark" ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
-      } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors`}
-      onClick={handleClick} // Открываем проводник при клике на область
+      } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors ${
+        isDragging ? (theme === "dark" ? "bg-gray-800" : "bg-gray-100") : "" 
+      }`}
+      onClick={handleClick} 
+      onDrop={handleDrop}
+      onDragOver={handleDragOver} 
+      onDragLeave={handleDragLeave}
     >
       {/* Скрытый input для выбора файла */}
       <input
@@ -181,7 +317,8 @@ function DataUploader({ onUpload }) {
               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
             </button>
           </div>
-          <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}>
+          <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
+             style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Файл успешно выбран
           </p>
         </div>
@@ -192,10 +329,12 @@ function DataUploader({ onUpload }) {
             <Sheet className="w-8 h-8" /> {/* Иконка для Excel */}
             <FileText className="w-8 h-8" /> {/* Иконка для CSV */}
           </div>
-          <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+          <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
+             style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Перетащите файл сюда или нажмите для загрузки
           </p>
-          <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}>
+          <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}
+             style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Поддерживаются форматы: CSV, Excel
           </p>
         </>
@@ -203,7 +342,6 @@ function DataUploader({ onUpload }) {
     </div>
   );
 }
-
 
 function ModelSettingsPanel({ selectedModel, onChange }) {
   const { theme } = useTheme();
@@ -312,6 +450,9 @@ function BaseChart({ options, isLoading }) {
           show: true,
           start: 0,
           end: 100,
+          left: "10%",
+          right: "10.5%",
+
           borderColor: `${
             isDarkMode ? "rgba(54, 65, 83, 1)" : "rgb(228, 226, 226)"
           } `,
@@ -478,7 +619,7 @@ function StartButton({ onClick }) {
 
   return (
     <button
-      className={`w-full h-1/4 mt-2 rounded-lg font-medium flex items-center justify-center gap-2
+      className={`w-full h-full rounded-lg font-medium flex items-center justify-center gap-2
                   shadow-md transition duration-200 border 
                   ${
                     theme === "dark"
@@ -562,7 +703,6 @@ export default function ForecastingPanel() {
         prediction: formattedPrediction,
       });
 
-
       console.log("Forecasting results:", response.data);
     } catch (error) {
       console.error("Error sending request:", error);
@@ -572,27 +712,75 @@ export default function ForecastingPanel() {
     }
   };  
 
+  const hasData = chartData.endog.length > 0; 
   const options = {
-    title: { text: "Прогноз" },
-    xAxis: { type: "category", data: chartData.full_dates },
+    title: { text: hasData ? "График прогноза" : "Пример графика" },
+    xAxis: {
+      type: "category",
+      data: hasData ? chartData.full_dates : placeholderDates,
+    },
     yAxis: { type: "value" },
-    series: [
-      { name: "Исходные данные", type: "line", data: chartData.endog, smooth: false, lineStyle: { width: 2 }, itemStyle: { color: "#3582FF" } },
-      { name: "Прогноз", type: "line", data: chartData.prediction, smooth: false, lineStyle: { width: 2, type: "dashed" }, itemStyle: { color: "#F54242" } }
-    ],
+    series: hasData
+      ? [
+          {
+            name: "",
+            type: "line",
+            data: [...chartData.endog, ...chartData.prediction.slice(chartData.endog.length + 1),],
+            lineStyle: { opacity: 0 },
+            itemStyle: { opacity: 0 },
+            emphasis: { focus: "none" },
+            tooltip: { show: false },
+          },
+          {
+            name: "Исходные данные",
+            type: "line",
+            data: chartData.endog,
+            smooth: false,
+            lineStyle: { width: 2 },
+            itemStyle: { color: "#3582FF" },
+          },
+          {
+            name: "Прогноз",
+            type: "line",
+            data: chartData.prediction,
+            smooth: false,
+            lineStyle: { width: 2, type: "dashed" },
+            itemStyle: { color: "#F54242" },
+          },
+        ]
+      : [
+          {
+            name: "Пример данных",
+            type: "line",
+            data: placeholderValues,
+            smooth: false,
+            lineStyle: { width: 2, type: "dotted" },
+            itemStyle: { color: "gray", opacity: 0.65 },
+          },
+        ],
   };
-
 
   const createGutter = (direction) => {
-    const gutter = document.createElement("div");
-    gutter.className = `gutter gutter-${direction} ${
-      theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"
-    } transition-colors rounded-lg`;
-    
-    if (direction === "vertical") gutter.style.height = "8px";
-    
-    return gutter;
-  };
+  const gutter = document.createElement("div");
+  gutter.className = `gutter gutter-${direction}`;
+  gutter.style.backgroundColor = "var(--gutter-bg)";
+  gutter.style.borderRadius = "var(--gutter-border-radius)";
+  gutter.style.transition = "var(--gutter-transition)";
+
+  gutter.addEventListener("mouseenter", () => {
+    gutter.style.backgroundColor = "var(--gutter-hover-bg)";
+  });
+
+  gutter.addEventListener("mouseleave", () => {
+    gutter.style.backgroundColor = "var(--gutter-bg)";
+  });
+
+  if (direction === "vertical") {
+    gutter.style.height = "8px";
+  }
+
+  return gutter;
+};
 
   return (
     <>
@@ -621,7 +809,7 @@ export default function ForecastingPanel() {
         </div>
 
         <Split
-          key={theme}
+          // key={theme}
           className="flex-grow flex flex-col w-full"
           direction="vertical"
           sizes={verticalSizesRef.current}
@@ -632,7 +820,7 @@ export default function ForecastingPanel() {
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
-            key={theme}
+            // key={theme}
             className="flex w-full mb-2 "
             sizes={horizontalSizesRef.current}
             minSize={[200, 300, 210]}
@@ -642,11 +830,12 @@ export default function ForecastingPanel() {
             gutter={(index, direction) => createGutter(direction)}
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">
-              <div className="flex-grow">
+              <div className="flex-grow h-2/3">
                 <DataUploader onUpload={handleFileUpload} />
               </div>
-              
+              <div className="flex-grow h-1/3 mt-2">
               <StartButton onClick={handleStartForecast} />
+              </div>
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
