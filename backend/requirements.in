@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+sqlalchemy
+statsmodels
+pip-tools
+python-multipart

@@ -2,7 +2,7 @@
 .env
 
 # Backend
-backend/app/__pycache__
+backend/*/__pycache__
 backend/venv
 
 # Data Processing
