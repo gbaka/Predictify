@@ -5,7 +5,9 @@ import Split from "react-split";
 import axios from "axios"
 import { useTheme } from "../context/ThemeContext";
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import ErrorModal from "./ErrorModal"
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
+
 
 
 
@@ -651,6 +653,9 @@ export default function ForecastingPanel() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const verticalSizesRef = useRef([80, 20]);
   const horizontalSizesRef = useRef([15, 70, 15]);
 
@@ -671,10 +676,11 @@ export default function ForecastingPanel() {
   };
 
   const handleStartForecast = async () => {
-    dataSummaryRef.current = "Загрузка...";
+    
   
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
-      alert("Please fill out all settings.");
+      setErrorMessage("Пожалуйста, заполните все поля.");
+      setIsErrorModalOpen(true);
       return;
     }
   
@@ -683,6 +689,7 @@ export default function ForecastingPanel() {
     formData.append("modelSettings", JSON.stringify(modelSettingsRef.current)); // Оборачиваем настройки в JSON строку
     formData.append("uploadedData", uploadedDataRef.current); // Файл
     setIsLoading(true); 
+    dataSummaryRef.current = "Загрузка...";
     console.log(isLoading)
 
     try {
@@ -703,12 +710,19 @@ export default function ForecastingPanel() {
         prediction: formattedPrediction,
       });
 
-      console.log("Forecasting results:", response.data);
+      // console.log("Forecasting results:", response.data);
     } catch (error) {
+      dataSummaryRef.current = ""
       console.error("Error sending request:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("Неверные данные. Пожалуйста, проверьте введённые значения.");
+      } else {
+        setErrorMessage("Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.");
+      }
+      setIsErrorModalOpen(true);
     } finally {
       setIsLoading(false);
-      console.log(isLoading)
+      // console.log(isLoading)
     }
   };  
 
@@ -852,6 +866,12 @@ export default function ForecastingPanel() {
           </div>
         </Split>
       </div>
+      {/* Модальное окно для ошибок */}
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorModalOpen(false)}
+      />
     </>
   );
 }
