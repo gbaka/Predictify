@@ -1,14 +1,15 @@
-import { FileText, Sheet, X, Maximize2, Minimize2, Play } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import Split from "react-split";
 import axios from "axios"
-import { useTheme } from "../context/ThemeContext";
-import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
-import ErrorModal from "./ErrorModal"
+
+import { FileText, Sheet, X, Maximize2, Minimize2, Play, Settings } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
-
-
+import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import { useTheme } from "../context/ThemeContext";
+import SettingsPanel from "./SettingsPanel";
+import ErrorModal from "./ErrorModal"
 
 
 function ModelSelector({ onChange }) {
@@ -604,13 +605,26 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
       onClick={onClick}
       className={`${
         theme === 'dark' ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
-      } border relative ml-2 mb-3 transition-colors p-2.5 rounded-lg`}
+      } border relative ml-1.5 mb-3 transition-colors p-2.5 rounded-lg`}
     >
       {isFullScreen ? (
         <Minimize2 className="w-5 h-5" /> // Иконка для сворачивания
       ) : (
         <Maximize2 className="w-5 h-5" /> // Иконка для разворачивания
       )}
+    </button>
+  );
+}
+
+function SettingsButton({ onClick, theme }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`${
+        theme === 'dark' ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
+      } border relative ml-1.5 mb-3 transition-colors p-2.5 rounded-lg`}
+    >
+      <Settings className="w-5 h-5" /> {/* Иконка настроек */}
     </button>
   );
 }
@@ -638,26 +652,25 @@ function StartButton({ onClick }) {
 
 
 export default function ForecastingPanel() {
+  const { theme } = useTheme();
+
   const modelSettingsRef = useRef(null);
-  const [selectedModel, setSelectedModel] = useState(null); 
   const uploadedDataRef = useRef(null);
+  const dataSummaryRef = useRef("");
+  const verticalSizesRef = useRef([80, 20]);
+  const horizontalSizesRef = useRef([15, 70, 15]);
+
+  const [selectedModel, setSelectedModel] = useState(null); 
+  const [isFullScreen, setIsFullScreen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); 
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [chartData, setChartData] = useState({
     full_dates: [],
     endog: [],
     prediction: [],
   });
-
-  const dataSummaryRef = useRef("");
-  const [isFullScreen, setIsFullScreen] = useState(true);
-  const { theme } = useTheme();
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const verticalSizesRef = useRef([80, 20]);
-  const horizontalSizesRef = useRef([15, 70, 15]);
 
   const handleModelSettingsChange = (settings) => {
     modelSettingsRef.current = settings;
@@ -676,8 +689,6 @@ export default function ForecastingPanel() {
   };
 
   const handleStartForecast = async () => {
-    
-  
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
       setErrorMessage("Пожалуйста, заполните все поля.");
       setIsErrorModalOpen(true);
@@ -696,10 +707,7 @@ export default function ForecastingPanel() {
       const response = await axios.post("http://localhost:8000/api/test", formData, {
         headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
       });
-      // Обновляем сводку данных
       dataSummaryRef.current = response.data.summary;
-
-      // Обновляем chartDataRef
       const predictionStartIndex = response.data.endog.length;
       const lastEndogValue = response.data.endog[predictionStartIndex - 1];
       const smoothedPrediction = [lastEndogValue, ...response.data.prediction];
@@ -819,6 +827,7 @@ export default function ForecastingPanel() {
       >
         <div className="flex justify-between items-center">
           <ModelSelector onChange={handleModelChange} />
+          <SettingsButton onClick={() => setIsSettingsOpen(!isSettingsOpen)} theme={theme} />
           <FullScreenToggleButton isFullScreen={isFullScreen} onClick={() => setIsFullScreen(!isFullScreen)} theme={theme} />
         </div>
 
@@ -866,6 +875,13 @@ export default function ForecastingPanel() {
           </div>
         </Split>
       </div>
+
+      {/* Панель настроек */}
+      <SettingsPanel
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+      />
+
       {/* Модальное окно для ошибок */}
       <ErrorModal
         isOpen={isErrorModalOpen}
