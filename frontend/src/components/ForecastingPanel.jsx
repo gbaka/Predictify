@@ -1,15 +1,26 @@
-import { FileText, Sheet, X, Maximize2, Minimize2, Play } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import Split from "react-split";
 import axios from "axios"
-import { useTheme } from "../context/ThemeContext";
-import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+
+import { FileText, Sheet, X, Maximize2, Minimize2, Play, Settings } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
+import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
+import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
+import ErrorModal from "./ErrorModal"
 
 
+const calculateAverage = (data) => {
+  const filteredData = data.filter((value) => value !== null);
+  if (filteredData.length === 0) return null;
+  const sum = filteredData.reduce((acc, value) => acc + value, 0);
+  return sum / filteredData.length;
+};
 
-function ModelSelector({ onChange }) {
+
+function ModelSelector({ onChange, theme }) {
   const models = {
     "1. Статистические методы": {
       "1.1 Линейные модели": ["ARIMA", "SARIMA"],
@@ -25,7 +36,8 @@ function ModelSelector({ onChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const selectRef = useRef(null);
-  const { theme } = useTheme();
+
+  const isDarkMode = theme === "dark";
 
   // Закрытие списка при клике вне области
   useEffect(() => {
@@ -74,7 +86,7 @@ function ModelSelector({ onChange }) {
       {/* Выпадающий список */}
       {isOpen && (
         <div
-          className={`absolute top-full left-0 w-full mt-1 border   ${theme === "dark" ? "text-gray-300 border-gray-600 bg-gray-850" : "text-gray-900 border-gray-400 bg-gray-50"} rounded-lg shadow-lg z-10`}
+          className={`absolute top-full left-0 w-full mt-1 border   ${isDarkMode ? "text-gray-300 border-gray-600 bg-gray-850" : "text-gray-900 border-gray-400 bg-gray-50"} rounded-lg shadow-lg z-10`}
           style={{ maxHeight: "60vh", overflowY: "auto" }}
         >
           {Object.keys(models).map((category) => (
@@ -86,7 +98,7 @@ function ModelSelector({ onChange }) {
                   {models[category][subcategory].map((model) => (
                     <div
                       key={model}
-                      className={`p-1 pl-4 cursor-pointer ${theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100" }`}
+                      className={`p-1 pl-4 cursor-pointer ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100" }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSelect(model);
@@ -106,151 +118,49 @@ function ModelSelector({ onChange }) {
 }
 
 
-// // Загрузка данных
-// function DataUploader({ onUpload }) {
-//   const { theme } = useTheme();
-//   const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбранного файла
+function DataUploader({ onUpload, theme }) {
+  const [selectedFile, setSelectedFile] = useState(null); 
+  const [isDragging, setIsDragging] = useState(false); 
 
-//   // Обработчик клика по области загрузки
-//   const handleClick = () => {
-//     document.getElementById("file-input").click(); // Программно вызываем клик по input
-//   };
-
-//   // Обработчик изменения файла
-//   const handleFileChange = (event) => {
-//     const file = event.target.files[0];
-//     if (file) {
-//       const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
-//       if (allowedTypes.includes(file.type)) {
-//         setSelectedFile(file); // Сохраняем выбранный файл
-//         onUpload(event); // Вызываем переданный обработчик
-//       } else {
-//         alert("Пожалуйста, выберите файл в формате CSV или Excel.");
-//       }
-//     }
-//   };
-
-//   // Обработчик удаления файла
-//   const handleRemoveFile = () => {
-//     setSelectedFile(null); // Удаляем выбранный файл
-//     onUpload(null)
-//     document.getElementById("file-input").value = ""; // Сбрасываем значение input
-//   };
-
-//   // Функция для обрезки длинных имен файлов
-//   const truncateFileName = (fileName, maxLength = 18) => {
-//     if (fileName.length > maxLength) {
-//       return `${fileName.substring(0, maxLength)}...`; // Обрезаем имя и добавляем многоточие
-//     }
-//     return fileName;
-//   };
-
-//   return (
-//     <div
-//       className={`p-4 border-2 border-dashed cursor-pointer ${
-//         theme === "dark" ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
-//       } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors`}
-//       onClick={handleClick} // Открываем проводник при клике на область
-//     >
-//       {/* Скрытый input для выбора файла */}
-//       <input
-//         id="file-input"
-//         type="file"
-//         className="hidden"
-//         onChange={handleFileChange}
-//         accept=".csv, .xls, .xlsx" // Указываем допустимые форматы
-//       />
-
-//       {/* Если файл выбран, отображаем его имя и кнопку удаления */}
-//       {selectedFile ? (
-//         <div className="flex flex-col items-center space-y-2">
-//           <div className="flex items-center space-x-2">
-//             <span
-//               className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-//               title={selectedFile.name} // Всплывающая подсказка с полным именем файла
-//             >
-//               {truncateFileName(selectedFile.name)}
-//             </span>
-//             <button
-//               onClick={(e) => {
-//                 e.stopPropagation(); // Предотвращаем всплытие события
-//                 handleRemoveFile();
-//               }}
-//               className={`p-1 rounded-full ${
-//                 theme === "dark" ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-200"
-//               } transition-colors`}
-//             >
-//               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
-//             </button>
-//           </div>
-//           <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
-//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-//             Файл успешно выбран
-//           </p>
-//         </div>
-//       ) : (
-//         <>
-//           {/* Иконки и текст, если файл не выбран */}
-//           <div className="flex space-x-4 text-gray-500">
-//             <Sheet className="w-8 h-8" /> {/* Иконка для Excel */}
-//             <FileText className="w-8 h-8" /> {/* Иконка для CSV */}
-//           </div>
-//           <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
-//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-//             Перетащите файл сюда или нажмите для загрузки
-//           </p>
-//           <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}
-//              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-//             Поддерживаются форматы: CSV, Excel
-//           </p>
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-function DataUploader({ onUpload }) {
-  const { theme } = useTheme();
-  const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбранного файла
-  const [isDragging, setIsDragging] = useState(false); // Состояние для отслеживания перетаскивания
+  const isDarkMode = theme === "dark";
 
   // Обработчик клика по области загрузки
   const handleClick = () => {
-    document.getElementById("file-input").click(); // Программно вызываем клик по input
+    document.getElementById("file-input").click(); 
   };
 
   // Обработчик изменения файла
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    processFile(file); // Обрабатываем файл
+    processFile(file); 
   };
 
   // Обработчик удаления файла
   const handleRemoveFile = () => {
-    setSelectedFile(null); // Удаляем выбранный файл
+    setSelectedFile(null); 
     onUpload(null);
-    document.getElementById("file-input").value = ""; // Сбрасываем значение input
+    document.getElementById("file-input").value = "";
   };
 
   // Обработчик перетаскивания файла
   const handleDrop = (event) => {
     event.preventDefault();
-    setIsDragging(false); // Сбрасываем состояние перетаскивания
+    setIsDragging(false);
 
-    const file = event.dataTransfer.files[0]; // Получаем перетащенный файл
-    processFile(file); // Обрабатываем файл
+    const file = event.dataTransfer.files[0];
+    processFile(file);
   };
 
   // Обработчик наведения на область
   const handleDragOver = (event) => {
     event.preventDefault();
-    setIsDragging(true); // Указываем, что файл можно перетащить
+    setIsDragging(true); 
   };
 
   // Обработчик выхода из области
   const handleDragLeave = (event) => {
     event.preventDefault();
-    setIsDragging(false); // Сбрасываем состояние перетаскивания
+    setIsDragging(false);
   };
 
   // Функция для обработки файла
@@ -258,8 +168,8 @@ function DataUploader({ onUpload }) {
     if (file) {
       const allowedTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
       if (allowedTypes.includes(file.type)) {
-        setSelectedFile(file); // Сохраняем выбранный файл
-        onUpload({ target: { files: [file] } }); // Вызываем переданный обработчик
+        setSelectedFile(file); 
+        onUpload({ target: { files: [file] } });
       } else {
         alert("Пожалуйста, выберите файл в формате CSV или Excel.");
       }
@@ -269,7 +179,7 @@ function DataUploader({ onUpload }) {
   // Функция для обрезки длинных имен файлов
   const truncateFileName = (fileName, maxLength = 18) => {
     if (fileName.length > maxLength) {
-      return `${fileName.substring(0, maxLength)}...`; // Обрезаем имя и добавляем многоточие
+      return `${fileName.substring(0, maxLength)}...`;
     }
     return fileName;
   };
@@ -277,9 +187,9 @@ function DataUploader({ onUpload }) {
   return (
     <div
       className={`p-4 border-2 border-dashed cursor-pointer ${
-        theme === "dark" ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
+        isDarkMode ? "border-gray-600 hover:border-gray-500" : "border-gray-400 hover:border-gray-500"
       } rounded-lg w-full h-full flex flex-col justify-center items-center transition-colors ${
-        isDragging ? (theme === "dark" ? "bg-gray-800" : "bg-gray-100") : "" 
+        isDragging ? (isDarkMode ? "bg-gray-800" : "bg-gray-100") : "" 
       }`}
       onClick={handleClick} 
       onDrop={handleDrop}
@@ -300,7 +210,7 @@ function DataUploader({ onUpload }) {
         <div className="flex flex-col items-center space-y-2">
           <div className="flex items-center space-x-2">
             <span
-              className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+              className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
               title={selectedFile.name} // Всплывающая подсказка с полным именем файла
             >
               {truncateFileName(selectedFile.name)}
@@ -311,13 +221,13 @@ function DataUploader({ onUpload }) {
                 handleRemoveFile();
               }}
               className={`p-1 rounded-full ${
-                theme === "dark" ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-200"
+                isDarkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-200"
               } transition-colors`}
             >
               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
             </button>
           </div>
-          <p className={`text-sm ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
+          <p className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Файл успешно выбран
           </p>
@@ -329,11 +239,11 @@ function DataUploader({ onUpload }) {
             <Sheet className="w-8 h-8" /> {/* Иконка для Excel */}
             <FileText className="w-8 h-8" /> {/* Иконка для CSV */}
           </div>
-          <p className={`text-center mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
+          <p className={`text-center mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Перетащите файл сюда или нажмите для загрузки
           </p>
-          <p className={`text-center text-sm ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}
+          <p className={`text-center text-sm ${isDarkMode ? "text-gray-600" : "text-gray-400"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             Поддерживаются форматы: CSV, Excel
           </p>
@@ -343,9 +253,8 @@ function DataUploader({ onUpload }) {
   );
 }
 
-function ModelSettingsPanel({ selectedModel, onChange }) {
-  const { theme } = useTheme();
 
+function ModelSettingsPanel({ selectedModel, onChange, theme }) {
   const renderSettings = () => {
     switch (selectedModel) {
       case "ARIMA":
@@ -366,10 +275,11 @@ function ModelSettingsPanel({ selectedModel, onChange }) {
   );
 }
 
-function DataSummary({ summary }) {
-  const { theme } = useTheme();
+
+function DataSummary({ summary, theme }) {
+  const isDarkMode = theme === "dark"
   return (
-    <div className={`${theme === 'dark' ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}>
+    <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}>
       <div style={{ height: 0, color: 'rgba(0, 0, 0, 0)' }}><br /></div>
       <h3 className="font-bold">Сводка данных:</h3>
       <pre className={`text-center whitespace-pre-wrap text-xs ${!summary ? 'text-gray-500' : ''}`}>
@@ -380,9 +290,8 @@ function DataSummary({ summary }) {
 }
 
 // График
-function BaseChart({ options, isLoading }) {
+function BaseChart({ options, isLoading, theme }) {
   const chartRef = useRef(null);
-  const { theme } = useTheme();
   const chartInstanceRef = useRef(null);
 
   useEffect(() => {
@@ -515,7 +424,6 @@ function BaseChart({ options, isLoading }) {
       grid: {
         left: "7%",
         right: "7%",
-        // bottom: '20%',
       },
 
       // Добавляем панель инструментов
@@ -526,11 +434,11 @@ function BaseChart({ options, isLoading }) {
             show: true,
             title: "Сохранить как PNG",
             iconStyle: {
-              normal: {
-                borderColor: `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`, // Цвет иконки в обычном состоянии
-              },
-              emphasis: {
-                borderColor:  `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, // Цвет иконки при наведении
+              borderColor: `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`, 
+            },
+            emphasis: {
+              iconStyle: {
+                borderColor: `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, 
               }
             }
           },
@@ -538,11 +446,11 @@ function BaseChart({ options, isLoading }) {
             show: true,
             title: "Сбросить масштаб",
             iconStyle: {
-              normal: {
-                borderColor:  `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`, // Цвет иконки в обычном состоянии
-              },
-              emphasis: {
-                borderColor:  `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, // Цвет иконки при наведении
+              borderColor:  `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`,    
+            },
+            emphasis: {
+              iconStyle: {
+                borderColor:  `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, 
               }
             }
           }
@@ -597,12 +505,13 @@ function BaseChart({ options, isLoading }) {
 
 
 function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
+  const isDarkMode = theme === "dark";
   return (
     <button
       onClick={onClick}
       className={`${
-        theme === 'dark' ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
-      } border relative ml-2 mb-3 transition-colors p-2.5 rounded-lg`}
+       isDarkMode ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
+      } border relative ml-1.5 mb-3 transition-colors p-2.5 rounded-lg`}
     >
       {isFullScreen ? (
         <Minimize2 className="w-5 h-5" /> // Иконка для сворачивания
@@ -613,16 +522,30 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
   );
 }
 
+function SettingsButton({ onClick, theme }) {
+  const isDarkMode = theme === "dark";
+  return (
+    <button
+      onClick={onClick}
+      className={`${
+        isDarkMode ? " hover:bg-gray-700 border-gray-700 " : "border-gray-300 hover:bg-gray-200"
+      } border relative ml-1.5 mb-3 transition-colors p-2.5 rounded-lg`}
+    >
+      <Settings className="w-5 h-5" /> {/* Иконка настроек */}
+    </button>
+  );
+}
 
-function StartButton({ onClick }) {
-  const { theme } = useTheme()
+
+function StartButton({ onClick, theme }) {
+  const isDarkMode = theme === "dark"
 
   return (
     <button
       className={`w-full h-full rounded-lg font-medium flex items-center justify-center gap-2
                   shadow-md transition duration-200 border 
                   ${
-                    theme === "dark"
+                    isDarkMode
                       ? "bg-gray-850 text-gray-100 border-gray-700 custom-dark-button"
                       : "bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100 shadow-sm"
                   }`}
@@ -635,31 +558,39 @@ function StartButton({ onClick }) {
 }
 
 
-export default function ForecastingPanel() {
+export default function ForecastingPanel({ theme }) {
+  // const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
+
   const modelSettingsRef = useRef(null);
-  const [selectedModel, setSelectedModel] = useState(null); 
+  const advancedSettingsRef = useRef({ ...ADVANCED_SETTINGS_DEFAULTS });
   const uploadedDataRef = useRef(null);
+  const dataSummaryRef = useRef("");
+  const verticalSizesRef = useRef([80, 20]);
+  const horizontalSizesRef = useRef([15, 70, 15]);
+
+  const [selectedModel, setSelectedModel] = useState(null); 
+  const [isFullScreen, setIsFullScreen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); 
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [chartData, setChartData] = useState({
     full_dates: [],
     endog: [],
     prediction: [],
   });
 
-  const dataSummaryRef = useRef("");
-  const [isFullScreen, setIsFullScreen] = useState(true);
-  const { theme } = useTheme();
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const verticalSizesRef = useRef([80, 20]);
-  const horizontalSizesRef = useRef([15, 70, 15]);
-
   const handleModelSettingsChange = (settings) => {
     modelSettingsRef.current = settings;
   };
 
+  const handleAdvancedSettingsChange = (settings) => {
+    advancedSettingsRef.current = settings;
+  }
+
   const handleModelChange = (model) => {
-    setSelectedModel(model); // Обновление состояния
+    setSelectedModel(model); 
   };
 
   const handleFileUpload = (event) => {
@@ -671,28 +602,28 @@ export default function ForecastingPanel() {
   };
 
   const handleStartForecast = async () => {
-    dataSummaryRef.current = "Загрузка...";
-  
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
-      alert("Please fill out all settings.");
+      setErrorMessage("Пожалуйста, заполните все поля.");
+      setIsErrorModalOpen(true);
       return;
     }
   
     const formData = new FormData();
     formData.append("selectedModel", selectedModel);
-    formData.append("modelSettings", JSON.stringify(modelSettingsRef.current)); // Оборачиваем настройки в JSON строку
-    formData.append("uploadedData", uploadedDataRef.current); // Файл
+    formData.append("modelSettings", JSON.stringify(modelSettingsRef.current)); 
+    formData.append("uploadedData", uploadedDataRef.current); 
+    formData.append("fileSettings", JSON.stringify(advancedSettingsRef.current["fileSettings"]));
+    
     setIsLoading(true); 
+    dataSummaryRef.current = "Загрузка...";
     console.log(isLoading)
 
     try {
       const response = await axios.post("http://localhost:8000/api/test", formData, {
         headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
       });
-      // Обновляем сводку данных
       dataSummaryRef.current = response.data.summary;
-
-      // Обновляем chartDataRef
+    
       const predictionStartIndex = response.data.endog.length;
       const lastEndogValue = response.data.endog[predictionStartIndex - 1];
       const smoothedPrediction = [lastEndogValue, ...response.data.prediction];
@@ -703,23 +634,43 @@ export default function ForecastingPanel() {
         prediction: formattedPrediction,
       });
 
-      console.log("Forecasting results:", response.data);
+      // console.log("Forecasting results:", response.data);
     } catch (error) {
+      dataSummaryRef.current = ""
       console.error("Error sending request:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.");
+      } else {
+        setErrorMessage("Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.");
+      }
+      setIsErrorModalOpen(true);
     } finally {
       setIsLoading(false);
-      console.log(isLoading)
     }
   };  
 
   const hasData = chartData.endog.length > 0; 
+  const averagePrediction = calculateAverage(chartData.prediction);
+  const averageEndog = calculateAverage(chartData.endog)
   const options = {
-    title: { text: hasData ? "График прогноза" : "Пример графика" },
+    legend: {
+      show: advancedSettingsRef.current.graphSettings.showLegend,
+    },
+    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
     xAxis: {
       type: "category",
       data: hasData ? chartData.full_dates : placeholderDates,
+      splitLine: {
+        show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
     },
-    yAxis: { type: "value" },
+    yAxis: { 
+      type: "value",
+      splitLine: {
+        show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
+     },
+    
     series: hasData
       ? [
           {
@@ -735,25 +686,114 @@ export default function ForecastingPanel() {
             name: "Исходные данные",
             type: "line",
             data: chartData.endog,
-            smooth: false,
+            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
             lineStyle: { width: 2 },
-            itemStyle: { color: "#3582FF" },
+            itemStyle: { color: advancedSettingsRef.current.graphSettings.dataColor },
+            markPoint: advancedSettingsRef.current.graphSettings.showEndogExtremes
+            ? {
+                data: [
+                  { type: "max", name: "max" },
+                  { type: "min", name: "min" },
+                ],
+                symbol: "circle",
+                symbolSize: 10,
+                itemStyle: {
+                  color: advancedSettingsRef.current.graphSettings.dataColor, 
+                },
+                label: {
+                  color: "#ffffff",
+                  textBorderColor: advancedSettingsRef.current.graphSettings.dataColor, 
+                  textBorderWidth: 2, 
+                  show: true,
+                  formatter: (params) => params.name, 
+                },
+              }
+            : undefined,
+            markLine: advancedSettingsRef.current.graphSettings.showEndogAverage
+            ? {
+                data: [
+                  {
+                    yAxis: averageEndog, 
+                    name: "Среднее", 
+                  },
+                ],
+                label: {
+                  show: true,
+                  formatter: "Среднее:\n{c}", 
+                  position: "end",
+                  align: 'center',
+                  padding: [0, 0, 0, 30], 
+                  textBorderColor: isDarkMode ? "#172131" : "#ffffff",
+                  textBorderWidth: 2,
+                  color: advancedSettingsRef.current.graphSettings.dataColor,
+
+                },
+                lineStyle: {
+                  color: advancedSettingsRef.current.graphSettings.dataColor, 
+                  type: "dotted", 
+                },
+              }
+            : undefined,
           },
           {
             name: "Прогноз",
             type: "line",
             data: chartData.prediction,
-            smooth: false,
+            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
             lineStyle: { width: 2, type: "dashed" },
-            itemStyle: { color: "#F54242" },
-          },
+            itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+            markPoint: advancedSettingsRef.current.graphSettings.showForecastExtremes
+            ? {
+                data: [
+                  { type: "max", name: "max" },
+                  { type: "min", name: "min" },
+                ],
+                symbol: "circle",
+                symbolSize: 10,
+                itemStyle: {
+                  color: advancedSettingsRef.current.graphSettings.forecastColor, 
+                },
+                label: {
+                  color: "#ffffff",
+                  textBorderColor: advancedSettingsRef.current.graphSettings.forecastColor, 
+                  textBorderWidth: 2, 
+                  show: true,
+                  formatter: (params) => params.name, 
+                },
+              }
+            : undefined,
+            markLine: advancedSettingsRef.current.graphSettings.showForecastAverage
+            ? {
+                data: [
+                  {
+                    type: "average", // Тип линии — среднее значение
+                    yAxis: averagePrediction, // Подпись линии
+                  },
+                ],
+                label: {
+                  show: true,
+                  formatter: "Среднее:\n{c}", // Отображаем значение среднего
+                  position: "end", // Позиция подписи
+                  align: 'center',
+                  padding: [0, 0, 0, 30], // Отступ слева 20px
+                  textBorderColor: isDarkMode ? "#172131" : "#ffffff",
+                  textBorderWidth: 2,
+                  color: advancedSettingsRef.current.graphSettings.forecastColor,
+                },
+                lineStyle: {
+                  color: advancedSettingsRef.current.graphSettings.forecastColor, // Цвет линии
+                  type: "dotted", // Тип линии (пунктирная)
+                },
+              }
+            : undefined,
+          },     
         ]
       : [
           {
             name: "Пример данных",
             type: "line",
             data: placeholderValues,
-            smooth: false,
+            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
             lineStyle: { width: 2, type: "dotted" },
             itemStyle: { color: "gray", opacity: 0.65 },
           },
@@ -761,25 +801,25 @@ export default function ForecastingPanel() {
   };
 
   const createGutter = (direction) => {
-  const gutter = document.createElement("div");
-  gutter.className = `gutter gutter-${direction}`;
-  gutter.style.backgroundColor = "var(--gutter-bg)";
-  gutter.style.borderRadius = "var(--gutter-border-radius)";
-  gutter.style.transition = "var(--gutter-transition)";
-
-  gutter.addEventListener("mouseenter", () => {
-    gutter.style.backgroundColor = "var(--gutter-hover-bg)";
-  });
-
-  gutter.addEventListener("mouseleave", () => {
+    const gutter = document.createElement("div");
+    gutter.className = `gutter gutter-${direction}`;
     gutter.style.backgroundColor = "var(--gutter-bg)";
-  });
+    gutter.style.borderRadius = "var(--gutter-border-radius)";
+    gutter.style.transition = "var(--gutter-transition)";
 
-  if (direction === "vertical") {
-    gutter.style.height = "8px";
-  }
+    gutter.addEventListener("mouseenter", () => {
+      gutter.style.backgroundColor = "var(--gutter-hover-bg)";
+    });
 
-  return gutter;
+    gutter.addEventListener("mouseleave", () => {
+      gutter.style.backgroundColor = "var(--gutter-bg)";
+    });
+
+    if (direction === "vertical") {
+      gutter.style.height = "8px";
+    }
+
+    return gutter;
 };
 
   return (
@@ -787,7 +827,7 @@ export default function ForecastingPanel() {
       {isFullScreen && (
         <div
           className={`fixed inset-0 z-100 backdrop-blur-sm ${
-            theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
+            isDarkMode ? "bg-gray-950/60" : "bg-gray-500/60"
           }`}
           onClick={() => setIsFullScreen(false)}
         />
@@ -799,17 +839,17 @@ export default function ForecastingPanel() {
             ? "fixed inset-4 h-[calc(100vh-2rem)] z-150 bg-black bg-opacity-10 backdrop-blur-sm"
             : "h-[82vh]"
         } flex flex-col ${
-          theme === "dark" ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"
+          isDarkMode ? "bg-gray-850 border-gray-700" : "bg-gray-50 border-gray-300"
         } transition-all duration-300`}
         style={{ overflow: "auto" }}
       >
         <div className="flex justify-between items-center">
-          <ModelSelector onChange={handleModelChange} />
+          <ModelSelector onChange={handleModelChange} theme={theme} />
+          <SettingsButton onClick={() => setIsSettingsOpen(!isSettingsOpen)} theme={theme} />
           <FullScreenToggleButton isFullScreen={isFullScreen} onClick={() => setIsFullScreen(!isFullScreen)} theme={theme} />
         </div>
 
         <Split
-          // key={theme}
           className="flex-grow flex flex-col w-full"
           direction="vertical"
           sizes={verticalSizesRef.current}
@@ -820,7 +860,6 @@ export default function ForecastingPanel() {
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
-            // key={theme}
             className="flex w-full mb-2 "
             sizes={horizontalSizesRef.current}
             minSize={[200, 300, 210]}
@@ -831,27 +870,43 @@ export default function ForecastingPanel() {
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">
               <div className="flex-grow h-2/3">
-                <DataUploader onUpload={handleFileUpload} />
+                <DataUploader onUpload={handleFileUpload} theme={theme} />
               </div>
               <div className="flex-grow h-1/3 mt-2">
-              <StartButton onClick={handleStartForecast} />
+              <StartButton onClick={handleStartForecast} theme={theme} />
               </div>
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
-              <BaseChart options={options} isLoading={isLoading} />
+              <BaseChart options={options} isLoading={isLoading} theme={theme} />
             </div>
 
             <div className="h-full ml-1 min-w-[130px]">
-              <ModelSettingsPanel selectedModel={selectedModel} onChange={handleModelSettingsChange} />
+              <ModelSettingsPanel selectedModel={selectedModel} onChange={handleModelSettingsChange} theme={theme} />
             </div>
           </Split>
 
           <div className="w-full h-full mt-2 min-w-[560px]">
-            <DataSummary summary={dataSummaryRef.current} />
+            <DataSummary summary={dataSummaryRef.current} theme={theme} />
           </div>
         </Split>
       </div>
+
+      {/* Панель настроек */}
+      <AdvancedSettingsPanel
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onChange={handleAdvancedSettingsChange}
+          theme={theme}
+      />
+
+      {/* Модальное окно для ошибок */}
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorModalOpen(false)}
+        theme={theme}
+      />
     </>
   );
 }

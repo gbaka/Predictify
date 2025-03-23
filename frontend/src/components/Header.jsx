@@ -156,7 +156,7 @@ function Logo() {
                     ${
                       theme === "dark"
                         ? "bg-gray-700 text-gray-300"
-                        : "bg-gray-300 text-gray-700"
+                        : "bg-gray-250 text-gray-700"
                     }`}
                 >
                   Ctrl + K
@@ -165,7 +165,7 @@ function Logo() {
             </AnimatePresence>
             <Search
               className={`${
-                theme === "dark" ? "text-gray-400" : "text-gray-600"
+                theme === "dark" ? "text-gray-400" : "text-gray-500"
               } cursor-pointer`}
               size={18}
               onClick={() => searchInputRef.current.focus()}

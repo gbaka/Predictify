@@ -13,13 +13,16 @@ body.dark {
   @apply bg-gray-800 text-gray-200;
 }
 
+.bg-gray-150 {
+  background-color: #eceef1; /* Цвет между gray-100 и gray-150 */
+}
+
+.bg-gray-250 {
+  background-color: #dbdee3 /* Цвет между gray-200 и gray-300 */
+}
 
 .bg-gray-850 {
   background-color: #172131; /* Цвет между gray-800 и gray-900 */
-}
-
-.bg-gray-150 {
-  background-color: #eceef1; /* Цвет между gray-100 и gray-150 */
 }
 
 .custom-dark-button:hover {
@@ -43,6 +46,9 @@ section {
   --gutter-hover-bg: #d1d5db; 
   --gutter-border-radius: 0.3rem; 
   --gutter-transition: background-color 0.3s; 
+
+  /* color input border */
+  --color-swatch-border: #dddde2; 
 }
 
 .dark {
@@ -56,5 +62,29 @@ section {
   /* split-gutter */
   --gutter-bg: #374151; 
   --gutter-hover-bg: #4b5563; 
+  
+  /* color input border */
+  --color-swatch-border: #374151; 
 }
 
+/* color input border для Firefox */
+input[type="color"]::-moz-color-swatch {
+  border-color: var(--color-swatch-border)
+}
+
+/* color input border для Chromium */
+input[type="color"]::-webkit-color-swatch {
+  border-color: var(--color-swatch-border)
+}
+
+input[type="text"] {
+  outline: none; 
+}
+
+input[type="number"] {
+  outline: none;
+}
+
+select {
+  outline: none
+}
