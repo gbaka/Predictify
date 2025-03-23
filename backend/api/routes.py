@@ -37,12 +37,14 @@ router = APIRouter()
 async def test(
     selectedModel: str = Form(...),
     modelSettings: str = Form(...),
-    uploadedData: UploadFile = File(...)
+    uploadedData: UploadFile = File(...),
+    fileSettings: str = Form(...)
 ):
     
+    file_settings_dict = loads(fileSettings)
     model_settings_dict = loads(modelSettings)
 
-
+    print(f"File settings: {file_settings_dict}")
     print(f"Selected model: {selectedModel}")
     print(f"Model settings: {model_settings_dict}")
     print(f"File filename: {uploadedData.filename}")
@@ -50,7 +52,7 @@ async def test(
 
 
     try:
-        file_data_dict = convert_to_dict(uploadedData)
+        file_data_dict = convert_to_dict(file=uploadedData, settings=file_settings_dict)
         print(f"File converted to dict:", file_data_dict)
     except Exception as e:
         raise HTTPException(

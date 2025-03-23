@@ -1,7 +1,5 @@
-import { useTheme } from "../context/ThemeContext";
-
-export default function ErrorModal({ isOpen, message, onClose }) {
-  const { theme } = useTheme();
+export default function ErrorModal({ isOpen, message, onClose, theme }) {
+  const isDarkMode = theme === "dark";
 
   // Если модальное окно не открыто, ничего не рендерим
   if (!isOpen) return null;
@@ -9,13 +7,13 @@ export default function ErrorModal({ isOpen, message, onClose }) {
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center bg-opacity-50 z-200 backdrop-blur-sm ${
-        theme === "dark" ? "bg-gray-950/60" : "bg-gray-500/60"
+        isDarkMode ? "bg-gray-950/60" : "bg-gray-500/60"
       }`}
     >
       {/* Контейнер модального окна */}
       <div
         className={`p-6 rounded-lg shadow-lg max-w-md w-full ${
-          theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
+          isDarkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
         }`}
       >
         {/* Заголовок модального окна */}
@@ -28,7 +26,7 @@ export default function ErrorModal({ isOpen, message, onClose }) {
         <button
           onClick={onClose}
           className={`w-full px-4 py-2 rounded-lg transition-colors ${
-            theme === "dark"
+            isDarkMode
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-blue-500 hover:bg-blue-600 text-white"
           }`}
