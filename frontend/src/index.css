@@ -5,6 +5,7 @@ body {
   @apply transition-all font-mono; /* Моноширный шрифт */
 }
 
+
 body.light {
   @apply bg-gray-100 text-gray-900;
 }
@@ -19,6 +20,10 @@ body.dark {
 
 .bg-gray-250 {
   background-color: #dbdee3 /* Цвет между gray-200 и gray-300 */
+}
+
+.bg-gray-350:hover {
+  background-color: #B7BCC5 /* Цвет между gray-300 и gray-400 */
 }
 
 .bg-gray-850 {

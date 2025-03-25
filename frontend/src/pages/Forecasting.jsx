@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import BaseChart from "../components/charts/BaseChart";
-import ForecastingPanel from "../components/ForecastingPanel";
+import ForecastPanel from "../components/ForecastPanel";
+import ForecastTiles from "../components/ForecastTiles/ForecastTiles";
 
 export default function Forecasting() {
     const [activeTab, setActiveTab] = useState("parsedData");
@@ -56,12 +57,20 @@ export default function Forecasting() {
         <div className="container mx-auto p-6 px-8">
           {activeTab === "parsedData" ? (
             <>
-              <h1 className="text-3xl font-bold mb-4">Графики прогнозов</h1>
-              <BaseChart options={options} />
+              <h1 className="text-3xl font-bold mb-4 mt-2 text-center">
+                Парсеры
+              </h1>
+              <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
+                Здесь будет что-то. Lorem ipsum, dolor
+                sit amet consectetur adipisicing elit. Labore maxime, soluta
+                ratione hic libero vero ducimus illum voluptatem aut quos.
+              </p>
+              {/* <BaseChart options={options} /> */}
+              <ForecastTiles theme={theme} />
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-bold mb-4 text-center">
+              <h1 className="text-3xl font-bold mb-4 mt-2 text-center">
                 Прогнозирование
               </h1>
               <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
@@ -69,7 +78,7 @@ export default function Forecasting() {
                 sit amet consectetur adipisicing elit. Labore maxime, soluta
                 ratione hic libero vero ducimus illum voluptatem aut quos.
               </p>
-              <ForecastingPanel theme={theme}/>
+              <ForecastPanel theme={theme}/>
 
               {/* Добавленные параграфы о сервисе */}
               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">

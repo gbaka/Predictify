@@ -42,7 +42,7 @@ export default function Footer() {
           onClick={toggleTheme}
           className={`
             flex items-center space-x-2 p-2 rounded-md transition-all
-            ${theme === "dark" ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-300 text-black hover:bg-gray-400"}
+            ${theme === "dark" ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-300 text-black hover:bg-[#B7BCC5]"}
           `}
           aria-label="Toggle theme"
         >
@@ -57,7 +57,7 @@ export default function Footer() {
           onClick={toggleLanguageMenu}
           className={`
             flex items-center space-x-2 p-2 rounded-md transition-all
-            ${theme === "dark" ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-300 text-black hover:bg-gray-400"}
+            ${theme === "dark" ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-300 text-black hover:bg-[#B7BCC5]"}
           `}
           aria-label="Change language"
         >
