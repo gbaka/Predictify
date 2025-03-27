@@ -65,8 +65,18 @@ export default function Forecasting() {
                 sit amet consectetur adipisicing elit. Labore maxime, soluta
                 ratione hic libero vero ducimus illum voluptatem aut quos.
               </p>
-              {/* <BaseChart options={options} /> */}
               <ForecastTiles theme={theme} />
+
+               {/* Добавленные параграфы о сервисе */}
+               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
+                <p>
+                  Мы уделяем особое внимание безопасности ваших данных. Все
+                  файлы, загруженные в наш сервис, обрабатываются в
+                  зашифрованном виде и хранятся на защищенных серверах. Мы не
+                  передаем ваши данные третьим лицам и гарантируем их
+                  конфиденциальность.
+                </p>
+              </div>
             </>
           ) : (
             <>

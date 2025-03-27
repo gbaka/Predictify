@@ -665,7 +665,7 @@ export default function ForecastingPanel({ theme }) {
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
-              <BaseChart options={options} isLoading={isLoading} theme={theme} />
+              <BaseChart options={options} isLoading={isLoading} theme={theme} bordered={true} />
             </div>
 
             <div className="h-full ml-1 min-w-[130px]">

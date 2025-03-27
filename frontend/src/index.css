@@ -5,7 +5,6 @@ body {
   @apply transition-all font-mono; /* Моноширный шрифт */
 }
 
-
 body.light {
   @apply bg-gray-100 text-gray-900;
 }

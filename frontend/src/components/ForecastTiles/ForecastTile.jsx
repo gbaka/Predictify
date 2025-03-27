@@ -3,54 +3,126 @@ import { useRef, useEffect } from "react";
 import BaseChart from "../charts/BaseChart";
 
 export default function ForecastTile({ data, onClick, isLoading, theme }) {
-    // Настроим options для графика
-    const options = {
-      title: { 
-        text: data.title,
-        show: false  // Скрываем название
+  const isDarkMode = theme == "dark"
+  const visiblePoints = 9; 
+  const startPercentage = data.x.length > visiblePoints 
+    ? ((data.x.length - visiblePoints) / data.x.length) * 100 
+    : 0;
+
+  const options = {
+    title: {
+      text: data.title,
+      show: false, 
+    },
+    xAxis: {
+      type: "category",
+      data: data.x,
+      show: true, 
+      splitLine: {
+        show: true
       },
-      xAxis: { 
-        type: "category", 
-        data: data.x,
-        show: false  // Скрываем ось X
+      axisLabel: {
+        show: false
       },
-      yAxis: { 
-        type: "value", 
-        show: false,  // Скрываем ось Y
+      axisLine: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: "value",
+      show: true, 
+      splitLine: {
+        show: true
       },
-      series: [
-        {
-          data: data.y,
-          type: "line",
-          smooth: true,  // Чтобы линия была плавной
-          lineStyle: {
-            width: 2,  // Ширина линии
-            color: theme === "dark" ? "#409EFF" : "#1E90FF"  // Цвет линии в зависимости от темы
-          }
-        }
-      ],
-      legend: {
-        show: false,  // Отключаем легенду
+      axisLabel: {
+        show: false
       },
-      tooltip: {
-        show: false,  // Скрываем tooltip
+      axisLine: {
+        show: false
+      }
+    },
+    series: [
+      {
+        data: data.y,
+        type: "line",
+        smooth: true,
+        lineStyle: {
+          width: 2,
+        },
+        itemStyle: { color: "#3582FF"},
       },
-      toolbox: {
-        show: false,
-      },
-      dataZoom: false,
-    };
-  
-    return (
-      <div
-        className="bg-gray-50 border border-gray-300 shadow-md rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all mx-1 h-[300px]"
-        onClick={onClick}
-      >
-        <h3 className="text-lg font-semibold mb-4">{data.title}</h3>
-        {/* Отправляем настройки в BaseChart */}
-        <div className="h-[220px]">
-            <BaseChart options={options} isLoading={isLoading} theme={theme} />
+    ],
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      show: false,
+    },
+    toolbox: {
+      show: false,
+    },
+    dataZoom: {
+      start: startPercentage,
+      end: 100,
+      show: false,
+    },
+    grid: {
+      show: true,
+      borderColor: isDarkMode ? "#000" : "#ccc",
+      top: "2%",
+      left: "1%",
+      right: "1%",
+      bottom: "8%"
+    },
+  };
+
+  return (
+    <div
+      className={`rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all mx-1 h-[300px] relative ${
+        isDarkMode 
+          ? "bg-gray-850 border-gray-700 shadow-md border" 
+          : "bg-gray-50 border-gray-300 shadow-md border "
+      }`}
+      onClick={onClick}
+    >
+      <div className="flex flex-col h-full">
+        <div className="relative flex justify-between items-center pb-2">
+          <h3 className={`text-lg font-semibold ${
+            isDarkMode ? "text-gray-100" : "text-gray-900"
+          }`}>
+            {data.title}
+          </h3>
+          
+          <div className="flex items-center ml-auto">
+            <span className={`relative w-2.5 h-2.5 rounded-full animate-pulse ${
+              isLoading ? "bg-yellow-500" : "bg-green-500"
+            }`}></span>
+            <span className={`ml-1 text-sm ${
+              isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}>
+              {isLoading ? "Соединение" : "Онлайн"}
+            </span>
+          </div>
+
+          <div
+            className="absolute bottom-0 left-0 right-0 h-px"
+            style={{
+              marginLeft: "-1rem",
+              marginRight: "-1rem",
+              backgroundColor: isDarkMode ? "#374151" : "#e5e7eb",
+            }}
+          />
+        </div>
+        
+        <div className="flex-1 h-[220px] overflow-y-hidden">
+          <BaseChart
+            options={options}
+            isLoading={isLoading}
+            theme={theme}
+            bordered={false}
+          />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}

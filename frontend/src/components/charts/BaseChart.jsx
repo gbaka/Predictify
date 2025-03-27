@@ -2,7 +2,7 @@ import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
 
 
-export default function BaseChart({ options, isLoading, theme }) {
+export default function BaseChart({ options, isLoading, theme,  bordered }) {
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
   
@@ -24,6 +24,11 @@ export default function BaseChart({ options, isLoading, theme }) {
         textStyle: { fontFamily: defaultFontFamily, color: textColor },
   
          // ПАРАМЕТРЫ ГРАФИКА С ДЕФОЛТНЫМИ ЗНАЧЕНИЯМИ
+        grid: options.grid ?? {
+          left: "7%",
+          right: "7%",
+        },
+
         dataZoom: options.dataZoom ?? [
           {
             type: "slider",
@@ -106,7 +111,10 @@ export default function BaseChart({ options, isLoading, theme }) {
                 fontFamily: defaultFontFamily,
                 color: textColor,
             },
-            axisLine: { lineStyle: { color: axisColor } },
+            axisLine: { 
+              ...options.xAxis.axisLine,
+              lineStyle: { color: axisColor } 
+            },
             }
         : {},
 
@@ -133,12 +141,6 @@ export default function BaseChart({ options, isLoading, theme }) {
         tooltip: {
           ...options.tooltip,
           trigger: "axis",
-        },
-  
-        grid: {
-          ...options.grid,
-          left: "7%",
-          right: "7%",
         },
 
         toolbox: {
@@ -206,9 +208,11 @@ export default function BaseChart({ options, isLoading, theme }) {
     return (
       <div
         className={`rounded-lg border transition-all ${
-          theme === "dark"
-            ? "bg-gray-850 border border-gray-700"
-            : "bg-gray-50 border border-gray-300"
+          bordered
+          ? theme === "dark"
+            ? "border border-gray-700"
+            : "border border-gray-300"
+          : "border-none"
         } h-full w-full`}
       >
         <div ref={chartRef} className="flex w-full h-full mt-3" />

@@ -1,0 +1,325 @@
+[1mdiff --git a/frontend/src/components/ForecastPanel.jsx b/frontend/src/components/ForecastPanel.jsx[m
+[1mindex 0b3baaf..c282aa1 100644[m
+[1m--- a/frontend/src/components/ForecastPanel.jsx[m
+[1m+++ b/frontend/src/components/ForecastPanel.jsx[m
+[36m@@ -665,7 +665,7 @@[m [mexport default function ForecastingPanel({ theme }) {[m
+             </div>[m
+ [m
+             <div className="h-full min-w-[300px] mx-1">[m
+[31m-              <BaseChart options={options} isLoading={isLoading} theme={theme} />[m
+[32m+[m[32m              <BaseChart options={options} isLoading={isLoading} theme={theme} bordered={true} />[m
+             </div>[m
+ [m
+             <div className="h-full ml-1 min-w-[130px]">[m
+[1mdiff --git a/frontend/src/components/ForecastTiles/ForecastTile.jsx b/frontend/src/components/ForecastTiles/ForecastTile.jsx[m
+[1mindex b4f9f68..5c1b59c 100644[m
+[1m--- a/frontend/src/components/ForecastTiles/ForecastTile.jsx[m
+[1m+++ b/frontend/src/components/ForecastTiles/ForecastTile.jsx[m
+[36m@@ -3,54 +3,126 @@[m [mimport { useRef, useEffect } from "react";[m
+ import BaseChart from "../charts/BaseChart";[m
+ [m
+ export default function ForecastTile({ data, onClick, isLoading, theme }) {[m
+[31m-    // Настроим options для графика[m
+[31m-    const options = {[m
+[31m-      title: { [m
+[31m-        text: data.title,[m
+[31m-        show: false  // Скрываем название[m
+[31m-      },[m
+[31m-      xAxis: { [m
+[31m-        type: "category", [m
+[31m-        data: data.x,[m
+[31m-        show: false  // Скрываем ось X[m
+[32m+[m[32m  const isDarkMode = theme == "dark"[m
+[32m+[m[32m  const visiblePoints =9;[m[41m [m
+[32m+[m[32m  const startPercentage = data.x.length > visiblePoints[m[41m [m
+[32m+[m[32m    ? ((data.x.length - visiblePoints) / data.x.length) * 100[m[41m [m
+[32m+[m[32m    : 0;[m
+[32m+[m
+[32m+[m[32m  const options = {[m
+[32m+[m[32m    title: {[m
+[32m+[m[32m      text: data.title,[m
+[32m+[m[32m      show: false,[m[41m [m
+[32m+[m[32m    },[m
+[32m+[m[32m    xAxis: {[m
+[32m+[m[32m      type: "category",[m
+[32m+[m[32m      data: data.x,[m
+[32m+[m[32m      show: true,[m[41m [m
+[32m+[m[32m      splitLine: {[m
+[32m+[m[32m        show: true[m
+       },[m
+[31m-      yAxis: { [m
+[31m-        type: "value", [m
+[31m-        show: false,  // Скрываем ось Y[m
+[32m+[m[32m      axisLabel: {[m
+[32m+[m[32m        show: false[m
+       },[m
+[31m-      series: [[m
+[31m-        {[m
+[31m-          data: data.y,[m
+[31m-          type: "line",[m
+[31m-          smooth: true,  // Чтобы линия была плавной[m
+[31m-          lineStyle: {[m
+[31m-            width: 2,  // Ширина линии[m
+[31m-            color: theme === "dark" ? "#409EFF" : "#1E90FF"  // Цвет линии в зависимости от темы[m
+[31m-          }[m
+[31m-        }[m
+[31m-      ],[m
+[31m-      legend: {[m
+[31m-        show: false,  // Отключаем легенду[m
+[32m+[m[32m      axisLine: {[m
+[32m+[m[32m        show: false[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    yAxis: {[m
+[32m+[m[32m      type: "value",[m
+[32m+[m[32m      show: true,[m[41m [m
+[32m+[m[32m      splitLine: {[m
+[32m+[m[32m        show: true[m
+       },[m
+[31m-      tooltip: {[m
+[31m-        show: false,  // Скрываем tooltip[m
+[32m+[m[32m      axisLabel: {[m
+[32m+[m[32m        show: false[m
+       },[m
+[31m-      toolbox: {[m
+[31m-        show: false,[m
+[32m+[m[32m      axisLine: {[m
+[32m+[m[32m        show: false[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    series: [[m
+[32m+[m[32m      {[m
+[32m+[m[32m        data: data.y,[m
+[32m+[m[32m        type: "line",[m
+[32m+[m[32m        smooth: true,[m
+[32m+[m[32m        lineStyle: {[m
+[32m+[m[32m          width: 2,[m
+[32m+[m[32m        },[m
+[32m+[m[32m        itemStyle: { color: "#3582FF"},[m
+       },[m
+[31m-      dataZoom: false,[m
+[31m-    };[m
+[31m-  [m
+[31m-    return ([m
+[31m-      <div[m
+[31m-        className="bg-gray-50 border border-gray-300 shadow-md rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all mx-1 h-[300px]"[m
+[31m-        onClick={onClick}[m
+[31m-      >[m
+[31m-        <h3 className="text-lg font-semibold mb-4">{data.title}</h3>[m
+[31m-        {/* Отправляем настройки в BaseChart */}[m
+[31m-        <div className="h-[220px]">[m
+[31m-            <BaseChart options={options} isLoading={isLoading} theme={theme} />[m
+[32m+[m[32m    ],[m
+[32m+[m[32m    legend: {[m
+[32m+[m[32m      show: false,[m
+[32m+[m[32m    },[m
+[32m+[m[32m    tooltip: {[m
+[32m+[m[32m      show: false,[m
+[32m+[m[32m    },[m
+[32m+[m[32m    toolbox: {[m
+[32m+[m[32m      show: false,[m
+[32m+[m[32m    },[m
+[32m+[m[32m    dataZoom: {[m
+[32m+[m[32m      start: startPercentage,[m
+[32m+[m[32m      end: 100,[m
+[32m+[m[32m      show: false,[m
+[32m+[m[32m    },[m
+[32m+[m[32m    grid: {[m
+[32m+[m[32m      show: true,[m
+[32m+[m[32m      borderColor: isDarkMode ? "#000" : "#ccc",[m
+[32m+[m[32m      top: "2%",[m
+[32m+[m[32m      left: "1%",[m
+[32m+[m[32m      right: "1%",[m
+[32m+[m[32m      bottom: "8%"[m
+[32m+[m[32m    },[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div[m
+[32m+[m[32m      className={`rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all mx-1 h-[300px] relative ${[m
+[32m+[m[32m        isDarkMode[m[41m [m
+[32m+[m[32m          ? "bg-gray-850 border-gray-700 shadow-md border"[m[41m [m
+[32m+[m[32m          : "bg-gray-50 border-gray-300 shadow-md border "[m
+[32m+[m[32m      }`}[m
+[32m+[m[32m      onClick={onClick}[m
+[32m+[m[32m    >[m
+[32m+[m[32m      <div className="flex flex-col h-full">[m
+[32m+[m[32m        <div className="relative flex justify-between items-center pb-2">[m
+[32m+[m[32m          <h3 className={`text-lg font-semibold ${[m
+[32m+[m[32m            isDarkMode ? "text-gray-100" : "text-gray-900"[m
+[32m+[m[32m          }`}>[m
+[32m+[m[32m            {data.title}[m
+[32m+[m[32m          </h3>[m
+[32m+[m[41m          [m
+[32m+[m[32m          <div className="flex items-center ml-auto">[m
+[32m+[m[32m            <span className={`relative w-2.5 h-2.5 rounded-full animate-pulse ${[m
+[32m+[m[32m              isLoading ? "bg-yellow-500" : "bg-green-500"[m
+[32m+[m[32m            }`}></span>[m
+[32m+[m[32m            <span className={`ml-1 text-sm ${[m
+[32m+[m[32m              isDarkMode ? "text-gray-300" : "text-gray-600"[m
+[32m+[m[32m            }`}>[m
+[32m+[m[32m              {isLoading ? "Соединение" : "Онлайн"}[m
+[32m+[m[32m            </span>[m
+[32m+[m[32m          </div>[m
+[32m+[m
+[32m+[m[32m          <div[m
+[32m+[m[32m            className="absolute bottom-0 left-0 right-0 h-px"[m
+[32m+[m[32m            style={{[m
+[32m+[m[32m              marginLeft: "-1rem",[m
+[32m+[m[32m              marginRight: "-1rem",[m
+[32m+[m[32m              backgroundColor: isDarkMode ? "#374151" : "#e5e7eb",[m
+[32m+[m[32m            }}[m
+[32m+[m[32m          />[m
+[32m+[m[32m        </div>[m
+[32m+[m[41m        [m
+[32m+[m[32m        <div className="flex-1 h-[220px] overflow-y-hidden">[m
+[32m+[m[32m          <BaseChart[m
+[32m+[m[32m            options={options}[m
+[32m+[m[32m            isLoading={isLoading}[m
+[32m+[m[32m            theme={theme}[m
+[32m+[m[32m            bordered={false}[m
+[32m+[m[32m          />[m
+         </div>[m
+       </div>[m
+[31m-    );[m
+[31m-  }[m
+\ No newline at end of file[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/frontend/src/components/ForecastTiles/ForecastTiles.jsx b/frontend/src/components/ForecastTiles/ForecastTiles.jsx[m
+[1mindex d26f676..8f59fe1 100644[m
+[1m--- a/frontend/src/components/ForecastTiles/ForecastTiles.jsx[m
+[1m+++ b/frontend/src/components/ForecastTiles/ForecastTiles.jsx[m
+[36m@@ -15,13 +15,18 @@[m [mexport default function ForecastTiles({ theme }) {[m
+     { title: "Загрузка...", x: [], y: [] },[m
+   ]);[m
+ [m
+[32m+[m[32m  const arr = [][m
+[32m+[m[32m  for (let i = 0; i < 100; i++) {[m
+[32m+[m[32m    arr.push(i**3 - 3*i**2-i)[m
+[32m+[m[32m  }[m
+[32m+[m
+   // Эмуляция запроса к бэку[m
+   useEffect(() => {[m
+     // Это место можно будет заменить на реальный запрос к API[m
+     setTimeout(() => {[m
+       setForecasts([[m
+[31m-        { title: "Прогноз 1", x: ["Янв", "Фев", "Мар"], y: [10, 20, 15] },[m
+[31m-        { title: "Прогноз 2", x: ["Апр", "Май", "Июн"], y: [5, 25, 30] },[m
+[32m+[m[32m        { title: "Погода", x: arr, y: arr },[m
+[32m+[m[32m        { title: "Акции", x: ["Апр", "Май", "Июн",1,1,1,1,1,1,1], y: [5, 25, 30,1,1,1,2,2,2,2] },[m
+         { title: "Прогноз 3", x: ["Июл", "Авг", "Сен"], y: [12, 18, 22] },[m
+         { title: "Прогноз 4", x: ["Окт", "Ноя", "Дек"], y: [8, 15, 19] },[m
+       ]);[m
+[36m@@ -38,7 +43,7 @@[m [mexport default function ForecastTiles({ theme }) {[m
+   };[m
+ [m
+   return ([m
+[31m-    <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4">[m
+[32m+[m[32m    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 p-4">[m
+       {forecasts.map((forecast, index) => ([m
+         <ForecastTile[m
+           key={index}[m
+[1mdiff --git a/frontend/src/components/charts/BaseChart.jsx b/frontend/src/components/charts/BaseChart.jsx[m
+[1mindex c6cd5c7..bd7f720 100644[m
+[1m--- a/frontend/src/components/charts/BaseChart.jsx[m
+[1m+++ b/frontend/src/components/charts/BaseChart.jsx[m
+[36m@@ -2,7 +2,7 @@[m [mimport * as echarts from "echarts";[m
+ import { useEffect, useRef } from "react";[m
+ [m
+ [m
+[31m-export default function BaseChart({ options, isLoading, theme }) {[m
+[32m+[m[32mexport default function BaseChart({ options, isLoading, theme,  bordered }) {[m
+     const chartRef = useRef(null);[m
+     const chartInstanceRef = useRef(null);[m
+   [m
+[36m@@ -24,6 +24,11 @@[m [mexport default function BaseChart({ options, isLoading, theme }) {[m
+         textStyle: { fontFamily: defaultFontFamily, color: textColor },[m
+   [m
+          // ПАРАМЕТРЫ ГРАФИКА С ДЕФОЛТНЫМИ ЗНАЧЕНИЯМИ[m
+[32m+[m[32m        grid: options.grid ?? {[m
+[32m+[m[32m          left: "7%",[m
+[32m+[m[32m          right: "7%",[m
+[32m+[m[32m        },[m
+[32m+[m
+         dataZoom: options.dataZoom ?? [[m
+           {[m
+             type: "slider",[m
+[36m@@ -106,7 +111,10 @@[m [mexport default function BaseChart({ options, isLoading, theme }) {[m
+                 fontFamily: defaultFontFamily,[m
+                 color: textColor,[m
+             },[m
+[31m-            axisLine: { lineStyle: { color: axisColor } },[m
+[32m+[m[32m            axisLine: {[m[41m [m
+[32m+[m[32m              ...options.xAxis.axisLine,[m
+[32m+[m[32m              lineStyle: { color: axisColor }[m[41m [m
+[32m+[m[32m            },[m
+             }[m
+         : {},[m
+ [m
+[36m@@ -134,12 +142,6 @@[m [mexport default function BaseChart({ options, isLoading, theme }) {[m
+           ...options.tooltip,[m
+           trigger: "axis",[m
+         },[m
+[31m-  [m
+[31m-        grid: {[m
+[31m-          ...options.grid,[m
+[31m-          left: "7%",[m
+[31m-          right: "7%",[m
+[31m-        },[m
+ [m
+         toolbox: {[m
+           ...options.toolbox,[m
+[36m@@ -206,9 +208,11 @@[m [mexport default function BaseChart({ options, isLoading, theme }) {[m
+     return ([m
+       <div[m
+         className={`rounded-lg border transition-all ${[m
+[31m-          theme === "dark"[m
+[31m-            ? "bg-gray-850 border border-gray-700"[m
+[31m-            : "bg-gray-50 border border-gray-300"[m
+[32m+[m[32m          bordered[m
+[32m+[m[32m          ? theme === "dark"[m
+[32m+[m[32m            ? "border border-gray-700"[m
+[32m+[m[32m            : "border border-gray-300"[m
+[32m+[m[32m          : "border-none"[m
+         } h-full w-full`}[m
+       >[m
+         <div ref={chartRef} className="flex w-full h-full mt-3" />[m
+[1mdiff --git a/frontend/src/index.css b/frontend/src/index.css[m
+[1mindex 5386229..13fa86e 100644[m
+[1m--- a/frontend/src/index.css[m
+[1m+++ b/frontend/src/index.css[m
+[36m@@ -5,7 +5,6 @@[m [mbody {[m
+   @apply transition-all font-mono; /* Моноширный шрифт */[m
+ }[m
+ [m
+[31m-[m
+ body.light {[m
+   @apply bg-gray-100 text-gray-900;[m
+ }[m
+[1mdiff --git a/frontend/src/pages/Forecasting.jsx b/frontend/src/pages/Forecasting.jsx[m
+[1mindex b7ba0c0..73d4019 100644[m
+[1m--- a/frontend/src/pages/Forecasting.jsx[m
+[1m+++ b/frontend/src/pages/Forecasting.jsx[m
+[36m@@ -65,8 +65,18 @@[m [mexport default function Forecasting() {[m
+                 sit amet consectetur adipisicing elit. Labore maxime, soluta[m
+                 ratione hic libero vero ducimus illum voluptatem aut quos.[m
+               </p>[m
+[31m-              {/* <BaseChart options={options} /> */}[m
+               <ForecastTiles theme={theme} />[m
+[32m+[m
+[32m+[m[32m               {/* Добавленные параграфы о сервисе */}[m
+[32m+[m[32m               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">[m
+[32m+[m[32m                <p>[m
+[32m+[m[32m                  Мы уделяем особое внимание безопасности ваших данных. Все[m
+[32m+[m[32m                  файлы, загруженные в наш сервис, обрабатываются в[m
+[32m+[m[32m                  зашифрованном виде и хранятся на защищенных серверах. Мы не[m
+[32m+[m[32m                  передаем ваши данные третьим лицам и гарантируем их[m
+[32m+[m[32m                  конфиденциальность.[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m              </div>[m
+             </>[m
+           ) : ([m
+             <>[m
