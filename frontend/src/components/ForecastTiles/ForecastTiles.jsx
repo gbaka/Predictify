@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ForecastTile from "./ForecastTile";
-// import FullScreenForecast from "./FullScreenForecast";
+import FullscreenForecastTile from "./FullscreenForecastTile";
+
 
 
 export default function ForecastTiles({ theme }) {
@@ -54,9 +55,14 @@ export default function ForecastTiles({ theme }) {
         />
       ))}
 
-      {/* {selectedForecast && (
-        <FullScreenForecast data={selectedForecast} onClose={closeFullScreen} />
-      )} */}
+      {selectedForecast && (
+        <FullscreenForecastTile
+          data={selectedForecast}
+          onClose={closeFullScreen}
+          theme={theme}
+        />
+      )}
+
     </div>
   );
 }

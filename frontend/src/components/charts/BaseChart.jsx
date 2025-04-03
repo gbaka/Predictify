@@ -215,7 +215,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
           : "border-none"
         } h-full w-full`}
       >
-        <div ref={chartRef} className="flex w-full h-full mt-3" />
+        <div ref={chartRef} className="flex w-full h-full mt-3 pb-2" />
       </div>
     );
   }

@@ -1,6 +1,5 @@
-import * as echarts from "echarts";
-import { useRef, useEffect } from "react";
 import BaseChart from "../charts/BaseChart";
+
 
 export default function ForecastTile({ data, onClick, isLoading, theme }) {
   const isDarkMode = theme == "dark"
@@ -94,9 +93,16 @@ export default function ForecastTile({ data, onClick, isLoading, theme }) {
           </h3>
           
           <div className="flex items-center ml-auto">
-            <span className={`relative w-2.5 h-2.5 rounded-full animate-pulse ${
-              isLoading ? "bg-yellow-500" : "bg-green-500"
-            }`}></span>
+            <span className={`relative flex h-3 w-3 mr-0.5 ${
+              isLoading ? "text-yellow-500" : "text-green-500"
+            }`}>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                isLoading ? "bg-yellow-400" : "bg-green-400"
+              }`}></span>
+              <span className={`relative inline-flex rounded-full h-3 w-3 ${
+                isLoading ? "bg-yellow-500" : "bg-green-500"
+              }`}></span>
+            </span>
             <span className={`ml-1 text-sm ${
               isDarkMode ? "text-gray-300" : "text-gray-600"
             }`}>

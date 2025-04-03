@@ -1,4 +1,3 @@
-import * as echarts from "echarts";
 import Split from "react-split";
 import axios from "axios"
 
@@ -68,7 +67,7 @@ function ModelSelector({ onChange, theme }) {
 
   return (
     <div
-      className={`min-w-[530px]
+      className={`min-w-[475px]
         ${isOpen ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при активном состоянии
         ${isHovered ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при наведении
         relative w-full p-1 outline  ${theme==='dark' ? "outline-gray-600" : "outline-gray-300"} rounded-lg z-20 cursor-pointer mb-3
@@ -353,8 +352,8 @@ export default function ForecastingPanel({ theme }) {
   const advancedSettingsRef = useRef({ ...ADVANCED_SETTINGS_DEFAULTS });
   const uploadedDataRef = useRef(null);
   const dataSummaryRef = useRef("");
-  const verticalSizesRef = useRef([80, 20]);
-  const horizontalSizesRef = useRef([15, 70, 15]);
+  // const verticalSizesRef = useRef([80, 20]);
+  // const horizontalSizesRef = useRef([15, 70, 15]);
 
   const [selectedModel, setSelectedModel] = useState(null); 
   const [isFullScreen, setIsFullScreen] = useState(true);
@@ -439,7 +438,7 @@ export default function ForecastingPanel({ theme }) {
   const hasData = chartData.endog.length > 0; 
   const averagePrediction = calculateAverage(chartData.prediction);
   const averageEndog = calculateAverage(chartData.endog)
-  const options = {
+  const chartOptions = {
     legend: {
       show: advancedSettingsRef.current.graphSettings.showLegend,
     },
@@ -589,7 +588,7 @@ export default function ForecastingPanel({ theme }) {
 
   const createGutter = (direction) => {
     const gutter = document.createElement("div");
-    gutter.className = `gutter gutter-${direction}`;
+    gutter.className = `gutter gutter-${direction}  ${direction==="vertical" ? "min-w-[575px]" : ""}`;
     gutter.style.backgroundColor = "var(--gutter-bg)";
     gutter.style.borderRadius = "var(--gutter-border-radius)";
     gutter.style.transition = "var(--gutter-transition)";
@@ -639,20 +638,20 @@ export default function ForecastingPanel({ theme }) {
         <Split
           className="flex-grow flex flex-col w-full"
           direction="vertical"
-          sizes={verticalSizesRef.current}
+          sizes={[80, 20]}
           minSize={[250, 80]}
           gutterSize={7}
           snapOffset={0}
-          onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
+          // onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
             className="flex w-full mb-2 "
-            sizes={horizontalSizesRef.current}
+            sizes={[15, 70, 15]}
             minSize={[200, 300, 210]}
             gutterSize={7}
             snapOffset={0}
-            onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
+            // onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">
@@ -665,7 +664,7 @@ export default function ForecastingPanel({ theme }) {
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
-              <BaseChart options={options} isLoading={isLoading} theme={theme} bordered={true} />
+              <BaseChart options={chartOptions} isLoading={isLoading} theme={theme} bordered={true} />
             </div>
 
             <div className="h-full ml-1 min-w-[130px]">
@@ -673,7 +672,7 @@ export default function ForecastingPanel({ theme }) {
             </div>
           </Split>
 
-          <div className="w-full h-full mt-2 min-w-[560px]">
+          <div className="w-full h-full mt-2 min-w-[575px]">
             <DataSummary summary={dataSummaryRef.current} theme={theme} />
           </div>
         </Split>

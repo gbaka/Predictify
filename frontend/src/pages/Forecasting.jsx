@@ -1,25 +1,11 @@
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
-import BaseChart from "../components/charts/BaseChart";
 import ForecastPanel from "../components/ForecastPanel";
 import ForecastTiles from "../components/ForecastTiles/ForecastTiles";
 
 export default function Forecasting() {
     const [activeTab, setActiveTab] = useState("parsedData");
     const { theme } = useTheme();
-
-    const options = {
-        title: { text: "Простой график №1" },
-        tooltip: { trigger: "axis" },
-        xAxis: { type: "category", data: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] },
-        yAxis: { type: "value" },
-        series: [
-            { name: "Значения 1", type: "line", data: [120, 200, 150, 190, 70, 110, 130], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#42A5F5" } },
-            { name: "Значения 2", type: "line", data: [120, 20, 160, 80, 60, 110, 130], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#4245F5" } },
-            { name: "Значения 3", type: "line", data: [120, 20, 1, 140, 10, 110, 190], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#2245F5" } },
-            { name: "Значения 4", type: "line", data: [110, 20, 1, 10, 60, 110, 190], smooth: true, lineStyle: { width: 2 }, itemStyle: { color: "#AA45F5" } }
-        ]
-    };
 
     return (
       <div className="w-full">
