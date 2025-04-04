@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+
 import { ARIMA_DEFAULTS, SARIMA_DEFAULTS } from "./defaultModelSettings";
 
 
-export function ARIMASettings({ onChange }) {
-    const { theme } = useTheme();
+export function ARIMASettings({ onChange, theme }) {
     const [settings, setSettings] = useState({ ...ARIMA_DEFAULTS });
+
+    const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
         let { value, type } = e.target;
@@ -47,7 +48,7 @@ export function ARIMASettings({ onChange }) {
                     max={30}
                     onChange={(e) => handleInputChange(e, "steps")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
-                        theme === "dark" ? "border-gray-600" : "border-gray-400"
+                        isDarkMode ? "border-gray-600" : "border-gray-400"
                     }`}
                 />
             </div>
@@ -62,7 +63,7 @@ export function ARIMASettings({ onChange }) {
                         value={settings[param]}
                         onChange={(e) => handleInputChange(e, param)}
                         className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
-                            theme === "dark" ? "border-gray-600" : "border-gray-400"
+                            isDarkMode ? "border-gray-600" : "border-gray-400"
                         }`}
                     />
                 </div>
@@ -75,7 +76,7 @@ export function ARIMASettings({ onChange }) {
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
                     className={`border rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 ${
-                        theme === "dark" ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
+                        isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
                     <option value="n">Нет тренда</option>
@@ -109,9 +110,10 @@ export function ARIMASettings({ onChange }) {
     );
 }
 
-export function SARIMASettings({ onChange }) {
+export function SARIMASettings({ onChange, theme }) {
     const settingsRef = useRef({ ...SARIMA_DEFAULTS });
-    const { theme } = useTheme();
+
+    const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
         let value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
@@ -137,7 +139,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.p}
                     onChange={(e) => handleInputChange(e, "p")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>
@@ -149,7 +151,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.d}
                     onChange={(e) => handleInputChange(e, "d")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>
@@ -161,7 +163,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.q}
                     onChange={(e) => handleInputChange(e, "q")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>

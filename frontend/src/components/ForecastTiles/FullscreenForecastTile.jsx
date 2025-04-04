@@ -78,31 +78,26 @@ function ParserInfoPanel({ parserInfo, theme }) {
       <h3 className="font-semibold mb-4">Информация о парсере</h3>
       
       <div className="space-y-4">
-        {/* Статус */}
         <StatusIndicator status="online" label="Статус:" theme={theme} />
 
-        {/* Источник данных */}
         <InfoRow 
           label="Источник:" 
           value={parserInfo.source} 
           theme={theme} 
         />
 
-        {/* Последнее обновление */}
         <InfoRow 
           label="Последнее обновление:" 
           value={parserInfo.lastUpdate} 
           theme={theme} 
         />
 
-        {/* Интервал обновления */}
         <InfoRow 
           label="Интервал обновления:" 
           value={parserInfo.updateInterval} 
           theme={theme} 
         />
 
-        {/* Следующее обновление */}
         <InfoRow 
           label="Следующее обновление:" 
           value={parserInfo.nextUpdate} 

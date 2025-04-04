@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
+
 export default function Home() {
   const [data, setData] = useState(null);
   const [param, setParam] = useState("");

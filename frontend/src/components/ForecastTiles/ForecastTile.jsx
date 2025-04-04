@@ -1,7 +1,7 @@
 import BaseChart from "../charts/BaseChart";
 
 
-export default function ForecastTile({ data, onClick, isLoading, theme }) {
+export default function ForecastTile({ data, onClick, isLoading, isClickable, theme }) {
   const isDarkMode = theme == "dark"
   const visiblePoints = 9; 
   const startPercentage = data.x.length > visiblePoints 
@@ -77,12 +77,9 @@ export default function ForecastTile({ data, onClick, isLoading, theme }) {
 
   return (
     <div
-      className={`rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all mx-1 h-[300px] relative ${
-        isDarkMode 
-          ? "bg-gray-850 border-gray-700 shadow-md border" 
-          : "bg-gray-50 border-gray-300 shadow-md border "
-      }`}
-      onClick={onClick}
+      className={`rounded-xl p-4 transition-all mx-1 h-[300px] relative ${isClickable ? "cursor-pointer hover:scale-[1.01]" : ""} 
+        ${isDarkMode ? "bg-gray-850 border-gray-700 shadow-md border" : "bg-gray-50 border-gray-300 shadow-md border "}`}
+      onClick={isClickable ? onClick : undefined}
     >
       <div className="flex flex-col h-full">
         <div className="relative flex justify-between items-center pb-2">

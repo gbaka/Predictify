@@ -1,5 +1,3 @@
-// src/pages/Privacy.jsx
-
 export default function Privacy() {
     return (
       <div className="container mx-auto p-6 px-8">

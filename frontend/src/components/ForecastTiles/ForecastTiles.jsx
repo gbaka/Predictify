@@ -3,11 +3,9 @@ import ForecastTile from "./ForecastTile";
 import FullscreenForecastTile from "./FullscreenForecastTile";
 
 
-
 export default function ForecastTiles({ theme }) {
   const [selectedForecast, setSelectedForecast] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
 
   const [forecasts, setForecasts] = useState([
     { title: "Загрузка...", x: [], y: [] },
@@ -36,7 +34,9 @@ export default function ForecastTiles({ theme }) {
   }, []);
 
   const handleTileClick = (forecast) => {
-    setSelectedForecast(forecast);
+    if (!isLoading) {
+      setSelectedForecast(forecast);
+    }
   };
 
   const closeFullScreen = () => {
@@ -51,7 +51,8 @@ export default function ForecastTiles({ theme }) {
           data={forecast}
           onClick={() => handleTileClick(forecast)}
           isLoading={isLoading}
-          theme={theme}
+          isClickable={!isLoading} 
+          theme={theme} 
         />
       ))}
 
@@ -62,7 +63,6 @@ export default function ForecastTiles({ theme }) {
           theme={theme}
         />
       )}
-
     </div>
   );
 }

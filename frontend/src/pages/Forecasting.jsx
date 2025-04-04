@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
-import ForecastPanel from "../components/ForecastPanel";
+import ForecastPanel from "../components/ForecastPanel/ForecastPanel";
 import ForecastTiles from "../components/ForecastTiles/ForecastTiles";
 
 export default function Forecasting() {

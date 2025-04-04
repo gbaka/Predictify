@@ -1,5 +1,3 @@
-// src/pages/Help.jsx
-
 export default function Help() {
     return (
       <div className="container mx-auto p-6 px-8">

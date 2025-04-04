@@ -1,12 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
 import Wiki from "./pages/Wiki";
 import Home from "./pages/Home";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Help from "./pages/Help";
 import Forecast from "./pages/Forecasting";
-import Footer from "./components/Footer";
+
 
 function App() {
   return (

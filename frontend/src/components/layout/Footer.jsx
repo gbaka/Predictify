@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Sun, Moon, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 import { useState, useEffect } from "react";
-// import classNames from "classnames";
+
 
 export default function Footer() {
   const { t, i18n } = useTranslation();

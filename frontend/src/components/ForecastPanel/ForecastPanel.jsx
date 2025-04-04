@@ -8,8 +8,8 @@ import { placeholderDates, placeholderValues } from './exampleChartPlaceholderDa
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
-import ErrorModal from "./ErrorModal"
-import BaseChart from "./charts/BaseChart";
+import ErrorModal from "../modals/ErrorModal"
+import BaseChart from "../charts/BaseChart";
 
 
 const calculateAverage = (data) => {
@@ -258,9 +258,9 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
   const renderSettings = () => {
     switch (selectedModel) {
       case "ARIMA":
-        return <ARIMASettings onChange={onChange} />;
+        return <ARIMASettings onChange={onChange} theme={theme}/>;
       case "SARIMA":
-        return <SARIMASettings onChange={onChange}/>;
+        return <SARIMASettings onChange={onChange} theme={theme}/>;
       default:
         return <div className="text-center text-gray-500">Модель не выбрана</div>;
     }
