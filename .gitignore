@@ -3,6 +3,7 @@
 
 # Backend
 backend/*/__pycache__
+backend/__pycache__
 backend/venv
 
 # Data Processing
