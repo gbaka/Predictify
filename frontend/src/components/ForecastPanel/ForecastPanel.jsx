@@ -388,6 +388,12 @@ export default function ForecastingPanel({ theme }) {
   };
 
   const handleStartForecast = async () => {
+    if (isLoading) {
+      setErrorMessage("Дождитесь результатов прогнозирования.");
+      setIsErrorModalOpen(true);
+      return
+    }
+    
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
       setErrorMessage("Пожалуйста, заполните все поля.");
       setIsErrorModalOpen(true);
