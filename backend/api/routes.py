@@ -14,9 +14,9 @@ from json import loads
 import traceback
 import asyncio
 
-from fastapi import FastAPI, APIRouter, File, Form, UploadFile, HTTPException, Request
+from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Request
 
-from forecasting import forecast
+from services.forecasting import forecast
 from converters import convert_to_dict
 
 
