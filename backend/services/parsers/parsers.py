@@ -3,89 +3,69 @@ import httpx
 from datetime import datetime, timedelta
 from typing import Dict, Any
 import asyncio
+from abc import ABC, abstractmethod
+import json
 
 
-class BaseParser:
+class BaseParser(ABC):
     """Базовый класс для всех парсеров"""
-    SOURCE_NAME = "base"
-    UPDATE_INTERVAL = 60 * 30  # 30 минут по умолчанию
+    URL = None
 
-    async def fetch(self) -> Dict[str, Any]:
-        """Основной метод для получения данных"""
-        raise NotImplementedError
-
+    async def fetch(self, params: Dict) -> Dict:
+        async with httpx.AsyncClient() as client:     
+            response = await client.get(
+                self.URL,
+                params=params
+            )
+            return self.parse(response.json())
+        
+    @abstractmethod
     def parse(self, raw_data: Dict) -> Dict:
         """Преобразование сырых данных в единый формат"""
-        return raw_data
+        raise NotImplementedError
 
 
 class OpenMeteoParser(BaseParser):
     """Парсер погодных данных с Open-Meteo"""
-    SOURCE_NAME = "openmeteo"
-    UPDATE_INTERVAL = 60 * 10  # 10 минут
-
-    async def fetch(self) -> Dict:
-        end_date = datetime.now().date() - timedelta(days=2)
-        start_date = end_date - timedelta(days=3) 
-        async with httpx.AsyncClient() as client:
-            
-            response = await client.get(
-                "https://archive-api.open-meteo.com/v1/archive",
-                params={
-                    "latitude": 55.77159,  # Москва  55.771596, 37.692222
-                    "longitude": 37.692222,
-                    "start_date": start_date.isoformat(),
-                    "end_date": end_date.isoformat(),
-                    "hourly": "temperature_2m"
-                }
-            )
-            return self.parse(response.json())
+    # SOURCE_NAME = "openmeteo"
+    URL = "https://archive-api.open-meteo.com/v1/archive"
 
     def parse(self, raw_data: Dict) -> Dict:
+        freq = next((f for f in ['hourly', 'daily', 'current'] if f in raw_data), None) 
+        if not freq: 
+            raise ValueError("Response doesn't contain any known time frequency (hourly/daily/current) or your request is in incorrect format.")
+        param_name = next((p for p in raw_data[freq] if p != "time"), None)
+        if not param_name: 
+            raise ValueError(f"No weather parameters found in {freq} data or your request is in incorrect format.")
+        
+        print(freq, param_name)
         return {
-            "source": self.SOURCE_NAME,
-            "timestamp": datetime.now().isoformat(),
-            "data": {
-                "temperatures": raw_data["hourly"]["temperature_2m"],
-                "timestamps": raw_data["hourly"]["time"]
-            }
+            "endog": raw_data[freq][param_name],
+            "dates": raw_data[freq]["time"],
         }
-
-# class AlphaVantageParser(BaseParser):
-#     """Парсер акций с Alpha Vantage"""
-#     SOURCE_NAME = "alphavantage"
-#     API_KEY = "YOUR_KEY"  # вынести в конфиг
-
-#     async def fetch(self) -> Dict:
-#         async with httpx.AsyncClient() as client:
-#             response = await client.get(
-#                 "https://www.alphavantage.co/query",
-#                 params={
-#                     "function": "TIME_SERIES_DAILY",
-#                     "symbol": "IBM",
-#                     "apikey": self.API_KEY
-#                 }
-#             )
-#             return self.parse(response.json())
-
-#     def parse(self, raw_data: Dict) -> Dict:
-#         return {
-#             "source": self.SOURCE_NAME,
-#             "timestamp": datetime.now().isoformat(),
-#             "data": {
-#                 "prices": raw_data["Time Series (Daily)"],
-#                 "metadata": raw_data["Meta Data"]
-#             }
-#         }
-
-# # Готовые экземпляры парсеров для удобства
-# PARSERS = {
-#     "weather": OpenMeteoParser(),
-#     "stocks": AlphaVantageParser()
-# }
+    
+        # return {
+        #     # "source": self.SOURCE_NAME,
+        #     "timestamp": datetime.now().isoformat(),
+        #     "data": {
+        #         "endog": raw_data["hourly"]["temperature_2m"],
+        #         "dates": raw_data["hourly"]["time"]
+        #     }
+        # }
 
 
 if __name__ == "__main__":
+
+    end_date = datetime.now().date() - timedelta(days=2)
+    start_date = end_date - timedelta(days=3)
+    myd = {
+        "latitude": 55.77159,  # Москва  55.771596, 37.692222
+        "longitude": 37.692222,
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "daily": "temperature_2m_min",
+    }
     parser = OpenMeteoParser()
-    res = asyncio.run(parser.fetch())
+    res = asyncio.run(parser.fetch(myd))
+    print(parser.fetch(myd))
     print(res)

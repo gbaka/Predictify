@@ -1,7 +1,9 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Dict
+import re
 
-def extend_dates(data: dict, steps: int) -> List:
+
+def extend_dates(data: Dict, steps: int) -> List:
     """
     Расширяет список дат на заданное количество шагов вперёд.
 
@@ -23,3 +25,44 @@ def extend_dates(data: dict, steps: int) -> List:
         return dates + new_dates
     else:
         return list(range(len(data["endog"]) + steps))
+    
+
+def is_camel_case(s: str) -> bool:
+    """
+    Проверяет, является ли строка написанной в стиле camelCase.
+
+    Строка считается camelCase, если:
+    - Первый символ в нижнем регистре
+    - Нет подчёркиваний
+    - Содержит хотя бы одну заглавную букву внутри слова
+
+    Параметры:
+        s (str): Строка для проверки.
+
+    Возвращает:
+        bool: True если строка в camelCase, иначе False.
+    """
+    if not s or '_' in s or s[0].isupper():
+        return False
+    return any(c.isupper() for c in s[1:])
+
+
+def camel_to_snake(s: str) -> str:
+    """
+    Транслирует строку из camelCase в snake_case.
+
+    Преобразует заглавные буквы в нижний регистр и добавляет перед ними подчёркивание.
+    Первая буква всегда остаётся в нижнем регистре.
+
+    Параметры:
+        s (str): Строка в camelCase для преобразования.
+
+    Возвращает:
+        str: Строка в snake_case.
+    """
+    if not is_camel_case(s):
+        return s
+
+    snake_str = re.sub('([A-Z])', r'_\1', s).lower()
+    
+    return snake_str.lstrip('_')

@@ -9,7 +9,7 @@
 
 
 from .models import ARIMAModel
-from .utils import extend_dates
+from .utils import extend_dates, is_camel_case, camel_to_snake
 
 def forecast(data: dict, model_type: str, settings: dict):
     """
@@ -28,11 +28,15 @@ def forecast(data: dict, model_type: str, settings: dict):
     """
     print('----------------\n',data, model_type, settings, sep="\n-----------\n")
 
+    # Кол-во шагов прогноза
     steps = settings.pop('steps')
+
+    # Преобразуем ключи словаря настроек settings из camelCase в snake_case
+    for param in settings.copy().keys():
+        if is_camel_case(param):
+            settings[camel_to_snake(param)] = settings.pop(param)
+
     if model_type == "ARIMA":
-        settings["enforce_stationarity"] = settings.pop("enforceStationarity")
-        settings["enforce_invertibility"] = settings.pop("enforceInvertibility")
- 
         model = ARIMAModel(**settings)
         summary = model.fit(data).summary().as_text()
         prediction = model.predict(steps).tolist()
