@@ -14,18 +14,23 @@ export function ARIMASettings({ onChange, theme }) {
         if (type === "checkbox") {
             value = e.target.checked;
         } else if (type === "number") {
-            value = value.replace(/\D/g, ""); // Убираем нечисловые символы
-            value = value ? Number(value) : ""; // Преобразуем только если не пусто
-
             if (key === "steps") {
+                value = value.replace(/\D/g, ""); 
+                value = value ? Number(value) : "";
                 value = Math.max(1, Math.min(30, value || 1)); // Ограничение для steps
             }
-            console.log(value)
+            if (key === "significanceLevel") {
+                value = value.replace(/[^\d.]/g, "");
+                value = value.replace(/^(\d*\.?)|(\d*)\.?/g, "$1$2");
+                value = value ? parseFloat(value) : "";
+                value = Math.max(0.01, Math.min(0.99, value || 0.05));
+            }
             if (['p', 'q', 'd'].includes(key)) {
-                console.log('asfsafsd')
+                value = value.replace(/\D/g, ""); 
+                value = value ? Number(value) : "";
                 value = Math.max(0, value || 0)
             }
-        }
+        } 
 
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
@@ -68,6 +73,22 @@ export function ARIMASettings({ onChange, theme }) {
                     />
                 </div>
             ))}
+
+            {/* Уровень значимости */}
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <input
+                    type="number"
+                    step={0.01}
+                    min={0.01}
+                    max={0.99}
+                    value={settings.significanceLevel}
+                    onChange={(e) => handleInputChange(e, "significanceLevel")}
+                    className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode ? "border-gray-600" : "border-gray-400"
+                    }`}
+                />
+            </div>
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">

@@ -16,6 +16,9 @@ certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
+    #   requests
+charset-normalizer==3.4.1
+    # via requests
 click==8.1.8
     # via
     #   pip-tools
@@ -36,6 +39,7 @@ idna==3.10
     # via
     #   anyio
     #   httpx
+    #   requests
 numpy==2.2.3
     # via
     #   pandas
@@ -66,6 +70,10 @@ python-multipart==0.0.20
     # via -r requirements.in
 pytz==2025.1
     # via pandas
+pyyaml==6.0.2
+    # via -r requirements.in
+requests==2.32.3
+    # via -r requirements.in
 scipy==1.15.2
     # via statsmodels
 six==1.17.0
@@ -87,6 +95,8 @@ typing-extensions==4.12.2
     #   sqlalchemy
 tzdata==2025.1
     # via pandas
+urllib3==2.3.0
+    # via requests
 uvicorn==0.34.0
     # via -r requirements.in
 wheel==0.45.1

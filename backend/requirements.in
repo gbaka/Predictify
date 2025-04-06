@@ -5,3 +5,5 @@ statsmodels
 pip-tools
 python-multipart
 httpx
+requests
+PyYAML

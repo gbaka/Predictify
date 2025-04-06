@@ -48,7 +48,7 @@ class ARIMAModel:
         self.model = self.model.fit()
         return self.model
 
-    def predict(self, steps: int):
+    def forecast(self, steps: int):
         """
         Прогнозирование значений на заданное количество шагов вперёд.
 
@@ -59,3 +59,18 @@ class ARIMAModel:
             List[float]: Список прогнозируемых значений.
         """
         return self.model.forecast(steps=steps)
+    
+    def detailed_forecast(self, steps: int): 
+        """
+        Прогнозирование значений на заданное количество шагов вперёд, 
+        а также доверительных интервалов и метрик точности.
+
+        Параметры:
+            steps (int): Количество шагов для прогноза.
+
+        Возвращаемое значение:
+            PredictionResults: Результаты прогнозирования.
+        """
+        return self.model.get_forecast(steps=steps)
+    
+    

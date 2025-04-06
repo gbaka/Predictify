@@ -3,13 +3,27 @@ from api.routes import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from concurrent.futures import ProcessPoolExecutor
+import asyncio
+import os
+
+from services.scheduler import Scheduler
+from services.config_loader import ConfigLoader
 
 
-# Создание пула процессов для построения прогнозов на основе пользовательских данных
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.forecasting_process_pool = ProcessPoolExecutor()
+    app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
+    app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
+
+    config_loader = ConfigLoader("./services/scheduler_config.yml")
+    tasks_config = config_loader.tasks
+    scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
+    print("Starting a scheduler")
+    asyncio.create_task(scheduler.start())
+
     yield
+
+    await scheduler.stop()
     app.state.forecasting_process_pool.shutdown(wait=True)
 
 

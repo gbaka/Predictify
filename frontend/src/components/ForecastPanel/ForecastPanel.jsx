@@ -426,7 +426,7 @@ export default function ForecastingPanel({ theme }) {
         prediction: formattedPrediction,
       });
 
-      // console.log("Forecasting results:", response.data);
+      console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals);
     } catch (error) {
       dataSummaryRef.current = ""
       console.error("Error sending request:", error);

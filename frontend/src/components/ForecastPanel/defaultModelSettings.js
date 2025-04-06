@@ -4,6 +4,7 @@ export const ARIMA_DEFAULTS = {
     d: 0,
     q: 0,
     trend: 'c',
+    significanceLevel: 0.05,
     enforceStationarity: true,
     enforceInvertibility: true,
 };

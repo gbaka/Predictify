@@ -1,10 +1,12 @@
-# services/parsers.py
 import httpx
 from datetime import datetime, timedelta
 from typing import Dict, Any
 import asyncio
 from abc import ABC, abstractmethod
 import json
+import requests
+
+from .utils import convert_to_datetime
 
 
 class BaseParser(ABC):
@@ -12,13 +14,25 @@ class BaseParser(ABC):
     URL = None
 
     async def fetch(self, params: Dict) -> Dict:
-        async with httpx.AsyncClient() as client:     
+        """Асинхронный метод получения данных"""
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(
                 self.URL,
                 params=params
             )
+            response.raise_for_status()
             return self.parse(response.json())
-        
+    
+    def fetch_sync(self, params: Dict) -> Dict:
+        """Синхронная версия для вызова в ProcessPoolExecutor"""
+        response = requests.get(
+            self.URL,
+            params=params,
+            timeout=30
+        )
+        response.raise_for_status()
+        return self.parse(response.json())
+    
     @abstractmethod
     def parse(self, raw_data: Dict) -> Dict:
         """Преобразование сырых данных в единый формат"""
@@ -38,34 +52,23 @@ class OpenMeteoParser(BaseParser):
         if not param_name: 
             raise ValueError(f"No weather parameters found in {freq} data or your request is in incorrect format.")
         
-        print(freq, param_name)
         return {
             "endog": raw_data[freq][param_name],
-            "dates": raw_data[freq]["time"],
+            "dates": convert_to_datetime(raw_data[freq]["time"]),
         }
-    
-        # return {
-        #     # "source": self.SOURCE_NAME,
-        #     "timestamp": datetime.now().isoformat(),
-        #     "data": {
-        #         "endog": raw_data["hourly"]["temperature_2m"],
-        #         "dates": raw_data["hourly"]["time"]
-        #     }
-        # }
 
 
+# Тестирование
 if __name__ == "__main__":
-
     end_date = datetime.now().date() - timedelta(days=2)
     start_date = end_date - timedelta(days=3)
     myd = {
-        "latitude": 55.77159,  # Москва  55.771596, 37.692222
+        "latitude": 55.77159, 
         "longitude": 37.692222,
         "start_date": start_date.isoformat(),
         "end_date": end_date.isoformat(),
         "daily": "temperature_2m_min",
     }
     parser = OpenMeteoParser()
-    res = asyncio.run(parser.fetch(myd))
-    print(parser.fetch(myd))
+    res = parser.fetch_sync(myd)
     print(res)

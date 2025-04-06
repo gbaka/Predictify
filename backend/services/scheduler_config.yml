@@ -1,0 +1,49 @@
+tasks:
+  - name: "weather_forecast"
+    parser:
+      type: "OpenMeteo"
+      params:
+        latitude: 55.7558
+        longitude: 37.6176
+        hourly: "temperature_2m"
+        start_date: !py3 "(datetime.now() - timedelta(days=4)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+    model:
+      type: "ARIMA"
+      params:
+        p: 1
+        d: 0
+        q: 0 
+        steps: 20
+        trend: "c"
+        significance_level: 0.05
+        enforce_stationarity: true
+        enforce_invertibility: true
+    schedule:
+      pooling_interval: 30  # в секундах
+      retry_cooldown: 300
+
+  # - name: "test"
+  #   parser: 
+  #     type: "test.com"
+  #   model:
+  #     type: "sarime"
+  #     params:
+  #       order: 54
+  #       steps: 228
+  #       schedule:
+  #   schedule:
+  #     pooling_inverval: 3600  # в секундах
+  #     retry_cooldown: 300
+
+  # - name: "SuperTask"
+  #   parser: 
+  #     type: "None"
+
+  # - name: "SuperTask 2"
+  #   parser: 
+  #     type: "None"
+
+  # - name: "SuperTask 3"
+  #   parser: 
+  #     type: "None"

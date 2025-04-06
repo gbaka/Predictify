@@ -35,15 +35,15 @@ async def test(
     file_settings_dict = loads(fileSettings)
     model_settings_dict = loads(modelSettings)
 
-    print(f"File settings: {file_settings_dict}")
-    print(f"Selected model: {selectedModel}")
-    print(f"Model settings: {model_settings_dict}")
-    print(f"File filename: {uploadedData.filename}")
-    print(f"file:", type(uploadedData))
+    # print(f"File settings: {file_settings_dict}")
+    # print(f"Selected model: {selectedModel}")
+    # print(f"Model settings: {model_settings_dict}")
+    # print(f"File filename: {uploadedData.filename}")
+    # print(f"file:", type(uploadedData))
 
     try:
         file_data_dict = convert_to_dict(file=uploadedData, settings=file_settings_dict)
-        print(f"File converted to dict:", file_data_dict)
+        # print(f"File converted to dict:", file_data_dict)
     except Exception as e:
         raise HTTPException(
             status_code=400,
@@ -69,5 +69,5 @@ async def test(
             status_code=400,
             detail=f"Error creating forecast: {str(e)}"
         )
-        
+    # print(result)
     return result
