@@ -299,7 +299,7 @@ function DataSummary({ summary, theme }) {
 
   return (
     <div
-      className={`relative ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}
+      className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} relative p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}
     >
       {/* Иконка копирования в правом верхнем углу */}
       <button
@@ -578,6 +578,7 @@ export default function ForecastingPanel({ theme }) {
               showInLegend: false,  
               animationDuration: 800,
               animationEasing: "exponentialOut",
+              smooth: advancedSettingsRef.current.graphSettings.isSmooth,
               data: [
                 ...Array(chartData.endog.length - 1).fill(null), 
                 chartData.endog[chartData.endog.length - 1], 
@@ -600,6 +601,7 @@ export default function ForecastingPanel({ theme }) {
               tooltip: { show: false },
               animationDuration: 800,
               animationEasing: "exponentialOut",
+              smooth: advancedSettingsRef.current.graphSettings.isSmooth,
               data: [
                 ...Array(chartData.endog.length - 1).fill(null), 
                 0, 
