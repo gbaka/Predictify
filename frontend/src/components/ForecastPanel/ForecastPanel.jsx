@@ -1,8 +1,9 @@
 import Split from "react-split";
 import axios from "axios"
 
-import { FileText, Sheet, X, Maximize2, Minimize2, Play, Settings } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { FileText, Sheet, X, Maximize2, Minimize2, Play, 
+         Settings, ClipboardCopy, Check } from "lucide-react";
 
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
@@ -279,9 +280,44 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
 
 
 function DataSummary({ summary, theme }) {
-  const isDarkMode = theme === "dark"
+  const isDarkMode = theme === "dark";
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (summary) {
+      navigator.clipboard.writeText(summary);
+
+      setCopied(true);
+
+      // Скрыть галочку через 2 секунды
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+  };
+
   return (
-    <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}>
+    <div
+      className={`relative ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}
+    >
+      {/* Иконка копирования в правом верхнем углу */}
+      <button
+        onClick={handleCopy}
+        title="Скопировать"
+        className={`absolute top-2.5 right-2.5 transition ${
+          isDarkMode
+            ? '[color:rgb(72,86,108)] hover:[color:rgb(115,134,161)]'
+            : '[color:rgb(150,150,150)] hover:[color:rgb(111,111,111)]'
+        }`}
+      >
+        {copied ? (
+          <Check size={20} strokeWidth={1.3} />
+        ) : (
+          <ClipboardCopy size={20} strokeWidth={1.3} />
+        )}
+      </button>
+
       <div style={{ height: 0, color: 'rgba(0, 0, 0, 0)' }}><br /></div>
       <h3 className="font-bold">Сводка данных:</h3>
       <pre className={`text-center whitespace-pre-wrap text-xs ${!summary ? 'text-gray-500' : ''}`}>
@@ -655,13 +691,6 @@ export default function ForecastingPanel({ theme }) {
         show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
       }
      },
-     tooltip: {
-        backgroundColor: `${isDarkMode ? "rgba(23,33,49,0.8)" : "rgba(249,250,251,0.8)"}`,
-        borderColor: `${isDarkMode ? "#4B5563" : "#D1D5DB"}`,
-        textStyle: {
-          color: `${isDarkMode ? "#F9FAFB" : "#3F3F46"}`
-        },
-      },  
     series: allSeries
   };
 

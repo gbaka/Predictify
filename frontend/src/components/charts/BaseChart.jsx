@@ -141,6 +141,11 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
         tooltip: {
           ...options.tooltip,
           trigger: "axis",
+          backgroundColor: `${isDarkMode ? "rgba(23,33,49,0.8)" : "rgba(249,250,251,0.8)"}`,
+          borderColor: `${isDarkMode ? "#4B5563" : "#D1D5DB"}`,
+          textStyle: {
+            color: `${isDarkMode ? "#F9FAFB" : "#3F3F46"}`
+          },   
         },
 
         toolbox: {
@@ -150,7 +155,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
               show: true,
               title: "Сохранить как PNG",
               iconStyle: {
-                borderColor: `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`, 
+                borderColor: `${isDarkMode ? "rgb(72, 86, 108)" : "rgb(150, 150, 150)"}`, 
               },
               emphasis: {
                 iconStyle: {
@@ -162,7 +167,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
               show: true,
               title: "Сбросить масштаб",
               iconStyle: {
-                borderColor:  `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`,    
+                borderColor:  `${isDarkMode ? "rgb(72, 86, 108)" : "rgb(150, 150, 150)"}`,    
               },
               emphasis: {
                 iconStyle: {
