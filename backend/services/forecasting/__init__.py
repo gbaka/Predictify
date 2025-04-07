@@ -46,14 +46,9 @@ def forecast(data: Dict, model_type: str, settings: Dict):
 
         prediction_result = model.detailed_forecast(steps)
         prediction_vals = prediction_result.predicted_mean.tolist()
-        prediction_conf_ints = prediction_result.conf_int(significance_level).tolist()
+        prediction_conf_ints = prediction_result.conf_int(alpha=significance_level).tolist()
 
         full_dates = extend_dates(data, steps)
-
-        # res = model.detailed_forecast(steps)
-        # print("Forecast:\n", prediction)
-        # print("Detailed forecast:\n", res.predicted_mean.tolist())
-        # print(res.conf_int(0.05).tolist())
         
         return {
             "summary" : summary,

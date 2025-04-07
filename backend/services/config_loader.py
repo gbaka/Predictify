@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Dict, Any
 
+
 class ConfigLoader:
     def __init__(self, config_path: str):
         """

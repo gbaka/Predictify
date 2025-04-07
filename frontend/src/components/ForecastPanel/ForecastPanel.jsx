@@ -345,15 +345,12 @@ function StartButton({ onClick, theme }) {
 
 
 export default function ForecastingPanel({ theme }) {
-  // const { theme } = useTheme();
   const isDarkMode = theme === "dark";
 
   const modelSettingsRef = useRef(null);
   const advancedSettingsRef = useRef({ ...ADVANCED_SETTINGS_DEFAULTS });
   const uploadedDataRef = useRef(null);
   const dataSummaryRef = useRef("");
-  // const verticalSizesRef = useRef([80, 20]);
-  // const horizontalSizesRef = useRef([15, 70, 15]);
 
   const [selectedModel, setSelectedModel] = useState(null); 
   const [isFullScreen, setIsFullScreen] = useState(true);
@@ -365,6 +362,7 @@ export default function ForecastingPanel({ theme }) {
     full_dates: [],
     endog: [],
     prediction: [],
+    confidence_intervals: null
   });
 
   const handleModelSettingsChange = (settings) => {
@@ -408,7 +406,6 @@ export default function ForecastingPanel({ theme }) {
     
     setIsLoading(true); 
     dataSummaryRef.current = "Загрузка...";
-    console.log(isLoading)
 
     try {
       const response = await axios.post("http://localhost:8000/api/test", formData, {
@@ -424,9 +421,10 @@ export default function ForecastingPanel({ theme }) {
         full_dates: response.data.full_dates,
         endog: response.data.endog,
         prediction: formattedPrediction,
+        confidenceIntervals: response.data.confidence_intervals
       });
 
-      console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals);
+      // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals);
     } catch (error) {
       dataSummaryRef.current = ""
       console.error("Error sending request:", error);
@@ -444,36 +442,130 @@ export default function ForecastingPanel({ theme }) {
   const hasData = chartData.endog.length > 0; 
   const averagePrediction = calculateAverage(chartData.prediction);
   const averageEndog = calculateAverage(chartData.endog)
-  const chartOptions = {
-    legend: {
-      show: advancedSettingsRef.current.graphSettings.showLegend,
-    },
-    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
-    xAxis: {
-      type: "category",
-      data: hasData ? chartData.full_dates : placeholderDates,
-      splitLine: {
-        show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
-      }
-    },
-    yAxis: { 
-      type: "value",
-      splitLine: {
-        show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
-      }
-     },
-    
-    series: hasData
-      ? [
-          {
-            name: "",
-            type: "line",
-            data: [...chartData.endog, ...chartData.prediction.slice(chartData.endog.length + 1),],
-            lineStyle: { opacity: 0 },
-            itemStyle: { opacity: 0 },
-            emphasis: { focus: "none" },
-            tooltip: { show: false },
-          },
+  const allSeries = hasData
+    ? [
+        // Базовый невидимый ряд для правильного масштабирования
+        {
+          name: "",
+          type: "line",
+          data: [...chartData.endog, ...chartData.prediction.slice(chartData.endog.length + 1),],
+          lineStyle: { opacity: 0 },
+          itemStyle: { opacity: 0 },
+          emphasis: { focus: "none" },
+          tooltip: { show: false },
+        },
+        {
+          name: "Прогноз",
+          type: "line",
+          data: chartData.prediction.map((el) => el ? el.toFixed(3) : el),
+          smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+          lineStyle: { width: 2, type: "dashed" },
+          itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+          animationDuration: 700,
+          animationEasing: "exponentialOut",
+          markPoint: advancedSettingsRef.current.graphSettings.showForecastExtremes
+          ? {
+              data: [
+                { type: "max", name: "max" },
+                { type: "min", name: "min" },
+              ],
+              symbol: "circle",
+              symbolSize: 10,
+              itemStyle: {
+                color: advancedSettingsRef.current.graphSettings.forecastColor, 
+              },
+              label: {
+                color: "#ffffff",
+                textBorderColor: advancedSettingsRef.current.graphSettings.forecastColor, 
+                textBorderWidth: 2, 
+                show: true,
+                formatter: (params) => params.name, 
+              },
+            }
+          : undefined,
+          markLine: advancedSettingsRef.current.graphSettings.showForecastAverage
+          ? {
+              data: [
+                {
+                  type: "average", // Тип линии — среднее значение
+                  yAxis: averagePrediction, // Подпись линии
+                },
+              ],
+              label: {
+                show: true,
+                formatter: "Среднее:\n{c}", // Отображаем значение среднего
+                position: "end", // Позиция подписи
+                align: 'center',
+                padding: [0, 0, 0, 30], // Отступ слева 20px
+                textBorderColor: isDarkMode ? "#172131" : "#ffffff",
+                textBorderWidth: 2,
+                color: advancedSettingsRef.current.graphSettings.forecastColor,
+              },
+              lineStyle: {
+                color: advancedSettingsRef.current.graphSettings.forecastColor, // Цвет линии
+                type: "dotted", // Тип линии (пунктирная)
+              },
+            }
+          : undefined,
+        }, 
+        // Вспомогательный ряд для корректного отображения подсказки
+        chartData.confidenceIntervals
+          ? {
+              name: "Доверительный интервал",
+              type: "line",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              lineStyle: { width: 0 },  
+              symbol: "roundRect",       
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null),
+                `[${chartData.endog[chartData.endog.length - 1].toFixed(3)}, ${chartData.endog[chartData.endog.length - 1].toFixed(3)}]`,
+                ...chartData.confidenceIntervals.map(
+                  ci => `[${ci[0].toFixed(3)}, ${ci[1].toFixed(3)}]`
+                )
+              ],         
+            } : null,
+        // Нижняя граница
+        chartData.confidenceIntervals
+          ? {
+              name: "Доверительный интервал",
+              type: "line",
+              stack: "confidence",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              lineStyle: { width: 0 }, 
+              symbol: "none",
+              tooltip: { show: false },
+              showInLegend: false,  
+              animationDuration: 800,
+              animationEasing: "exponentialOut",
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null), 
+                chartData.endog[chartData.endog.length - 1], 
+                ...chartData.confidenceIntervals.map(ci => ci[0]) 
+              ],
+            }
+        : null,   
+        // Верхняя граница
+        chartData.confidenceIntervals 
+          ? {
+              name: "Доверительный интервал",
+              type: "line",
+              stack: "confidence",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              areaStyle: {
+                opacity: 0.2 
+              },
+              lineStyle: { width: 0 }, 
+              symbol: "none",
+              tooltip: { show: false },
+              animationDuration: 800,
+              animationEasing: "exponentialOut",
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null), 
+                0, 
+                ...chartData.confidenceIntervals.map(ci => (ci[1] - ci[0]))
+              ],
+            }
+          : null,
           {
             name: "Исходные данные",
             type: "line",
@@ -518,7 +610,7 @@ export default function ForecastingPanel({ theme }) {
                   textBorderColor: isDarkMode ? "#172131" : "#ffffff",
                   textBorderWidth: 2,
                   color: advancedSettingsRef.current.graphSettings.dataColor,
-
+  
                 },
                 lineStyle: {
                   color: advancedSettingsRef.current.graphSettings.dataColor, 
@@ -527,69 +619,45 @@ export default function ForecastingPanel({ theme }) {
               }
             : undefined,
           },
-          {
-            name: "Прогноз",
-            type: "line",
-            data: chartData.prediction,
-            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
-            lineStyle: { width: 2, type: "dashed" },
-            itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
-            markPoint: advancedSettingsRef.current.graphSettings.showForecastExtremes
-            ? {
-                data: [
-                  { type: "max", name: "max" },
-                  { type: "min", name: "min" },
-                ],
-                symbol: "circle",
-                symbolSize: 10,
-                itemStyle: {
-                  color: advancedSettingsRef.current.graphSettings.forecastColor, 
-                },
-                label: {
-                  color: "#ffffff",
-                  textBorderColor: advancedSettingsRef.current.graphSettings.forecastColor, 
-                  textBorderWidth: 2, 
-                  show: true,
-                  formatter: (params) => params.name, 
-                },
-              }
-            : undefined,
-            markLine: advancedSettingsRef.current.graphSettings.showForecastAverage
-            ? {
-                data: [
-                  {
-                    type: "average", // Тип линии — среднее значение
-                    yAxis: averagePrediction, // Подпись линии
-                  },
-                ],
-                label: {
-                  show: true,
-                  formatter: "Среднее:\n{c}", // Отображаем значение среднего
-                  position: "end", // Позиция подписи
-                  align: 'center',
-                  padding: [0, 0, 0, 30], // Отступ слева 20px
-                  textBorderColor: isDarkMode ? "#172131" : "#ffffff",
-                  textBorderWidth: 2,
-                  color: advancedSettingsRef.current.graphSettings.forecastColor,
-                },
-                lineStyle: {
-                  color: advancedSettingsRef.current.graphSettings.forecastColor, // Цвет линии
-                  type: "dotted", // Тип линии (пунктирная)
-                },
-              }
-            : undefined,
-          },     
-        ]
-      : [
-          {
-            name: "Пример данных",
-            type: "line",
-            data: placeholderValues,
-            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
-            lineStyle: { width: 2, type: "dotted" },
-            itemStyle: { color: "gray", opacity: 0.65 },
-          },
-        ],
+      ]
+    : [
+        {
+          name: "Пример данных",
+          type: "line",
+          data: placeholderValues,
+          smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+          lineStyle: { width: 2, type: "dotted" },
+          itemStyle: { color: "gray", opacity: 0.65 },
+        },
+      ]
+
+  const chartOptions = {
+    legend: {
+      show: advancedSettingsRef.current.graphSettings.showLegend,
+      data: hasData ? ["Исходные данные", "Прогноз", "Доверительный интервал"] : ["Пример данных"]
+    },
+    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
+    xAxis: {
+      type: "category",
+      data: hasData ? chartData.full_dates : placeholderDates,
+      splitLine: {
+        show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
+    },
+    yAxis: { 
+      type: "value",
+      splitLine: {
+        show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
+     },
+     tooltip: {
+        backgroundColor: `${isDarkMode ? "rgba(23,33,49,0.8)" : "rgba(249,250,251,0.8)"}`,
+        borderColor: `${isDarkMode ? "#4B5563" : "#D1D5DB"}`,
+        textStyle: {
+          color: `${isDarkMode ? "#F9FAFB" : "#3F3F46"}`
+        },
+      },  
+    series: allSeries
   };
 
   const createGutter = (direction) => {

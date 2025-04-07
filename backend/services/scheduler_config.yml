@@ -20,7 +20,7 @@ tasks:
         enforce_stationarity: true
         enforce_invertibility: true
     schedule:
-      pooling_interval: 30  # в секундах
+      pooling_interval: 300  # в секундах
       retry_cooldown: 300
 
   # - name: "test"
