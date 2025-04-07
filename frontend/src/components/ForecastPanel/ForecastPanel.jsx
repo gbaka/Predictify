@@ -13,10 +13,12 @@ import BaseChart from "../charts/BaseChart";
 
 
 const calculateAverage = (data) => {
-  const filteredData = data.filter((value) => value !== null);
-  if (filteredData.length === 0) return null;
-  const sum = filteredData.reduce((acc, value) => acc + value, 0);
-  return sum / filteredData.length;
+  if (data) {
+    const filteredData = data.filter((value) => value !== null);
+    if (filteredData.length === 0) return null;
+    const sum = filteredData.reduce((acc, value) => acc + value, 0);
+    return sum / filteredData.length;
+  }
 };
 
 
@@ -359,10 +361,11 @@ export default function ForecastingPanel({ theme }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [chartData, setChartData] = useState({
-    full_dates: [],
-    endog: [],
-    prediction: [],
-    confidence_intervals: null
+    fullDates: null,
+    endog: null,
+    prediction: null,
+    confidenceIntervals: null,
+    confidenceLevel: null
   });
 
   const handleModelSettingsChange = (settings) => {
@@ -418,13 +421,15 @@ export default function ForecastingPanel({ theme }) {
       const smoothedPrediction = [lastEndogValue, ...response.data.prediction];
       const formattedPrediction = Array(predictionStartIndex - 1).fill(null).concat(smoothedPrediction);
       setChartData({
-        full_dates: response.data.full_dates,
+        fullDates: response.data.full_dates,
         endog: response.data.endog,
         prediction: formattedPrediction,
-        confidenceIntervals: response.data.confidence_intervals
+        confidenceIntervals: response.data.confidence_intervals.intervals,
+        confidenceLevel: response.data.confidence_intervals.confidence_level
       });
 
-      // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals);
+      // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals.invervals);
+      console.log("CI", chartData.confidenceLevel)
     } catch (error) {
       dataSummaryRef.current = ""
       console.error("Error sending request:", error);
@@ -439,7 +444,7 @@ export default function ForecastingPanel({ theme }) {
     }
   };  
 
-  const hasData = chartData.endog.length > 0; 
+  const hasData = chartData.endog !== null; 
   const averagePrediction = calculateAverage(chartData.prediction);
   const averageEndog = calculateAverage(chartData.endog)
   const allSeries = hasData
@@ -511,7 +516,7 @@ export default function ForecastingPanel({ theme }) {
         // Вспомогательный ряд для корректного отображения подсказки
         chartData.confidenceIntervals
           ? {
-              name: "Доверительный интервал",
+              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
               lineStyle: { width: 0 },  
@@ -527,7 +532,7 @@ export default function ForecastingPanel({ theme }) {
         // Нижняя граница
         chartData.confidenceIntervals
           ? {
-              name: "Доверительный интервал",
+              name:`Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
@@ -547,7 +552,7 @@ export default function ForecastingPanel({ theme }) {
         // Верхняя граница
         chartData.confidenceIntervals 
           ? {
-              name: "Доверительный интервал",
+              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
@@ -634,12 +639,12 @@ export default function ForecastingPanel({ theme }) {
   const chartOptions = {
     legend: {
       show: advancedSettingsRef.current.graphSettings.showLegend,
-      data: hasData ? ["Исходные данные", "Прогноз", "Доверительный интервал"] : ["Пример данных"]
+      data: hasData ? ["Исходные данные", "Прогноз", `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`] : ["Пример данных"]
     },
     title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
     xAxis: {
       type: "category",
-      data: hasData ? chartData.full_dates : placeholderDates,
+      data: hasData ? chartData.fullDates : placeholderDates,
       splitLine: {
         show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
       }

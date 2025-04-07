@@ -51,11 +51,14 @@ def forecast(data: Dict, model_type: str, settings: Dict):
         full_dates = extend_dates(data, steps)
         
         return {
-            "summary" : summary,
-            "prediction" : prediction_vals, 
-            "confidence_intervals": prediction_conf_ints,
+            "summary" : summary,  
             "full_dates" : full_dates, 
-            "endog" : data.get("endog")
+            "endog" : data.get("endog"),
+            "prediction" : prediction_vals, 
+            "confidence_intervals": {
+                "intervals" : prediction_conf_ints,
+                "confidence_level" : round(1-significance_level, 2)
+            }
         }
     
     # # elif model_type == "LSTM":
