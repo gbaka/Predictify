@@ -287,10 +287,7 @@ function DataSummary({ summary, theme }) {
   const handleCopy = () => {
     if (summary) {
       navigator.clipboard.writeText(summary);
-
       setCopied(true);
-
-      // Скрыть галочку через 2 секунды
       setTimeout(() => {
         setCopied(false);
       }, 2000);
@@ -346,6 +343,7 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
   );
 }
 
+
 function SettingsButton({ onClick, theme }) {
   const isDarkMode = theme === "dark";
   return (
@@ -363,7 +361,6 @@ function SettingsButton({ onClick, theme }) {
 
 function StartButton({ onClick, theme }) {
   const isDarkMode = theme === "dark"
-
   return (
     <button
       className={`w-full h-full rounded-lg font-medium flex items-center justify-center gap-2
