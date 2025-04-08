@@ -8,6 +8,7 @@ import { FileText, Sheet, X, Maximize2, Minimize2, Play,
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
+import { API_CONFIG } from "./apiConfig";
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
 import ErrorModal from "../modals/ErrorModal"
 import BaseChart from "../charts/BaseChart";
@@ -392,7 +393,10 @@ export default function ForecastingPanel({ theme }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); 
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState({
+    title: null,
+    detail: null
+  });
   const [chartData, setChartData] = useState({
     fullDates: null,
     endog: null,
@@ -423,13 +427,13 @@ export default function ForecastingPanel({ theme }) {
 
   const handleStartForecast = async () => {
     if (isLoading) {
-      setErrorMessage("Дождитесь результатов прогнозирования.");
+      setErrorMessage({title: "Дождитесь результатов прогнозирования.", detail: null});
       setIsErrorModalOpen(true);
       return
     }
     
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
-      setErrorMessage("Пожалуйста, заполните все поля.");
+      setErrorMessage({title: "Пожалуйста, заполните все поля.", detail: null});
       setIsErrorModalOpen(true);
       return;
     }
@@ -443,10 +447,14 @@ export default function ForecastingPanel({ theme }) {
     setIsLoading(true); 
     dataSummaryRef.current = "Загрузка...";
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT); 
     try {
-      const response = await axios.post("http://localhost:8000/api/test", formData, {
-        headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
+      const response = await axios.post(`${API_CONFIG.BASE_URL}/${API_CONFIG.FORECAST_ENDPOINT}` , formData, {
+        headers: { "Content-Type": "multipart/form-data" }, 
+        signal: controller.signal
       });
+      clearTimeout(timeoutId)
       dataSummaryRef.current = response.data.summary;
     
       const predictionStartIndex = response.data.endog.length;
@@ -462,14 +470,23 @@ export default function ForecastingPanel({ theme }) {
       });
 
       // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals.invervals);
-      console.log("CI", chartData.confidenceLevel)
+      // console.log("CI", chartData.confidenceLevel)
     } catch (error) {
+      clearTimeout(timeoutId)
       dataSummaryRef.current = ""
       console.error("Error sending request:", error);
-      if (error.response && error.response.status === 400) {
-        setErrorMessage("Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.");
+
+      if (error.name === 'AbortError' || error.code === 'ECONNABORTED' || error.code === 'ERR_CANCELED') {
+        setErrorMessage({
+          title: `Превышено время ожидания. Сервер не ответил за ${Math.round(API_CONFIG.TIMEOUT/1000)} секунд. Пожалуйста, попробуйте позже.`,
+          detail: null
+        });
+      } else if (error.response && error.response.status === 400) {
+        console.log("Detail:", error.response.data.detail)
+        const detailedErrorMessage = error?.response?.data?.detail || 'Unknown error.';
+        setErrorMessage({title: "Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.", detail: detailedErrorMessage});
       } else {
-        setErrorMessage("Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.");
+        setErrorMessage({title: "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.", detail: null});
       }
       setIsErrorModalOpen(true);
     } finally {

@@ -15,7 +15,23 @@ export default function ErrorModal({ isOpen, message, onClose, theme }) {
         }`}
       >
         <h2 className="text-xl font-bold mb-4">Ошибка</h2>
-        <p className="mb-4">{message}</p>
+        <p className="mb-4">{message.title}</p>
+
+        {message.detail && (
+          <div className="mb-4">
+            <p className="font-semibold mb-2 flex items-center">
+              Подробности:
+            </p>
+            <div className={`p-2.5 rounded text-sm ${
+              isDarkMode 
+                ? "bg-gray-700/40 border border-gray-600" 
+                : "bg-gray-100/80 border border-gray-200"
+            }`}>
+              <p className="whitespace-pre-wrap">{message.detail}</p>
+            </div>
+          </div>
+        )}
+
         <button
           onClick={onClose}
           className={`w-full px-4 py-2 rounded-lg transition-colors ${

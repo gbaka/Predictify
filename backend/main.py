@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI):
     scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
     print("Starting a scheduler")
     asyncio.create_task(scheduler.start())
+    print("Scheduler started")
 
     yield
 

@@ -2,7 +2,9 @@ import csv
 from io import StringIO
 from starlette.datastructures import UploadFile
 from datetime import datetime
-from .utils import detect_date_format, detect_delimiter
+from .utils import detect_date_format, detect_delimiter, validate_csv_size
+from .config import ConvertersConfig
+
 
 def csv_to_dict(file: UploadFile, delimiter: str = "auto", date_format: str = "auto") -> dict:
     """
@@ -13,12 +15,14 @@ def csv_to_dict(file: UploadFile, delimiter: str = "auto", date_format: str = "a
     `param date_format`: Формат даты. Может быть "YYYY-MM-DD", "DD.MM.YYYY", "MM/DD/YYYY", "DD/MM/YYYY", или "auto".
     `return`: Словарь с разделением по датам (если есть) или индексам
     """
-    content = file.file.read().decode('utf-8')  # Читаем и декодируем файл в строку
-    file.file.seek(0)  # Возвращаем указатель в начало файла
+    content = file.file.read().decode('utf-8')  
+    validate_csv_size(content, ConvertersConfig.MAX_FILE_ROWS)
+
+    file.file.seek(0)  
 
     if delimiter == "auto":
         first_line = content.split('\n')[0]
-        delimiter = detect_delimiter(first_line)
+        delimiter = detect_delimiter(first_line, ConvertersConfig.CSV_DELIMITERS)
 
     reader = csv.DictReader(StringIO(content), delimiter=delimiter)  
     use_index = "dates" not in reader.fieldnames  
@@ -31,7 +35,6 @@ def csv_to_dict(file: UploadFile, delimiter: str = "auto", date_format: str = "a
         sample_date = next(reader)["dates"]
         date_format = detect_date_format(sample_date)
 
-    # Возвращаем указатель в начало файла
     file.file.seek(0)
     reader = csv.DictReader(StringIO(content), delimiter=delimiter)
 
