@@ -30,7 +30,7 @@ export default function Wiki() {
 
   return (
     <div className="flex">
-      {/* Фоновая панель (fixed, занимает всю высоту, с тенью) */}
+      {/* Фоновая панель */}
       <div
         ref={bgRef}
         className={`fixed hidden md:block left-0 top-0 h-full shadow-sm z-0 ${theme === "dark" ? "bg-gray-850 text-white" : "bg-gray-150 text-gray-800" } `}

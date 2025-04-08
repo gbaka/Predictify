@@ -1,6 +1,8 @@
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
+
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings";
+
 
 export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme }) {
   const isDarkMode = theme === "dark";

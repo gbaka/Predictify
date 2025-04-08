@@ -1,22 +1,26 @@
-import * as echarts from "echarts";
 import Split from "react-split";
 import axios from "axios"
 
-import { FileText, Sheet, X, Maximize2, Minimize2, Play, Settings } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { FileText, Sheet, X, Maximize2, Minimize2, Play, 
+         Settings, ClipboardCopy, Check } from "lucide-react";
 
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
 import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
+import { API_CONFIG } from "./apiConfig";
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
-import ErrorModal from "./ErrorModal"
+import ErrorModal from "../modals/ErrorModal"
+import BaseChart from "../charts/BaseChart";
 
 
 const calculateAverage = (data) => {
-  const filteredData = data.filter((value) => value !== null);
-  if (filteredData.length === 0) return null;
-  const sum = filteredData.reduce((acc, value) => acc + value, 0);
-  return sum / filteredData.length;
+  if (data) {
+    const filteredData = data.filter((value) => value !== null);
+    if (filteredData.length === 0) return null;
+    const sum = filteredData.reduce((acc, value) => acc + value, 0);
+    return sum / filteredData.length;
+  }
 };
 
 
@@ -67,7 +71,7 @@ function ModelSelector({ onChange, theme }) {
 
   return (
     <div
-      className={`min-w-[530px]
+      className={`min-w-[475px]
         ${isOpen ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при активном состоянии
         ${isHovered ? `outline outline-2 ${theme==='dark' ? 'outline-gray-600' : 'outline-gray-300'}` : ""} // Жирная обводка при наведении
         relative w-full p-1 outline  ${theme==='dark' ? "outline-gray-600" : "outline-gray-300"} rounded-lg z-20 cursor-pointer mb-3
@@ -258,9 +262,9 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
   const renderSettings = () => {
     switch (selectedModel) {
       case "ARIMA":
-        return <ARIMASettings onChange={onChange} />;
+        return <ARIMASettings onChange={onChange} theme={theme}/>;
       case "SARIMA":
-        return <SARIMASettings onChange={onChange}/>;
+        return <SARIMASettings onChange={onChange} theme={theme}/>;
       default:
         return <div className="text-center text-gray-500">Модель не выбрана</div>;
     }
@@ -277,228 +281,46 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
 
 
 function DataSummary({ summary, theme }) {
-  const isDarkMode = theme === "dark"
+  const isDarkMode = theme === "dark";
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (summary) {
+      navigator.clipboard.writeText(summary);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+  };
+
   return (
-    <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}>
+    <div
+      className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} relative p-2 border rounded-lg w-full h-full line-clamp-1 overflow-y-scroll`}
+    >
+      {/* Иконка копирования в правом верхнем углу */}
+      <button
+        onClick={handleCopy}
+        title="Скопировать"
+        className={`absolute top-2.5 right-2.5 transition ${
+          isDarkMode
+            ? '[color:rgb(72,86,108)] hover:[color:rgb(115,134,161)]'
+            : '[color:rgb(150,150,150)] hover:[color:rgb(111,111,111)]'
+        }`}
+      >
+        {copied ? (
+          <Check size={20} strokeWidth={1.3} />
+        ) : (
+          <ClipboardCopy size={20} strokeWidth={1.3} />
+        )}
+      </button>
+
       <div style={{ height: 0, color: 'rgba(0, 0, 0, 0)' }}><br /></div>
       <h3 className="font-bold">Сводка данных:</h3>
       <pre className={`text-center whitespace-pre-wrap text-xs ${!summary ? 'text-gray-500' : ''}`}>
         {summary || "Нет данных"}
       </pre>
-    </div>
-  );
-}
-
-// График
-function BaseChart({ options, isLoading, theme }) {
-  const chartRef = useRef(null);
-  const chartInstanceRef = useRef(null);
-
-  useEffect(() => {
-    if (!chartRef.current) return;
-    const isDarkMode = theme === "dark";
-
-    chartInstanceRef.current = echarts.init(chartRef.current, isDarkMode ? "dark" : null);
-    const defaultFontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-    const textColor = isDarkMode ? "#fafafa" : "#333";
-    const axisColor = isDarkMode ? "#888" : "#ccc";
-    const legendColor = isDarkMode ? "#fff" : "#333";
-
-    const updatedOptions = {
-      ...options,
-      backgroundColor: "transparent",
-      textStyle: { fontFamily: defaultFontFamily, color: textColor },
-
-      title: options.title
-        ? {
-            ...options.title,
-            left: "center",
-            textStyle: {
-              ...options.title.textStyle,
-              fontFamily: defaultFontFamily,
-              color: textColor,
-            },
-          }
-        : {},
-
-      xAxis: options.xAxis
-        ? {
-            ...options.xAxis,
-            axisLabel: {
-              ...options.xAxis.axisLabel,
-              fontFamily: defaultFontFamily,
-              color: textColor,
-            },
-            axisLine: { lineStyle: { color: axisColor } },
-          }
-        : {},
-
-      yAxis: options.yAxis
-        ? {
-            ...options.yAxis,
-            axisLabel: {
-              ...options.yAxis.axisLabel,
-              fontFamily: defaultFontFamily,
-              color: textColor,
-            },
-            axisLine: { lineStyle: { color: axisColor } },
-          }
-        : {},
-
-      legend: {
-        ...options.legend,
-        textStyle: { color: legendColor, fontFamily: defaultFontFamily },
-        type: "scroll",
-        orient: "horizontal",
-        top: 28,
-      },
-
-      dataZoom: [
-        {
-          type: "slider",
-          show: true,
-          start: 0,
-          end: 100,
-          left: "10%",
-          right: "10.5%",
-
-          borderColor: `${
-            isDarkMode ? "rgba(54, 65, 83, 1)" : "rgb(228, 226, 226)"
-          } `,
-          fillerColor: `${
-            isDarkMode ? "rgba(29, 36, 46, 0.13)" : "rgba(213, 213, 213, 0.13)"
-          }`,
-
-          dataBackground: {
-            lineStyle: {
-              color: `${
-                isDarkMode
-                  ? "rgba(160, 160, 160, 0.2)"
-                  : "rgba(232, 232, 232, 0.2)"
-              }`,
-            },
-            areaStyle: {
-              color: `${
-                isDarkMode ? "rgba(54, 65, 83, 1)" : "rgb(188, 188, 188)"
-              }`,
-            },
-          },
-
-          selectedDataBackground: {
-            lineStyle: {
-              color: `${
-                isDarkMode ? "rgba(54, 65, 83, 1)" : "rgba(224, 224, 237, 0.95)"
-              }`,
-              width: 2,
-            },
-            areaStyle: {
-              color: `${
-                isDarkMode ? "rgba(54, 65, 83, 1)" : "rgba(212, 215, 243, 0.92)"
-              }`, // Цвет заливки области
-            },
-          },
-
-          emphasis: {
-            moveHandleStyle: {
-              color: "rgb(53, 130, 255)",
-            },
-          },
-
-          handleStyle: {
-            color: `${
-              isDarkMode ? "rgba(54, 65, 83, 1)" : "rgb(255, 255, 255)"
-            }`,
-            fillerColor: "red",
-          },
-        },
-
-        { type: "inside" }, // Зум колесиком
-      ],
-
-      // Настраиваем всплывающие подсказки (tooltip)
-      tooltip: {
-        trigger: "axis",
-      },
-
-      // Настраиваем отступы (grid)
-      grid: {
-        left: "7%",
-        right: "7%",
-      },
-
-      // Добавляем панель инструментов
-      toolbox: {
-        show: true,
-        feature: {
-          saveAsImage: {
-            show: true,
-            title: "Сохранить как PNG",
-            iconStyle: {
-              borderColor: `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`, 
-            },
-            emphasis: {
-              iconStyle: {
-                borderColor: `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, 
-              }
-            }
-          },
-          restore: {
-            show: true,
-            title: "Сбросить масштаб",
-            iconStyle: {
-              borderColor:  `${isDarkMode ? "rgb(61, 73, 93)" : "rgb(150, 150, 150)"}`,    
-            },
-            emphasis: {
-              iconStyle: {
-                borderColor:  `${isDarkMode ? "rgb(115, 134, 161)" : "rgb(111, 111, 111)"}`, 
-              }
-            }
-          }
-        }
-      }
-      
-    };
-
-    // Загрузка при отправке данных
-    if (isLoading) {
-      chartInstanceRef.current.showLoading('default', {
-        text: 'Загрузка...',
-        fontFamily: defaultFontFamily,
-        fontSize: 16,
-        textColor: `${theme === "dark" ? "#FFF" : "#000"}`,
-        spinnerRadius: 16,
-        color: '#409EFF',
-        maskColor: 'rgba(0, 0, 0, 0)',
-      });
-    } else {
-      chartInstanceRef.current.hideLoading();
-      chartInstanceRef.current.setOption(updatedOptions);
-    }
-
-    // Используем ResizeObserver для автоматического изменения размера графика
-    const resizeObserver = new ResizeObserver(() => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.resize();
-      }
-    });
-
-    resizeObserver.observe(chartRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-      chartInstanceRef.current.dispose();
-    };
-  }, [options, theme]);
-
-  return (
-    <div
-      className={`rounded-lg border transition-all ${
-        theme === "dark"
-          ? "bg-gray-850 border border-gray-700"
-          : "bg-gray-50 border border-gray-300"
-      } h-full w-full`}
-    >
-      <div ref={chartRef} className="flex w-full h-full mt-3" />
     </div>
   );
 }
@@ -522,6 +344,7 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
   );
 }
 
+
 function SettingsButton({ onClick, theme }) {
   const isDarkMode = theme === "dark";
   return (
@@ -539,7 +362,6 @@ function SettingsButton({ onClick, theme }) {
 
 function StartButton({ onClick, theme }) {
   const isDarkMode = theme === "dark"
-
   return (
     <button
       className={`w-full h-full rounded-lg font-medium flex items-center justify-center gap-2
@@ -559,26 +381,28 @@ function StartButton({ onClick, theme }) {
 
 
 export default function ForecastingPanel({ theme }) {
-  // const { theme } = useTheme();
   const isDarkMode = theme === "dark";
 
   const modelSettingsRef = useRef(null);
   const advancedSettingsRef = useRef({ ...ADVANCED_SETTINGS_DEFAULTS });
   const uploadedDataRef = useRef(null);
   const dataSummaryRef = useRef("");
-  const verticalSizesRef = useRef([80, 20]);
-  const horizontalSizesRef = useRef([15, 70, 15]);
 
   const [selectedModel, setSelectedModel] = useState(null); 
   const [isFullScreen, setIsFullScreen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); 
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState({
+    title: null,
+    detail: null
+  });
   const [chartData, setChartData] = useState({
-    full_dates: [],
-    endog: [],
-    prediction: [],
+    fullDates: null,
+    endog: null,
+    prediction: null,
+    confidenceIntervals: null,
+    confidenceLevel: null
   });
 
   const handleModelSettingsChange = (settings) => {
@@ -602,8 +426,14 @@ export default function ForecastingPanel({ theme }) {
   };
 
   const handleStartForecast = async () => {
+    if (isLoading) {
+      setErrorMessage({title: "Дождитесь результатов прогнозирования.", detail: null});
+      setIsErrorModalOpen(true);
+      return
+    }
+    
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
-      setErrorMessage("Пожалуйста, заполните все поля.");
+      setErrorMessage({title: "Пожалуйста, заполните все поля.", detail: null});
       setIsErrorModalOpen(true);
       return;
     }
@@ -616,12 +446,15 @@ export default function ForecastingPanel({ theme }) {
     
     setIsLoading(true); 
     dataSummaryRef.current = "Загрузка...";
-    console.log(isLoading)
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT); 
     try {
-      const response = await axios.post("http://localhost:8000/api/test", formData, {
-        headers: { "Content-Type": "multipart/form-data" }, // Обязательно multipart/form-data
+      const response = await axios.post(`${API_CONFIG.BASE_URL}/${API_CONFIG.FORECAST_ENDPOINT}` , formData, {
+        headers: { "Content-Type": "multipart/form-data" }, 
+        signal: controller.signal
       });
+      clearTimeout(timeoutId)
       dataSummaryRef.current = response.data.summary;
     
       const predictionStartIndex = response.data.endog.length;
@@ -629,19 +462,31 @@ export default function ForecastingPanel({ theme }) {
       const smoothedPrediction = [lastEndogValue, ...response.data.prediction];
       const formattedPrediction = Array(predictionStartIndex - 1).fill(null).concat(smoothedPrediction);
       setChartData({
-        full_dates: response.data.full_dates,
+        fullDates: response.data.full_dates,
         endog: response.data.endog,
         prediction: formattedPrediction,
+        confidenceIntervals: response.data.confidence_intervals.intervals,
+        confidenceLevel: response.data.confidence_intervals.confidence_level
       });
 
-      // console.log("Forecasting results:", response.data);
+      // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals.invervals);
+      // console.log("CI", chartData.confidenceLevel)
     } catch (error) {
+      clearTimeout(timeoutId)
       dataSummaryRef.current = ""
       console.error("Error sending request:", error);
-      if (error.response && error.response.status === 400) {
-        setErrorMessage("Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.");
+
+      if (error.name === 'AbortError' || error.code === 'ECONNABORTED' || error.code === 'ERR_CANCELED') {
+        setErrorMessage({
+          title: `Превышено время ожидания. Сервер не ответил за ${Math.round(API_CONFIG.TIMEOUT/1000)} секунд. Пожалуйста, попробуйте позже.`,
+          detail: null
+        });
+      } else if (error.response && error.response.status === 400) {
+        console.log("Detail:", error.response.data.detail)
+        const detailedErrorMessage = error?.response?.data?.detail || 'Unknown error.';
+        setErrorMessage({title: "Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.", detail: detailedErrorMessage});
       } else {
-        setErrorMessage("Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.");
+        setErrorMessage({title: "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.", detail: null});
       }
       setIsErrorModalOpen(true);
     } finally {
@@ -649,39 +494,135 @@ export default function ForecastingPanel({ theme }) {
     }
   };  
 
-  const hasData = chartData.endog.length > 0; 
+  const hasData = chartData.endog !== null; 
   const averagePrediction = calculateAverage(chartData.prediction);
   const averageEndog = calculateAverage(chartData.endog)
-  const options = {
-    legend: {
-      show: advancedSettingsRef.current.graphSettings.showLegend,
-    },
-    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
-    xAxis: {
-      type: "category",
-      data: hasData ? chartData.full_dates : placeholderDates,
-      splitLine: {
-        show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
-      }
-    },
-    yAxis: { 
-      type: "value",
-      splitLine: {
-        show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
-      }
-     },
-    
-    series: hasData
-      ? [
-          {
-            name: "",
-            type: "line",
-            data: [...chartData.endog, ...chartData.prediction.slice(chartData.endog.length + 1),],
-            lineStyle: { opacity: 0 },
-            itemStyle: { opacity: 0 },
-            emphasis: { focus: "none" },
-            tooltip: { show: false },
-          },
+  const allSeries = hasData
+    ? [
+        // Базовый невидимый ряд для правильного масштабирования
+        {
+          name: "",
+          type: "line",
+          data: [...chartData.endog, ...chartData.prediction.slice(chartData.endog.length + 1),],
+          lineStyle: { opacity: 0 },
+          itemStyle: { opacity: 0 },
+          emphasis: { focus: "none" },
+          tooltip: { show: false },
+        },
+        {
+          name: "Прогноз",
+          type: "line",
+          data: chartData.prediction.map((el) => el ? el.toFixed(3) : el),
+          smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+          lineStyle: { width: 2, type: "dashed" },
+          itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+          animationDuration: 700,
+          animationEasing: "exponentialOut",
+          markPoint: advancedSettingsRef.current.graphSettings.showForecastExtremes
+          ? {
+              data: [
+                { type: "max", name: "max" },
+                { type: "min", name: "min" },
+              ],
+              symbol: "circle",
+              symbolSize: 10,
+              itemStyle: {
+                color: advancedSettingsRef.current.graphSettings.forecastColor, 
+              },
+              label: {
+                color: "#ffffff",
+                textBorderColor: advancedSettingsRef.current.graphSettings.forecastColor, 
+                textBorderWidth: 2, 
+                show: true,
+                formatter: (params) => params.name, 
+              },
+            }
+          : undefined,
+          markLine: advancedSettingsRef.current.graphSettings.showForecastAverage
+          ? {
+              data: [
+                {
+                  type: "average", // Тип линии — среднее значение
+                  yAxis: averagePrediction, // Подпись линии
+                },
+              ],
+              label: {
+                show: true,
+                formatter: "Среднее:\n{c}", // Отображаем значение среднего
+                position: "end", // Позиция подписи
+                align: 'center',
+                padding: [0, 0, 0, 30], // Отступ слева 20px
+                textBorderColor: isDarkMode ? "#172131" : "#ffffff",
+                textBorderWidth: 2,
+                color: advancedSettingsRef.current.graphSettings.forecastColor,
+              },
+              lineStyle: {
+                color: advancedSettingsRef.current.graphSettings.forecastColor, // Цвет линии
+                type: "dotted", // Тип линии (пунктирная)
+              },
+            }
+          : undefined,
+        }, 
+        // Вспомогательный ряд для корректного отображения подсказки
+        chartData.confidenceIntervals
+          ? {
+              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              type: "line",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              lineStyle: { width: 0 },  
+              symbol: "roundRect",       
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null),
+                `[${chartData.endog[chartData.endog.length - 1].toFixed(3)}, ${chartData.endog[chartData.endog.length - 1].toFixed(3)}]`,
+                ...chartData.confidenceIntervals.map(
+                  ci => `[${ci[0].toFixed(3)}, ${ci[1].toFixed(3)}]`
+                )
+              ],         
+            } : null,
+        // Нижняя граница
+        chartData.confidenceIntervals
+          ? {
+              name:`Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              type: "line",
+              stack: "confidence",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              lineStyle: { width: 0 }, 
+              symbol: "none",
+              tooltip: { show: false },
+              showInLegend: false,  
+              animationDuration: 800,
+              animationEasing: "exponentialOut",
+              smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null), 
+                chartData.endog[chartData.endog.length - 1], 
+                ...chartData.confidenceIntervals.map(ci => ci[0]) 
+              ],
+            }
+        : null,   
+        // Верхняя граница
+        chartData.confidenceIntervals 
+          ? {
+              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              type: "line",
+              stack: "confidence",
+              itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
+              areaStyle: {
+                opacity: 0.2 
+              },
+              lineStyle: { width: 0 }, 
+              symbol: "none",
+              tooltip: { show: false },
+              animationDuration: 800,
+              animationEasing: "exponentialOut",
+              smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+              data: [
+                ...Array(chartData.endog.length - 1).fill(null), 
+                0, 
+                ...chartData.confidenceIntervals.map(ci => (ci[1] - ci[0]))
+              ],
+            }
+          : null,
           {
             name: "Исходные данные",
             type: "line",
@@ -726,7 +667,7 @@ export default function ForecastingPanel({ theme }) {
                   textBorderColor: isDarkMode ? "#172131" : "#ffffff",
                   textBorderWidth: 2,
                   color: advancedSettingsRef.current.graphSettings.dataColor,
-
+  
                 },
                 lineStyle: {
                   color: advancedSettingsRef.current.graphSettings.dataColor, 
@@ -735,74 +676,43 @@ export default function ForecastingPanel({ theme }) {
               }
             : undefined,
           },
-          {
-            name: "Прогноз",
-            type: "line",
-            data: chartData.prediction,
-            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
-            lineStyle: { width: 2, type: "dashed" },
-            itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
-            markPoint: advancedSettingsRef.current.graphSettings.showForecastExtremes
-            ? {
-                data: [
-                  { type: "max", name: "max" },
-                  { type: "min", name: "min" },
-                ],
-                symbol: "circle",
-                symbolSize: 10,
-                itemStyle: {
-                  color: advancedSettingsRef.current.graphSettings.forecastColor, 
-                },
-                label: {
-                  color: "#ffffff",
-                  textBorderColor: advancedSettingsRef.current.graphSettings.forecastColor, 
-                  textBorderWidth: 2, 
-                  show: true,
-                  formatter: (params) => params.name, 
-                },
-              }
-            : undefined,
-            markLine: advancedSettingsRef.current.graphSettings.showForecastAverage
-            ? {
-                data: [
-                  {
-                    type: "average", // Тип линии — среднее значение
-                    yAxis: averagePrediction, // Подпись линии
-                  },
-                ],
-                label: {
-                  show: true,
-                  formatter: "Среднее:\n{c}", // Отображаем значение среднего
-                  position: "end", // Позиция подписи
-                  align: 'center',
-                  padding: [0, 0, 0, 30], // Отступ слева 20px
-                  textBorderColor: isDarkMode ? "#172131" : "#ffffff",
-                  textBorderWidth: 2,
-                  color: advancedSettingsRef.current.graphSettings.forecastColor,
-                },
-                lineStyle: {
-                  color: advancedSettingsRef.current.graphSettings.forecastColor, // Цвет линии
-                  type: "dotted", // Тип линии (пунктирная)
-                },
-              }
-            : undefined,
-          },     
-        ]
-      : [
-          {
-            name: "Пример данных",
-            type: "line",
-            data: placeholderValues,
-            smooth: advancedSettingsRef.current.graphSettings.isSmooth,
-            lineStyle: { width: 2, type: "dotted" },
-            itemStyle: { color: "gray", opacity: 0.65 },
-          },
-        ],
+      ]
+    : [
+        {
+          name: "Пример данных",
+          type: "line",
+          data: placeholderValues,
+          smooth: advancedSettingsRef.current.graphSettings.isSmooth,
+          lineStyle: { width: 2, type: "dotted" },
+          itemStyle: { color: "gray", opacity: 0.65 },
+        },
+      ]
+
+  const chartOptions = {
+    legend: {
+      show: advancedSettingsRef.current.graphSettings.showLegend,
+      data: hasData ? ["Исходные данные", "Прогноз", `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`] : ["Пример данных"]
+    },
+    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
+    xAxis: {
+      type: "category",
+      data: hasData ? chartData.fullDates : placeholderDates,
+      splitLine: {
+        show: ["regular", "vertical"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
+    },
+    yAxis: { 
+      type: "value",
+      splitLine: {
+        show: ["regular", "horizontal"].includes(advancedSettingsRef.current.graphSettings.gridType),
+      }
+     },
+    series: allSeries
   };
 
   const createGutter = (direction) => {
     const gutter = document.createElement("div");
-    gutter.className = `gutter gutter-${direction}`;
+    gutter.className = `gutter gutter-${direction}  ${direction==="vertical" ? "min-w-[575px]" : ""}`;
     gutter.style.backgroundColor = "var(--gutter-bg)";
     gutter.style.borderRadius = "var(--gutter-border-radius)";
     gutter.style.transition = "var(--gutter-transition)";
@@ -852,20 +762,20 @@ export default function ForecastingPanel({ theme }) {
         <Split
           className="flex-grow flex flex-col w-full"
           direction="vertical"
-          sizes={verticalSizesRef.current}
+          sizes={[80, 20]}
           minSize={[250, 80]}
           gutterSize={7}
           snapOffset={0}
-          onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
+          // onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
             className="flex w-full mb-2 "
-            sizes={horizontalSizesRef.current}
+            sizes={[15, 70, 15]}
             minSize={[200, 300, 210]}
             gutterSize={7}
             snapOffset={0}
-            onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
+            // onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">
@@ -878,7 +788,7 @@ export default function ForecastingPanel({ theme }) {
             </div>
 
             <div className="h-full min-w-[300px] mx-1">
-              <BaseChart options={options} isLoading={isLoading} theme={theme} />
+              <BaseChart options={chartOptions} isLoading={isLoading} theme={theme} bordered={true} />
             </div>
 
             <div className="h-full ml-1 min-w-[130px]">
@@ -886,7 +796,7 @@ export default function ForecastingPanel({ theme }) {
             </div>
           </Split>
 
-          <div className="w-full h-full mt-2 min-w-[560px]">
+          <div className="w-full h-full mt-2 min-w-[575px]">
             <DataSummary summary={dataSummaryRef.current} theme={theme} />
           </div>
         </Split>

@@ -1,8 +1,34 @@
 from fastapi import FastAPI
 from api.routes import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from concurrent.futures import ProcessPoolExecutor
+import asyncio
+import os
 
-app = FastAPI(title="Forecasting API")
+from services.scheduler import Scheduler
+from services.config_loader import ConfigLoader
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
+    app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
+
+    config_loader = ConfigLoader("./services/scheduler_config.yml")
+    tasks_config = config_loader.tasks
+    scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
+    print("Starting a scheduler")
+    asyncio.create_task(scheduler.start())
+    print("Scheduler started")
+
+    yield
+
+    await scheduler.stop()
+    app.state.forecasting_process_pool.shutdown(wait=True)
+
+
+app = FastAPI(title="Forecasting API", lifespan=lifespan)
 
 # Подключаем маршруты
 app.include_router(api_router, prefix="/api")
@@ -15,7 +41,3 @@ app.add_middleware(
     allow_methods=["*"],  # Разрешаем все методы, например, GET, POST
     allow_headers=["*"],  # Разрешаем все заголовки
 )
-
-@app.get("/")
-async def root():
-    return {"message": "Forecasting API is running!"}

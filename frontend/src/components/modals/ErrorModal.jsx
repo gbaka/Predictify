@@ -1,7 +1,6 @@
 export default function ErrorModal({ isOpen, message, onClose, theme }) {
   const isDarkMode = theme === "dark";
 
-  // Если модальное окно не открыто, ничего не рендерим
   if (!isOpen) return null;
 
   return (
@@ -10,19 +9,29 @@ export default function ErrorModal({ isOpen, message, onClose, theme }) {
         isDarkMode ? "bg-gray-950/60" : "bg-gray-500/60"
       }`}
     >
-      {/* Контейнер модального окна */}
       <div
         className={`p-6 rounded-lg shadow-lg max-w-md w-full ${
           isDarkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
         }`}
       >
-        {/* Заголовок модального окна */}
         <h2 className="text-xl font-bold mb-4">Ошибка</h2>
+        <p className="mb-4">{message.title}</p>
 
-        {/* Сообщение об ошибке */}
-        <p className="mb-4">{message}</p>
+        {message.detail && (
+          <div className="mb-4">
+            <p className="font-semibold mb-2 flex items-center">
+              Подробности:
+            </p>
+            <div className={`p-2.5 rounded text-sm ${
+              isDarkMode 
+                ? "bg-gray-700/40 border border-gray-600" 
+                : "bg-gray-100/80 border border-gray-200"
+            }`}>
+              <p className="whitespace-pre-wrap">{message.detail}</p>
+            </div>
+          </div>
+        )}
 
-        {/* Кнопка закрытия */}
         <button
           onClick={onClose}
           className={`w-full px-4 py-2 rounded-lg transition-colors ${

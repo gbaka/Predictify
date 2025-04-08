@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+
 import { ARIMA_DEFAULTS, SARIMA_DEFAULTS } from "./defaultModelSettings";
 
 
-export function ARIMASettings({ onChange }) {
-    const { theme } = useTheme();
+export function ARIMASettings({ onChange, theme }) {
     const [settings, setSettings] = useState({ ...ARIMA_DEFAULTS });
+
+    const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
         let { value, type } = e.target;
@@ -13,18 +14,23 @@ export function ARIMASettings({ onChange }) {
         if (type === "checkbox") {
             value = e.target.checked;
         } else if (type === "number") {
-            value = value.replace(/\D/g, ""); // Убираем нечисловые символы
-            value = value ? Number(value) : ""; // Преобразуем только если не пусто
-
             if (key === "steps") {
+                value = value.replace(/\D/g, ""); 
+                value = value ? Number(value) : "";
                 value = Math.max(1, Math.min(30, value || 1)); // Ограничение для steps
             }
-            console.log(value)
+            if (key === "significanceLevel") {
+                value = value.replace(/[^\d.]/g, "");
+                value = value.replace(/^(\d*\.?)|(\d*)\.?/g, "$1$2");
+                value = value ? parseFloat(value) : "";
+                value = Math.max(0.01, Math.min(0.99, value || 0.05));
+            }
             if (['p', 'q', 'd'].includes(key)) {
-                console.log('asfsafsd')
+                value = value.replace(/\D/g, ""); 
+                value = value ? Number(value) : "";
                 value = Math.max(0, value || 0)
             }
-        }
+        } 
 
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
@@ -47,7 +53,7 @@ export function ARIMASettings({ onChange }) {
                     max={30}
                     onChange={(e) => handleInputChange(e, "steps")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
-                        theme === "dark" ? "border-gray-600" : "border-gray-400"
+                        isDarkMode ? "border-gray-600" : "border-gray-400"
                     }`}
                 />
             </div>
@@ -62,11 +68,27 @@ export function ARIMASettings({ onChange }) {
                         value={settings[param]}
                         onChange={(e) => handleInputChange(e, param)}
                         className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
-                            theme === "dark" ? "border-gray-600" : "border-gray-400"
+                            isDarkMode ? "border-gray-600" : "border-gray-400"
                         }`}
                     />
                 </div>
             ))}
+
+            {/* Уровень значимости */}
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <input
+                    type="number"
+                    step={0.01}
+                    min={0.01}
+                    max={0.99}
+                    value={settings.significanceLevel}
+                    onChange={(e) => handleInputChange(e, "significanceLevel")}
+                    className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode ? "border-gray-600" : "border-gray-400"
+                    }`}
+                />
+            </div>
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
@@ -75,7 +97,7 @@ export function ARIMASettings({ onChange }) {
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
                     className={`border rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 ${
-                        theme === "dark" ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
+                        isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
                     <option value="n">Нет тренда</option>
@@ -109,9 +131,10 @@ export function ARIMASettings({ onChange }) {
     );
 }
 
-export function SARIMASettings({ onChange }) {
+export function SARIMASettings({ onChange, theme }) {
     const settingsRef = useRef({ ...SARIMA_DEFAULTS });
-    const { theme } = useTheme();
+
+    const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
         let value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
@@ -137,7 +160,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.p}
                     onChange={(e) => handleInputChange(e, "p")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>
@@ -149,7 +172,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.d}
                     onChange={(e) => handleInputChange(e, "d")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>
@@ -161,7 +184,7 @@ export function SARIMASettings({ onChange }) {
                     defaultValue={settingsRef.current.q}
                     onChange={(e) => handleInputChange(e, "q")}
                     className={`border rounded-lg p-2 w-full bg-transparent focus:ring-2 focus:ring-sky-500 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                        isDarkMode ? 'border-gray-600' : 'border-gray-400'
                     }`}
                 />
             </div>

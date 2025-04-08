@@ -7,11 +7,12 @@
 - forecast: Основная функция для прогнозирования, которая выбирает модель и возвращает результат.
 """
 
+from typing import Dict
 
 from .models import ARIMAModel
-from .utils import extend_dates
+from .utils import extend_dates, is_camel_case, camel_to_snake
 
-def forecast(data: dict, model_type: str, settings: dict):
+def forecast(data: Dict, model_type: str, settings: Dict):
     """
     Прогнозирование на основе выбранной модели.
 
@@ -26,23 +27,38 @@ def forecast(data: dict, model_type: str, settings: dict):
     Исключения:
         ValueError: Если выбранная модель не поддерживается.
     """
-    print('----------------\n',data, model_type, settings, sep="\n-----------\n")
+    # print('----------------\n',data, model_type, settings, sep="\n-----------\n")
 
+    # Кол-во шагов прогноза
     steps = settings.pop('steps')
+
+    print(settings)
+
+    # Преобразуем ключи словаря настроек settings из camelCase в snake_case
+    for param in settings.copy().keys():
+        if is_camel_case(param):
+            settings[camel_to_snake(param)] = settings.pop(param)
+
     if model_type == "ARIMA":
-        settings["enforce_stationarity"] = settings.pop("enforceStationarity")
-        settings["enforce_invertibility"] = settings.pop("enforceInvertibility")
- 
+        significance_level = settings.pop('significance_level')
         model = ARIMAModel(**settings)
         summary = model.fit(data).summary().as_text()
-        prediction = model.predict(steps).tolist()
+
+        prediction_result = model.detailed_forecast(steps)
+        prediction_vals = prediction_result.predicted_mean.tolist()
+        prediction_conf_ints = prediction_result.conf_int(alpha=significance_level).tolist()
+
         full_dates = extend_dates(data, steps)
         
         return {
-            "summary" : summary,
-            "prediction" : prediction, 
+            "summary" : summary,  
             "full_dates" : full_dates, 
-            "endog" : data.get("endog")
+            "endog" : data.get("endog"),
+            "prediction" : prediction_vals, 
+            "confidence_intervals": {
+                "intervals" : prediction_conf_ints,
+                "confidence_level" : round(1-significance_level, 2)
+            }
         }
     
     # # elif model_type == "LSTM":
