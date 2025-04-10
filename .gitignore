@@ -5,9 +5,6 @@
 **/__pycache__/
 backend/venv
 
-# Data Processing
-data_processing/venv
-
 # Frontend
 /frontend/logs
 /frontend/*.log

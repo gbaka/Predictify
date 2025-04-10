@@ -10,21 +10,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  backend:
-    build: ./backend
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev  
     ports:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-    depends_on:
-      - database
+    volumes:
+      - ./backend:/app  
 
-  frontend:
-    build: ./frontend
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     ports:
-      - "8080:8080"
-    depends_on:
-      - backend
+      - "3030:3030"
+    volumes:
+      - ./frontend:/app 
+      - /app/node_modules           
 
 
 volumes:

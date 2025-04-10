@@ -2,6 +2,9 @@
 FROM node:20
 LABEL author="gbaka <geo.m2019@mail.ru>"
 
+# Директория для сервиса внутри контейнера
+WORKDIR /app
+
 # Копируем все файлы проекта (кроме тех, что в .dockerignore)
 COPY . .
 

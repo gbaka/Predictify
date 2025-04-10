@@ -9,6 +9,8 @@ import os
 from services.scheduler import Scheduler
 from services.config_loader import ConfigLoader
 
+from database import get_db_session, init_db
+ 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,7 +38,10 @@ app.include_router(api_router, prefix="/api")
 # Настройка CORS: разрешаем доступ с нужных источников (например, с фронтенда)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Разрешаем доступ с фронтенда
+    allow_origins=[
+        "http://localhost:8080",  # frontend 
+        "http://localhost:3030"   # frontend-dev
+    ],  
     allow_credentials=True,
     allow_methods=["*"],  # Разрешаем все методы, например, GET, POST
     allow_headers=["*"],  # Разрешаем все заголовки
