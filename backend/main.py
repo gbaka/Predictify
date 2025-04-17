@@ -14,6 +14,8 @@ from database import get_db_session, init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_db()
+
     app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
     app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
 

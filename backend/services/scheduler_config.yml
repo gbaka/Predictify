@@ -6,22 +6,26 @@ tasks:
         latitude: 55.7558
         longitude: 37.6176
         hourly: "temperature_2m"
-        start_date: !py3 "(datetime.now() - timedelta(days=4)).strftime('%Y-%m-%d')"
-        end_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
     model:
       type: "ARIMA"
+      observation_window_size: 100
       params:
         p: 1
         d: 0
         q: 0 
-        steps: 20
+        steps: 30
         trend: "c"
         significance_level: 0.05
         enforce_stationarity: true
         enforce_invertibility: true
+    database:
+      tablename: "weather_forecast"
     schedule:
       pooling_interval: 300  # в секундах
       retry_cooldown: 300
+  
 
   # - name: "test"
   #   parser: 
