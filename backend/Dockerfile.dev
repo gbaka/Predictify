@@ -2,17 +2,17 @@
 FROM python:3.12
 LABEL author="gbaka <geo.m2019@mail.ru>"
 
-# Директория для сервиса внутри контейнера
+# # Директория для сервиса внутри контейнера
 WORKDIR /app
 
-# Копируем все файлы проекта (кроме тех, что в .dockerignore)
-COPY . . 
+# Копируем файл с зависимостями
+COPY requirements.txt .
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Сервер бэкэнда работает на 8000 порту
+# Dev-сервер бэкэнда работает на 8000 порту
 EXPOSE 8000
 
 # Запускаем FastAPI с Uvicorn (дебаг-конфигурация)

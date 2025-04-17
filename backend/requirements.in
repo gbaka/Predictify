@@ -7,3 +7,4 @@ python-multipart
 httpx
 requests
 PyYAML
+psycopg2-binary

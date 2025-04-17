@@ -56,6 +56,8 @@ patsy==1.0.1
     # via statsmodels
 pip-tools==7.4.1
     # via -r requirements.in
+psycopg2-binary==2.9.10
+    # via -r requirements.in
 pydantic==2.10.6
     # via fastapi
 pydantic-core==2.27.2
