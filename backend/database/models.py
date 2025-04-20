@@ -2,7 +2,6 @@ from sqlalchemy import Column, Float, Integer, Text, TIMESTAMP
 from sqlalchemy.sql import func
 from database import Base
 
-# Модели должны соответствовать таблицам, создаваемым в /backend/database/init.sql
 
 class ForecastBase(Base):
     __abstract__ = True 

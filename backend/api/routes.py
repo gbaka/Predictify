@@ -10,6 +10,7 @@ API-эндпоинты для взаимодействия с пользоват
 
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import asynccontextmanager
+from datetime import datetime
 from json import loads
 import traceback
 import asyncio
@@ -18,7 +19,13 @@ from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Request
 
 from services.forecasting import forecast
 from converters import convert_to_dict
+from database import get_db_session
+from database.crud import get_crud_for_table
+from .utils import format_db_forecast_data
 
+
+# Максимальное кол-во записей которые мы извлекаем из бд для отображения на фронте 
+MAX_SAMPLES_FROM_PARSERS  = 300
 
 router = APIRouter()
 
@@ -31,6 +38,7 @@ async def test(
     uploadedData: UploadFile = File(...),
     fileSettings: str = Form(...)
 ):
+    print("TEST")
     try:  
         file_settings_dict = loads(fileSettings)
         model_settings_dict = loads(modelSettings)
@@ -57,11 +65,11 @@ async def test(
     
     try:
         # Построение прогноза в текущем процессе
-        # result = forecast(data=file_data_dict, model_type=selectedModel, settings=model_settings_dict)
+        # response = forecast(data=file_data_dict, model_type=selectedModel, settings=model_settings_dict)
 
         # Построение прогнозов в отдельных процессах
         loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
+        response = await loop.run_in_executor(
             request.app.state.forecasting_process_pool,
             forecast,  
             file_data_dict,
@@ -74,5 +82,29 @@ async def test(
             status_code=400,
             detail=f"Error creating forecast: {str(e)}"
         )
-    # print(result)
-    return result
+
+    return response
+
+
+@router.get("/forecasts-from-parsers")
+def get_forecasts():
+
+    try:
+    # print("Получаем данные через CRUD")
+        db = next(get_db_session())
+
+        forecast_tables = ['weather_forecast', 'test_forecast']
+        response = {}
+        for tablename in forecast_tables:
+            crud = get_crud_for_table(tablename)
+            instances = crud.get_all(db,limit=MAX_SAMPLES_FROM_PARSERS)
+            response[tablename] = format_db_forecast_data(instances)
+        print("RESPONSE:", response)
+    except Exception as e:
+        print("-"*50, '\n',e, traceback.format_exc(), "\n"+"-"*50 + '\n')
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error fetching the data from DB: {str(e)}"
+        )
+    
+    return response

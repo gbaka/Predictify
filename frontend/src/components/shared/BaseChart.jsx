@@ -135,7 +135,8 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
             textStyle: { color: legendColor, fontFamily: defaultFontFamily },
             type: "scroll",
             orient: "horizontal",
-            top: 28,
+            top: options.legend?.top || 28
+          
         },
 
         tooltip: {

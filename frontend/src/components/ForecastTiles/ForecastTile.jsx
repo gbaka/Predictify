@@ -1,21 +1,56 @@
-import BaseChart from "../charts/BaseChart";
+import BaseChart from "../shared/BaseChart";
 
 
-export default function ForecastTile({ data, onClick, isLoading, isClickable, theme }) {
+export default function ForecastTile({ data, title, onClick, isLoading, isClickable, theme }) {
+  console.log("ForecastTile: ",title, data)
+  
   const isDarkMode = theme == "dark"
-  const visiblePoints = 9; 
-  const startPercentage = data.x.length > visiblePoints 
-    ? ((data.x.length - visiblePoints) / data.x.length) * 100 
+  const visiblePoints = 200; 
+
+  data = data
+    ? data
+    : {
+        summary: "Nothing here yet.",
+        full_dates: [],
+        endog: [],
+        confidence_intervals: [],
+        confidence_level: null,
+        prediction: [],
+        absolute_error: [],
+        last_update: null,
+      }
+
+  const startPercentage = data.full_dates.length > visiblePoints 
+    ? ((data.full_dates.length - visiblePoints) / data.full_dates.length) * 100 
     : 0;
+
+  const allSeries = [
+    {
+      data: data.endog,
+      type: "line",
+      smooth: true,
+      lineStyle: {
+        width: 2,
+      },
+      itemStyle: { color: "#3582FF"},
+    },
+    {
+      data: data.prediction,
+      type: "line",
+      smooth: true,
+      lineStyle: { width: 2, type: "dashed" },
+      itemStyle: { color: "#F54242"},
+    },
+  ]
 
   const options = {
     title: {
-      text: data.title,
+      text: title,
       show: false, 
     },
     xAxis: {
       type: "category",
-      data: data.x,
+      data: data?.full_dates,
       show: true, 
       splitLine: {
         show: true
@@ -40,17 +75,7 @@ export default function ForecastTile({ data, onClick, isLoading, isClickable, th
         show: false
       }
     },
-    series: [
-      {
-        data: data.y,
-        type: "line",
-        smooth: true,
-        lineStyle: {
-          width: 2,
-        },
-        itemStyle: { color: "#3582FF"},
-      },
-    ],
+    series: allSeries,
     legend: {
       show: false,
     },
@@ -86,7 +111,7 @@ export default function ForecastTile({ data, onClick, isLoading, isClickable, th
           <h3 className={`text-lg font-semibold ${
             isDarkMode ? "text-gray-100" : "text-gray-900"
           }`}>
-            {data.title}
+            {title}
           </h3>
           
           <div className="flex items-center ml-auto">

@@ -7,7 +7,7 @@ from typing import Dict, List
 from datetime import datetime
 import traceback
 
-from database.crud import weather_crud, test_crud
+from database.crud import get_crud_for_table
 from database import get_db_session
 from .parsers import parse
 from .forecasting import forecast
@@ -78,18 +78,13 @@ class Scheduler:
         print(f"🔮 Model: {task_config['model']['type']}")
         print(f"{'='*50}")
 
-        TABLE_CRUD = {
-            'weather_forecast': weather_crud,
-            'test': test_crud
-        }
-
         try:
             # Открываем сессию БД
             db = next(get_db_session())
 
             # Получаем дату для последнего ненулевого endog из БД
             tablename = task_config['database']['tablename']
-            crud = TABLE_CRUD[tablename]
+            crud = get_crud_for_table(tablename)
             last_observation = (
                 db.query(crud.model)
                 .filter(crud.model.endog.isnot(None))
