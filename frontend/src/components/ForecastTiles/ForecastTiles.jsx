@@ -84,6 +84,7 @@ export default function ForecastTiles({ theme }) {
       setApiData(response.data);
       setIsLoading(false);
       setError(null);
+      console.log("Pooling")
     } catch (error) {
       setError(error.message);
       setIsLoading(false);
@@ -95,9 +96,10 @@ export default function ForecastTiles({ theme }) {
     }
   };
 
+  // Периодический пуллинг
   useEffect(() => {
     fetchForecasts();
-    const interval = setInterval(fetchForecasts, 2*60*1000);
+    const interval = setInterval(fetchForecasts, 5*60*1000);
     return () => clearInterval(interval);
   }, []);
 

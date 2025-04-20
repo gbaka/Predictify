@@ -90,14 +90,12 @@ async def test(
 def get_forecasts():
 
     try:
-    # print("Получаем данные через CRUD")
-        db = next(get_db_session())
-
+        db_session = next(get_db_session())
         forecast_tables = ['weather_forecast', 'test_forecast']
         response = {}
         for tablename in forecast_tables:
             crud = get_crud_for_table(tablename)
-            instances = crud.get_all(db,limit=MAX_SAMPLES_FROM_PARSERS)
+            instances = crud.get_all(db_session,limit=MAX_SAMPLES_FROM_PARSERS)
             response[tablename] = format_db_forecast_data(instances)
         print("RESPONSE:", response)
     except Exception as e:
@@ -106,5 +104,7 @@ def get_forecasts():
             status_code=400,
             detail=f"Error fetching the data from DB: {str(e)}"
         )
+    finally:
+        db_session.close()
     
     return response

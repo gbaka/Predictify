@@ -9,7 +9,7 @@ import os
 from services.scheduler import Scheduler
 from services.config_loader import ConfigLoader
 
-from database import get_db_session, init_db
+from database import init_db
  
 
 @asynccontextmanager

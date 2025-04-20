@@ -80,13 +80,13 @@ class Scheduler:
 
         try:
             # Открываем сессию БД
-            db = next(get_db_session())
+            db_session = next(get_db_session())
 
             # Получаем дату для последнего ненулевого endog из БД
             tablename = task_config['database']['tablename']
             crud = get_crud_for_table(tablename)
             last_observation = (
-                db.query(crud.model)
+                db_session.query(crud.model)
                 .filter(crud.model.endog.isnot(None))
                 .order_by(desc(crud.model.date))
                 .first()
@@ -108,7 +108,7 @@ class Scheduler:
             new_observations = []
             for i, date in enumerate(parsed_data["dates"]):
                 if not last_obs_date or date > last_obs_date:
-                    existing_record = db.query(crud.model)\
+                    existing_record = db_session.query(crud.model)\
                                     .filter(crud.model.date == date)\
                                     .first()       
                     if existing_record and existing_record.predict is not None:
@@ -129,10 +129,10 @@ class Scheduler:
                             "last_summary": None,
                         })  
             if updated_forecasts > 0:
-                db.commit()
+                db_session.commit()
                 print(f"📊 Updated {updated_forecasts} existing forecasts with actual data")
             if new_observations:
-                crud.bulk_create(db, new_observations)
+                crud.bulk_create(db_session, new_observations)
                 print(f"💾 Saved {len(new_observations)} new observations")
             else:
                 print("\n🆗 No new observations to save")
@@ -142,7 +142,7 @@ class Scheduler:
             # Получаем данные для прогнозирования
             observation_window_size = task_config['model']['observation_window_size']
             print(f"\n🔍 Loading last {observation_window_size} observations for forecasting...")
-            observations_for_forecast = db.query(crud.model)\
+            observations_for_forecast = db_session.query(crud.model)\
                             .filter(crud.model.endog.isnot(None))\
                             .order_by(desc(crud.model.date))\
                             .limit(observation_window_size)\
@@ -178,7 +178,7 @@ class Scheduler:
             updated = 0
             created = 0
             for pred_idx, date in enumerate(forecast_dates):
-                existing = db.query(crud.model)\
+                existing = db_session.query(crud.model)\
                             .filter(crud.model.date == date)\
                             .first()
                 
@@ -201,23 +201,23 @@ class Scheduler:
                         endog=None,
                         **update_data
                     )
-                    db.add(new_forecast)
+                    db_session.add(new_forecast)
 
-            db.commit()
+            db_session.commit()
             print(f"📊 Forecast points updated: {updated}")
             print(f"📊 Forecast points created: {created}")
             print(f"\n🎉 Task completed successfully!")
             return True
 
         except Exception as e:
-            db.rollback()
+            db_session.rollback()
             print(f"\n❌ {'!'*50}")
             print(f"❌ Task FAILED: {str(e)}")
             print(f"❌ {'!'*50}")
             traceback.print_exc()
             raise
         finally:
-            db.close()
+            db_session.close()
             print("\n" + "="*50)
     
     async def stop(self):

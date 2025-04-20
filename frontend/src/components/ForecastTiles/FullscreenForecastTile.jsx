@@ -110,6 +110,25 @@ function ParserInfoPanel({ parserInfo, theme }) {
 
 export default function FullscreenForecastTile({ data, onClose, theme }) {
   const isDarkMode = theme === "dark";
+
+  function patchTransitionNulls(data) {
+    if (!data?.prediction || !data?.endog) return;
+  
+    for (let i = 0; i < data.prediction.length - 1; i++) {
+      if (data.prediction[i] === null && data.prediction[i + 1] !== null) {
+        // Заменяем null перед переходом на не-null
+        if (data.endog[i] !== undefined) {
+          data.prediction[i] = data.endog[i];
+          if (data.confidence_intervals?.[i]) {
+            data.confidence_intervals[i] = [data.endog[i], data.endog[i]];
+          }
+        }
+      }
+    }
+  }
+
+  patchTransitionNulls(data)
+
   const allSeries = [
         // Базовый невидимый ряд для правильного масштабирования
         {
@@ -177,7 +196,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
           animationEasing: "exponentialOut",
           smooth: false,
           data: data.confidence_intervals.map(
-            ci => ci[1]
+            ci => ci[0] ? (ci[1] - ci[0]) : undefined
           )
         }, 
         {

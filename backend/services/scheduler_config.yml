@@ -6,17 +6,17 @@ tasks:
         latitude: 55.7558
         longitude: 37.6176
         hourly: "temperature_2m"
-        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
-        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+        start_date: !py3 "(datetime.now() - timedelta(days=4)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
     model:
       type: "ARIMA"
       observation_window_size: 100
       params:
-        p: 1
+        p: 5
         d: 0
-        q: 0 
+        q: 2 
         steps: 30
-        trend: "c"
+        trend: "t"
         significance_level: 0.05
         enforce_stationarity: true
         enforce_invertibility: true
