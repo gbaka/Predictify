@@ -14,31 +14,88 @@ export default function ForecastTiles({ theme }) {
 
   // Базовый шаблон для mappingTable с описанием характеристик парсеров
   const baseMappingTable = {
-    weather_forecast: {
-      title: "Погода",
+    temperature_forecast: {
+      title: "Температура",
       parserInfo: {
         status: "online",
         source: "Open Meteo API",
         updateInterval: "15 мин",
-        model: "ARIMA(1,0,0)",
+        model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
         details: "Температура воздуха в точке 55.7558 37.6176 (Над УЛК)"
       } 
     },
-    test_forecast: {
-      title: "Тест",
+    relative_humidity_forecast: {
+      title: "Относительная влажность",
       parserInfo: {
         status: "online",
-        source: "Test API",
-        updateInterval: "30 мин",
-        model: "ARIMA(1,1,0)",
+        source: "Open Meteo API",
+        updateInterval: "15 мин",
+        model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
-        details: "Тест тест тест"
+        details: "Влажность в точке 55.7558 37.6176 (Над УЛК)"
       } 
-    }
+    },
+    wind_speed_forecast: {
+      title: "Скорость ветра",
+      parserInfo: {
+        status: "online",
+        source: "Open Meteo API",
+        updateInterval: "15 мин",
+        model: "ARIMA(5,0,2)",
+        lastUpdate: null,
+        dataPoints: 0,
+        details: "Скорость ветра в точке 55.7558 37.6176 (Над УЛК)"
+      } 
+    },
+    precipitation_forecast: {
+      title: "Осадки",
+      parserInfo: {
+        status: "online",
+        source: "Open Meteo API",
+        updateInterval: "15 мин",
+        model: "ARIMA(5,0,2)",
+        lastUpdate: null,
+        dataPoints: 0,
+        details: "Осадки в точке 55.7558 37.6176 (Над УЛК)"
+      } 
+    },
   };
+
+  // Модифицируем исходные данные для красивого отображения на графике
+  // (добавляем фикивные прогноз и доверительный интвервал в начало not-null серии)
+  const patchTransitionNulls = (originalData) => {
+    if (!originalData?.prediction || !originalData?.endog) {
+      return originalData;
+    }
+    // Создаем глубокую копию данных
+    const data = {
+      ...originalData,
+      prediction: [...originalData.prediction],
+      confidence_intervals: originalData.confidence_intervals 
+        ? originalData.confidence_intervals.map(interval => interval ? [...interval] : null)
+        : null,
+      absolute_error: originalData.absolute_error
+      ? originalData.absolute_error.map(val => val !== null ? val.toFixed(3) : null)
+      : null
+
+    };
+    // Модифицируем копию
+    for (let i = 0; i < data.prediction.length - 1; i++) {
+      if (data.prediction[i] === null && data.prediction[i + 1] !== null) {
+        if (originalData.endog[i] !== undefined) {
+          data.prediction[i] = originalData.endog[i];
+          data.absolute_error[i] = 0
+          if (data.confidence_intervals?.[i]) {
+            data.confidence_intervals[i] = [originalData.endog[i], originalData.endog[i]];
+          }
+        }
+      }
+    }
+    return data;
+  }
 
   // Динамически формируемый mappingTable на основе apiData
   const getMappingTable = () => {
@@ -84,7 +141,7 @@ export default function ForecastTiles({ theme }) {
       setApiData(response.data);
       setIsLoading(false);
       setError(null);
-      console.log("Pooling")
+      console.log("POOLING FROM DB")
     } catch (error) {
       setError(error.message);
       setIsLoading(false);
@@ -96,9 +153,9 @@ export default function ForecastTiles({ theme }) {
     }
   };
 
-  // Периодический пуллинг
+  // Периодический пуллинг (5*60*1000 = 5 мин)
   useEffect(() => {
-    fetchForecasts();
+    fetchForecasts();   
     const interval = setInterval(fetchForecasts, 5*60*1000);
     return () => clearInterval(interval);
   }, []);
@@ -120,12 +177,6 @@ export default function ForecastTiles({ theme }) {
       {error ? (
         <div className="col-span-2 text-center text-red-500">
           Ошибка: {error}
-          <button
-            onClick={fetchForecasts}
-            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded"
-          >
-            Повторить
-          </button>
         </div>
       ) : (
         Object.keys(mappingTable).map((tableName) => {
@@ -135,7 +186,7 @@ export default function ForecastTiles({ theme }) {
             <ForecastTile
               key={tableName}
               title={mappingTable[tableName].title}
-              data={tileData}
+              data={patchTransitionNulls(tileData)}
               isLoading={isLoading}
               isClickable={!isLoading && tileData !== null}
               onClick={() => handleTileClick(tableName)}
@@ -147,7 +198,7 @@ export default function ForecastTiles({ theme }) {
 
       {selectedData && (
         <FullscreenForecastTile
-          data={selectedData}
+          data={patchTransitionNulls(selectedData)}
           onClose={closeFullScreen}
           theme={theme}
         />

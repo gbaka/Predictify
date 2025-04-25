@@ -4,7 +4,6 @@ import BaseChart from "../shared/BaseChart";
 import DataSummary from "../shared/DataSummary";
 
 
-// components/StatusIndicator.jsx
 function StatusIndicator({ status, label, theme }) {
   const isDarkMode = theme === "dark";
   const isOnline = status === "online";
@@ -109,25 +108,8 @@ function ParserInfoPanel({ parserInfo, theme }) {
 
 
 export default function FullscreenForecastTile({ data, onClose, theme }) {
+  console.log("FullScreenForecastTile", data)
   const isDarkMode = theme === "dark";
-
-  function patchTransitionNulls(data) {
-    if (!data?.prediction || !data?.endog) return;
-  
-    for (let i = 0; i < data.prediction.length - 1; i++) {
-      if (data.prediction[i] === null && data.prediction[i + 1] !== null) {
-        // Заменяем null перед переходом на не-null
-        if (data.endog[i] !== undefined) {
-          data.prediction[i] = data.endog[i];
-          if (data.confidence_intervals?.[i]) {
-            data.confidence_intervals[i] = [data.endog[i], data.endog[i]];
-          }
-        }
-      }
-    }
-  }
-
-  patchTransitionNulls(data)
 
   const allSeries = [
         // Базовый невидимый ряд для правильного масштабирования
@@ -199,6 +181,17 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
             ci => ci[0] ? (ci[1] - ci[0]) : undefined
           )
         }, 
+        // Ряд абсолютных ошибок
+        {
+        name: "Абсолютная ошибка",
+        type: "line",
+        data: data.absolute_error, 
+        lineStyle: { width: 0 }, 
+        itemStyle: { color: "#F54242" }, 
+        symbol: "none",
+        showInLegend: false 
+        },
+        // Исходные данные
         {
           name: "Исходные данные",
           type: "line",
@@ -206,8 +199,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
           smooth: false,
           lineStyle: { width: 2 },
           itemStyle: { color: "#3582FF" },
-        }
-
+        },
       ]
 
   // Опции для графика (адаптированные под полноэкранный режим)
@@ -245,6 +237,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
     },
   };
 
+  // Split-панели
   const createGutter = (direction) => {
     console.log(direction)
     const gutter = document.createElement("div");
@@ -268,7 +261,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
     return gutter;
   };
 
-  console.log("FSTile: ", data)
+  // console.log("FSTile: ", data)
 
   return (
     <div

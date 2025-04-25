@@ -1,4 +1,4 @@
-from .models import WeatherForecast, TestModel
+from .models import TemperatureForecast, RelativeHumidityForecast, WindSpeedForecast, PrecipitationForecast
 from typing import List, Dict
 from sqlalchemy import asc
 
@@ -62,13 +62,17 @@ class CRUDBase:
         return obj
 
 
-weather_crud = CRUDBase(WeatherForecast) 
-test_crud = CRUDBase(TestModel)
+temperature_crud = CRUDBase(TemperatureForecast) 
+relative_humidity_crud =  CRUDBase(RelativeHumidityForecast)
+wind_speed_crud = CRUDBase(WindSpeedForecast)
+precipitation_crud = CRUDBase(PrecipitationForecast)
 
 # Маппинг таблиц
 TABLE_CRUD_MAPPING = {
-    'weather_forecast': weather_crud,
-    'test_forecast': test_crud
+    'temperature_forecast': temperature_crud,
+    'relative_humidity_forecast': relative_humidity_crud,
+    'wind_speed_forecast': wind_speed_crud,
+    'precipitation_forecast': precipitation_crud
 }
 
 def get_crud_for_table(table_name: str):

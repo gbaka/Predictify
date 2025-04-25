@@ -20,7 +20,7 @@ from fastapi import APIRouter, File, Form, UploadFile, HTTPException, Request
 from services.forecasting import forecast
 from converters import convert_to_dict
 from database import get_db_session
-from database.crud import get_crud_for_table
+from database.crud import get_crud_for_table, TABLE_CRUD_MAPPING
 from .utils import format_db_forecast_data
 
 
@@ -91,13 +91,13 @@ def get_forecasts():
 
     try:
         db_session = next(get_db_session())
-        forecast_tables = ['weather_forecast', 'test_forecast']
+        forecast_tables = TABLE_CRUD_MAPPING.keys() # ['precipitation_forecast', 'wind_speed_forecast']
         response = {}
         for tablename in forecast_tables:
             crud = get_crud_for_table(tablename)
             instances = crud.get_all(db_session,limit=MAX_SAMPLES_FROM_PARSERS)
             response[tablename] = format_db_forecast_data(instances)
-        print("RESPONSE:", response)
+        # print("RESPONSE:", response)
     except Exception as e:
         print("-"*50, '\n',e, traceback.format_exc(), "\n"+"-"*50 + '\n')
         raise HTTPException(
