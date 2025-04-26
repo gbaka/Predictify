@@ -2,7 +2,6 @@ from sqlalchemy import Column, Float, Integer, Text, TIMESTAMP
 from sqlalchemy.sql import func
 from database import Base
 
-# Модели должны соответствовать таблицам, создаваемым в /backend/database/init.sql
 
 class ForecastBase(Base):
     __abstract__ = True 
@@ -19,8 +18,14 @@ class ForecastBase(Base):
     absolute_error = Column(Float)
     last_summary = Column(Text)
   
-class WeatherForecast(ForecastBase):
-    __tablename__ = "weather_forecast"
+class TemperatureForecast(ForecastBase):
+    __tablename__ = "temperature_forecast"
 
-class TestModel(ForecastBase):
-    __tablename__ = "test"
+class RelativeHumidityForecast(ForecastBase):
+    __tablename__ = "relative_humidity_forecast"
+
+class WindSpeedForecast(ForecastBase):
+    __tablename__ = "wind_speed_forecast"
+
+class PrecipitationForecast(ForecastBase):
+    __tablename__ = "precipitation_forecast"

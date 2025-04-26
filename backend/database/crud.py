@@ -1,5 +1,6 @@
-from .models import WeatherForecast, TestModel
+from .models import TemperatureForecast, RelativeHumidityForecast, WindSpeedForecast, PrecipitationForecast
 from typing import List, Dict
+from sqlalchemy import asc
 
 
 class CRUDBase:
@@ -10,7 +11,11 @@ class CRUDBase:
         return db_session.query(self.model).filter(self.model.id == id).first()
 
     def get_all(self, db_session, limit=100):
-        return db_session.query(self.model).limit(limit).all()
+        query = db_session.query(self.model)
+        if hasattr(self.model, 'date'):
+            query = query.order_by(asc(self.model.date))
+        query = query.limit(limit)
+        return query.all()
 
     def create(self, db_session, obj_data: dict):
         obj = self.model(**obj_data)
@@ -57,5 +62,22 @@ class CRUDBase:
         return obj
 
 
-weather_crud = CRUDBase(WeatherForecast) 
-test_crud = CRUDBase(TestModel)
+temperature_crud = CRUDBase(TemperatureForecast) 
+relative_humidity_crud =  CRUDBase(RelativeHumidityForecast)
+wind_speed_crud = CRUDBase(WindSpeedForecast)
+precipitation_crud = CRUDBase(PrecipitationForecast)
+
+# Маппинг таблиц
+TABLE_CRUD_MAPPING = {
+    'temperature_forecast': temperature_crud,
+    'relative_humidity_forecast': relative_humidity_crud,
+    'wind_speed_forecast': wind_speed_crud,
+    'precipitation_forecast': precipitation_crud
+}
+
+def get_crud_for_table(table_name: str):
+    """Безопасное получение CRUD объекта"""
+    crud = TABLE_CRUD_MAPPING.get(table_name)
+    if not crud:
+        raise ValueError(f"Unknown table: {table_name}")
+    return crud

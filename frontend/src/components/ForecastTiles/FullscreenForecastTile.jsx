@@ -1,23 +1,9 @@
 import { X } from "lucide-react";
 import Split from "react-split";
-import BaseChart from "../charts/BaseChart";
+import BaseChart from "../shared/BaseChart";
+import DataSummary from "../shared/DataSummary";
 
 
-function DataSummary({ summary, theme }) {
-  const isDarkMode = theme === "dark"
-  return (
-    <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-300'} p-2 border rounded-lg mr-3 w-full h-full line-clamp-1 overflow-y-scroll`}>
-      <div style={{ height: 0, color: 'rgba(0, 0, 0, 0)' }}><br /></div>
-      <h3 className="font-bold">Сводка данных:</h3>
-      <pre className={`text-center whitespace-pre-wrap text-xs ${!summary ? 'text-gray-500' : ''}`}>
-        {summary || "Нет данных"}
-      </pre>
-    </div>
-  );
-}
-
-
-// components/StatusIndicator.jsx
 function StatusIndicator({ status, label, theme }) {
   const isDarkMode = theme === "dark";
   const isOnline = status === "online";
@@ -77,7 +63,7 @@ function ParserInfoPanel({ parserInfo, theme }) {
     }`}>
       <h3 className="font-semibold mb-4">Информация о парсере</h3>
       
-      <div className="space-y-4">
+      <div className="max-h-[200px] flex-grow space-y-4">
         <StatusIndicator status="online" label="Статус:" theme={theme} />
 
         <InfoRow 
@@ -99,8 +85,20 @@ function ParserInfoPanel({ parserInfo, theme }) {
         />
 
         <InfoRow 
-          label="Следующее обновление:" 
-          value={parserInfo.nextUpdate} 
+          label="Модель:" 
+          value={parserInfo.model} 
+          theme={theme} 
+        />
+
+        <InfoRow 
+          label="Получено значений:" 
+          value={parserInfo.dataPoints} 
+          theme={theme} 
+        />
+
+        <InfoRow 
+          label="Подробнее:" 
+          value={parserInfo.details} 
           theme={theme} 
         />
       </div>
@@ -110,19 +108,113 @@ function ParserInfoPanel({ parserInfo, theme }) {
 
 
 export default function FullscreenForecastTile({ data, onClose, theme }) {
+  console.log("FullScreenForecastTile", data)
   const isDarkMode = theme === "dark";
+
+  const allSeries = [
+        // Базовый невидимый ряд для правильного масштабирования
+        {
+          name: "",
+          type: "line",
+          data: data.full_dates.map((val, idx) => data.endog[idx] ? data.endog[idx] : data.prediction[idx]),
+          lineStyle: { opacity: 0 },
+          itemStyle: { opacity: 0 },
+          emphasis: { focus: "none" },
+          tooltip: { show: false },
+        },
+        // Ряд прогнозных значений
+        {
+          name: "Прогноз",
+          type: "line",
+          data: data.prediction.map((el) => el ? el.toFixed(3) : el),
+          smooth: false,
+          lineStyle: { width: 2, type: "dashed" },
+          itemStyle: { color: "#F54242" },
+          animationDuration: 700,
+          animationEasing: "exponentialOut",
+        },
+        // Вспомогательный ряд для корректного отображения подсказки
+        {
+          name: `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          type: "line",
+          itemStyle: { color: "#F54242" },
+          lineStyle: { width: 0 },  
+          symbol: "roundRect",           
+          data: data.confidence_intervals.map(
+              ci => (ci[0] && ci[1]) ? `[${ci[0].toFixed(3)}, ${ci[1].toFixed(3)}]` : null
+            )
+                    
+        }, 
+        // Нижняя граница
+        {
+          name:`Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          type: "line",
+          stack: "confidence",
+          itemStyle: { color: "#F54242" },
+          lineStyle: { width: 0 }, 
+          symbol: "none",
+          tooltip: { show: false },
+          showInLegend: false,  
+          animationDuration: 800,
+          animationEasing: "exponentialOut",
+          smooth: false,
+          data: data.confidence_intervals.map(
+            ci => ci[0]
+          )
+        },
+        // Верхняя граница
+        {
+          name: `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          type: "line",
+          stack: "confidence",
+          itemStyle: { color: "#F54242" },
+          areaStyle: {
+            opacity: 0.2 
+          },
+          lineStyle: { width: 0 }, 
+          symbol: "none",
+          tooltip: { show: false },
+          animationDuration: 800,
+          animationEasing: "exponentialOut",
+          smooth: false,
+          data: data.confidence_intervals.map(
+            ci => ci[0] ? (ci[1] - ci[0]) : undefined
+          )
+        }, 
+        // Ряд абсолютных ошибок
+        {
+        name: "Абсолютная ошибка",
+        type: "line",
+        data: data.absolute_error, 
+        lineStyle: { width: 0 }, 
+        itemStyle: { color: "#F54242" }, 
+        symbol: "none",
+        showInLegend: false 
+        },
+        // Исходные данные
+        {
+          name: "Исходные данные",
+          type: "line",
+          data: data.endog,
+          smooth: false,
+          lineStyle: { width: 2 },
+          itemStyle: { color: "#3582FF" },
+        },
+      ]
 
   // Опции для графика (адаптированные под полноэкранный режим)
   const chartOptions = {
     legend: {
-      show: false,
+      show: true,
+      top: '1.5%',
+      data: ["Исходные данные", "Прогноз", `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`]
     },
     title: {
       show: false,
     },
     xAxis: {
       type: "category",
-      data: data.x,
+      data: data.full_dates,
       axisLabel: {
         color: isDarkMode ? "#9CA3AF" : "#6B7280",
       },
@@ -137,37 +229,15 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
       },
     },
 
-    series: [
-      {
-        name: "Исходные данные",
-        type: "line",
-        data: data.y,
-        smooth: false,
-        lineStyle: { width: 2 },
-        itemStyle: {
-          color: "#3B82F6"
-        }
-      },
-    ],
+    series: allSeries,
     grid: {
       top: "9%",
       right: "3%",
-      // bottom: "17%",
       left: "9%",
-      // containLabel: true,
     },
   };
 
-  const parserInfo = {
-    status: "online",
-    lastUpdate: "2023-11-15 14:30:45",
-    source: "Alpha Vantage API",
-    updateInterval: "15 мин",
-    nextUpdate: "2023-11-15 14:45:00",
-    dataPoints: data.x.length,
-  };
-
-
+  // Split-панели
   const createGutter = (direction) => {
     console.log(direction)
     const gutter = document.createElement("div");
@@ -190,6 +260,8 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
 
     return gutter;
   };
+
+  // console.log("FSTile: ", data)
 
   return (
     <div
@@ -229,7 +301,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         <Split
           className="px-4 pt-2 flex-grow flex flex-col w-full"
           direction="vertical"
-          sizes={[80, 20]}
+          sizes={[72, 28]}
           minSize={[250, 80]}
           snapOffset={0}
           gutterSize={7}
@@ -238,7 +310,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
           {/* Верхний блок (график + информация о парсере) */}
           <Split
             className="flex w-full mb-2"
-            sizes={[70, 30]}
+            sizes={[75, 25]}
             minSize={[400, 250]}
             gutterSize={7}
             snapOffset={0}
@@ -255,13 +327,13 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
 
             {/* Информация о парсере */}
             <div className=" h-full min-w-[130px] pl-1">
-              <ParserInfoPanel parserInfo={parserInfo} theme={theme} />
+              <ParserInfoPanel parserInfo={data.parserInfo} theme={theme} />
             </div>
             
           </Split>
 
           <div className="w-full h-full mt-2 min-w-[430px] pb-4">
-            <DataSummary summary={null} theme={theme} />
+            <DataSummary summary={data.summary} theme={theme} />
           </div>
         </Split>
       </div>

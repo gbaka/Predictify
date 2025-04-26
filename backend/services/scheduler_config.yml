@@ -1,5 +1,10 @@
+# Конфиг-файл планировщика
+# database -> tablename должны соответствовать моделям из backend/database/models.py (+crud объекты из backend/database/crud.py, +backend/routes.py)
+# - name должны соответствовать именам из маппинг таблицы baseMappingTable компонента frontend/src/components/ForecastTiles/ForecastTiles.jsx
+
+
 tasks:
-  - name: "weather_forecast"
+  - name: "temperature_forecast"
     parser:
       type: "OpenMeteo"
       params:
@@ -12,42 +17,98 @@ tasks:
       type: "ARIMA"
       observation_window_size: 100
       params:
-        p: 1
+        p: 5
         d: 0
-        q: 0 
+        q: 2 
         steps: 30
-        trend: "c"
+        trend: "t"
         significance_level: 0.05
         enforce_stationarity: true
         enforce_invertibility: true
     database:
-      tablename: "weather_forecast"
+      tablename: "temperature_forecast"
     schedule:
-      pooling_interval: 300  # в секундах
+      pooling_interval: 900  # в секундах
+      retry_cooldown: 300
+
+  - name: "relative_humidity_forecast"
+    parser:
+      type: "OpenMeteo"
+      params:
+        latitude: 55.7558
+        longitude: 37.6176
+        hourly: "relative_humidity_2m"
+        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+    model:
+      type: "ARIMA"
+      observation_window_size: 100
+      params:
+        p: 5
+        d: 0
+        q: 2 
+        steps: 30
+        trend: "t"
+        significance_level: 0.05
+        enforce_stationarity: true
+        enforce_invertibility: true
+    database:
+      tablename: "relative_humidity_forecast"
+    schedule:
+      pooling_interval: 900  # в секундах
+      retry_cooldown: 300
+
+  - name: "wind_speed_forecast"
+    parser:
+      type: "OpenMeteo"
+      params:
+        latitude: 55.7558
+        longitude: 37.6176
+        hourly: "wind_speed_10m"
+        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+    model:
+      type: "ARIMA"
+      observation_window_size: 100
+      params:
+        p: 5
+        d: 0
+        q: 2 
+        steps: 30
+        trend: "t"
+        significance_level: 0.05
+        enforce_stationarity: true
+        enforce_invertibility: true
+    database:
+      tablename: "wind_speed_forecast"
+    schedule:
+      pooling_interval: 900  # в секундах
+      retry_cooldown: 300
+
+  - name: "precipitation_forecast"
+    parser:
+      type: "OpenMeteo"
+      params:
+        latitude: 55.7558
+        longitude: 37.6176
+        hourly: "precipitation"
+        start_date: !py3 "(datetime.now() - timedelta(days=5)).strftime('%Y-%m-%d')"
+        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+    model:
+      type: "ARIMA"
+      observation_window_size: 100
+      params:
+        p: 5
+        d: 0
+        q: 2 
+        steps: 30
+        trend: "t"
+        significance_level: 0.05
+        enforce_stationarity: true
+        enforce_invertibility: true
+    database:
+      tablename: "precipitation_forecast"
+    schedule:
+      pooling_interval: 900  # в секундах
       retry_cooldown: 300
   
-
-  # - name: "test"
-  #   parser: 
-  #     type: "test.com"
-  #   model:
-  #     type: "sarime"
-  #     params:
-  #       order: 54
-  #       steps: 228
-  #       schedule:
-  #   schedule:
-  #     pooling_inverval: 3600  # в секундах
-  #     retry_cooldown: 300
-
-  # - name: "SuperTask"
-  #   parser: 
-  #     type: "None"
-
-  # - name: "SuperTask 2"
-  #   parser: 
-  #     type: "None"
-
-  # - name: "SuperTask 3"
-  #   parser: 
-  #     type: "None"
