@@ -16,9 +16,15 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3030,
-  },
-  preview: {
-    host: '0.0.0.0',
-    port: 8080,
+
+    proxy: {
+      // Проксирование API запросов
+      '/api': {
+        target: 'http://backend-dev:8000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/api')  
+      }
+    }
   },
 })

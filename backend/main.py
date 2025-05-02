@@ -41,7 +41,7 @@ app.include_router(api_router, prefix="/api")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:8080",  # frontend 
+        # "http://localhost:80",    # CORS не нужны т.к. запросы с фронта проксируются через Nginx
         "http://localhost:3030"   # frontend-dev
     ],  
     allow_credentials=True,

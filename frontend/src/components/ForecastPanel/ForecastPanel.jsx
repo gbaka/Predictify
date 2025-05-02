@@ -405,7 +405,7 @@ export default function ForecastingPanel({ theme }) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT); 
     try {
-      const response = await axios.post(`${API_CONFIG.BASE_URL}/${API_CONFIG.FORECAST_ENDPOINT}` , formData, {
+      const response = await axios.post(API_CONFIG.FORECAST_ENDPOINT , formData, {
         headers: { "Content-Type": "multipart/form-data" }, 
         signal: controller.signal
       });
