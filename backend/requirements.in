@@ -1,5 +1,4 @@
 fastapi
-uvicorn
 sqlalchemy
 statsmodels
 pip-tools
@@ -8,3 +7,5 @@ httpx
 requests
 PyYAML
 psycopg2-binary
+gunicorn
+uvicorn[standard]

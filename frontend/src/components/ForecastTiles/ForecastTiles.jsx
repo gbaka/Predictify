@@ -136,12 +136,12 @@ export default function ForecastTiles({ theme }) {
   const fetchForecasts = async () => {
     try {
       const response = await axios.get(
-        `${API_CONFIG.BASE_URL}/${API_CONFIG.FORECAST_FROM_PARSERS_ENDPOINT}`
+        API_CONFIG.FORECAST_FROM_PARSERS_ENDPOINT
       );
       setApiData(response.data);
       setIsLoading(false);
       setError(null);
-      console.log("POOLING FROM DB")
+      console.log("POOLING FROM DB", response.dara, response)
     } catch (error) {
       setError(error.message);
       setIsLoading(false);

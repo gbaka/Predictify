@@ -10,6 +10,7 @@ anyio==4.8.0
     # via
     #   httpx
     #   starlette
+    #   watchfiles
 build==1.2.2.post1
     # via pip-tools
 certifi==2025.1.31
@@ -27,12 +28,16 @@ fastapi==0.115.8
     # via -r requirements.in
 greenlet==3.1.1
     # via sqlalchemy
+gunicorn==23.0.0
+    # via -r requirements.in
 h11==0.14.0
     # via
     #   httpcore
     #   uvicorn
 httpcore==1.0.7
     # via httpx
+httptools==0.6.4
+    # via uvicorn
 httpx==0.28.1
     # via -r requirements.in
 idna==3.10
@@ -49,6 +54,7 @@ numpy==2.2.3
 packaging==24.2
     # via
     #   build
+    #   gunicorn
     #   statsmodels
 pandas==2.2.3
     # via statsmodels
@@ -68,12 +74,16 @@ pyproject-hooks==1.2.0
     #   pip-tools
 python-dateutil==2.9.0.post0
     # via pandas
+python-dotenv==1.1.0
+    # via uvicorn
 python-multipart==0.0.20
     # via -r requirements.in
 pytz==2025.1
     # via pandas
 pyyaml==6.0.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   uvicorn
 requests==2.32.3
     # via -r requirements.in
 scipy==1.15.2
@@ -99,8 +109,14 @@ tzdata==2025.1
     # via pandas
 urllib3==2.3.0
     # via requests
-uvicorn==0.34.0
+uvicorn[standard]==0.34.0
     # via -r requirements.in
+uvloop==0.21.0
+    # via uvicorn
+watchfiles==1.0.5
+    # via uvicorn
+websockets==15.0.1
+    # via uvicorn
 wheel==0.45.1
     # via pip-tools
 

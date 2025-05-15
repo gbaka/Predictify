@@ -1,21 +1,33 @@
-# Используем официальный образ с Node.js
-FROM node:20
-LABEL author="gbaka <geo.m2019@mail.ru>"
+# === Этап 1: Сборка фронта ===
+FROM node:20 as builder
 
 # Директория для сервиса внутри контейнера
 WORKDIR /app
 
+# Копируем только package.json и package-lock.json (для оптимизации кэширования слоев Docker)
+COPY package*.json ./
+
+# Устанавливаем только зависимости
+RUN npm ci
+
 # Копируем все файлы проекта (кроме тех, что в .dockerignore)
 COPY . .
 
-# Устанавливаем зависимости (описаны в package.json)
-RUN npm install 
+# Собираем проект (результат в /app/dist)
+RUN npm run build      
 
-# Собираем проект с помощью Vite
-RUN npm run build
 
-# Сервер фронтенда работает на 8080 порту
-EXPOSE 8080
+# === Этап 2: Nginx для статики ===
+FROM nginx:1.28.0-alpine
 
-# Запускаем сервер, чтобы обслуживать статику
-CMD ["npm", "run", "preview"]
+# Копируем конфиг Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Удаляем дефолтный конфиг
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Копируем собранные файлы из builder в Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Nginx по умолчанию слушает 80 порт
+EXPOSE 80

@@ -1,19 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import QueuePool
+from sqlalchemy.pool import NullPool
 
 
-SQLALCHEMY_DATABASE_URL = "postgresql://myuser:mypassword@database:5432/forecast_db"
+SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://myuser:mypassword@database:5432/forecast_db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    poolclass=QueuePool,
-    pool_size=10,  
-    max_overflow=5,  
-    pool_timeout=30,  
-    pool_pre_ping=True
+    poolclass=NullPool,  # TODO: Помирить gunicorn воркеры с QueuePool 
 )
+
 print("Engine has been successfully created!")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -25,7 +22,6 @@ def get_db_session():
         yield db_session
     finally:
         db_session.close()
-
 
 def init_db():
     from . import models  
