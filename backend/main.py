@@ -4,30 +4,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from concurrent.futures import ProcessPoolExecutor
 import asyncio
-import fcntl
 import os
 
 from services.scheduler import Scheduler
 from services.config_loader import ConfigLoader
 from database import init_db
-
 from utils import SimpleFileLock
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
 
-    # lock = LockManager.get_lock()
-  
-
     # Запуск планировщика только в одном из воркеров
     lock = SimpleFileLock('/tmp/scheduler.lock')
-
     if lock.acquire():
-   
-        # fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB) # Неблокирующая попытка захвата
-        init_db()
         print("🔄 [Master] Initializing scheduler")
+        init_db()
 
         # Пул процесса планировщика 
         app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
