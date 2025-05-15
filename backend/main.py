@@ -4,31 +4,51 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from concurrent.futures import ProcessPoolExecutor
 import asyncio
+import fcntl
 import os
 
 from services.scheduler import Scheduler
 from services.config_loader import ConfigLoader
-
 from database import init_db
- 
+
+from utils import SimpleFileLock
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
-
     app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
-    app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
 
-    config_loader = ConfigLoader("./services/scheduler_config.yml")
-    tasks_config = config_loader.tasks
-    scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
-    print("Starting a scheduler")
-    asyncio.create_task(scheduler.start())
-    print("Scheduler started")
+    # lock = LockManager.get_lock()
+  
 
+    # Запуск планировщика только в одном из воркеров
+    lock = SimpleFileLock('/tmp/scheduler.lock')
+
+    if lock.acquire():
+   
+        # fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB) # Неблокирующая попытка захвата
+        init_db()
+        print("🔄 [Master] Initializing scheduler")
+
+        # Пул процесса планировщика 
+        app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
+        config_loader = ConfigLoader("./services/scheduler_config.yml")
+        tasks_config = config_loader.tasks
+        app.state.scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
+
+        print("Starting a scheduler")
+        asyncio.create_task(app.state.scheduler.start())
+        print("Scheduler started")
+    else: 
+        print("🔄 Scheduler running in another worker")
+        
     yield
 
-    await scheduler.stop()
+    if hasattr(app.state, "scheduler"):
+        print("🛑 Stopping scheduler")
+        await app.state.scheduler.stop()
+        app.state.scheduler_proccess_pool.shutdown(wait=True)
+        lock.release()
+
     app.state.forecasting_process_pool.shutdown(wait=True)
 
 

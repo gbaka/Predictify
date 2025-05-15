@@ -4,86 +4,86 @@
 
 
 tasks:
-  - name: "temperature_forecast"
-    parser:
-      type: "OpenMeteo"
-      params:
-        latitude: 55.7558
-        longitude: 37.6176
-        hourly: "temperature_2m"
-        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
-        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
-    model:
-      type: "ARIMA"
-      observation_window_size: 100
-      params:
-        p: 5
-        d: 0
-        q: 2 
-        steps: 30
-        trend: "t"
-        significance_level: 0.05
-        enforce_stationarity: true
-        enforce_invertibility: true
-    database:
-      tablename: "temperature_forecast"
-    schedule:
-      pooling_interval: 900  # в секундах
-      retry_cooldown: 300
+  # - name: "temperature_forecast"
+  #   parser:
+  #     type: "OpenMeteo"
+  #     params:
+  #       latitude: 55.7558
+  #       longitude: 37.6176
+  #       hourly: "temperature_2m"
+  #       start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+  #       end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+  #   model:
+  #     type: "ARIMA"
+  #     observation_window_size: 100
+  #     params:
+  #       p: 5
+  #       d: 0
+  #       q: 2 
+  #       steps: 30
+  #       trend: "t"
+  #       significance_level: 0.05
+  #       enforce_stationarity: true
+  #       enforce_invertibility: true
+  #   database:
+  #     tablename: "temperature_forecast"
+  #   schedule:
+  #     pooling_interval: 900  # в секундах
+  #     retry_cooldown: 300
 
-  - name: "relative_humidity_forecast"
-    parser:
-      type: "OpenMeteo"
-      params:
-        latitude: 55.7558
-        longitude: 37.6176
-        hourly: "relative_humidity_2m"
-        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
-        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
-    model:
-      type: "ARIMA"
-      observation_window_size: 100
-      params:
-        p: 5
-        d: 0
-        q: 2 
-        steps: 30
-        trend: "t"
-        significance_level: 0.05
-        enforce_stationarity: true
-        enforce_invertibility: true
-    database:
-      tablename: "relative_humidity_forecast"
-    schedule:
-      pooling_interval: 900  # в секундах
-      retry_cooldown: 300
+  # - name: "relative_humidity_forecast"
+  #   parser:
+  #     type: "OpenMeteo"
+  #     params:
+  #       latitude: 55.7558
+  #       longitude: 37.6176
+  #       hourly: "relative_humidity_2m"
+  #       start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+  #       end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+  #   model:
+  #     type: "ARIMA"
+  #     observation_window_size: 100
+  #     params:
+  #       p: 5
+  #       d: 0
+  #       q: 2 
+  #       steps: 30
+  #       trend: "t"
+  #       significance_level: 0.05
+  #       enforce_stationarity: true
+  #       enforce_invertibility: true
+  #   database:
+  #     tablename: "relative_humidity_forecast"
+  #   schedule:
+  #     pooling_interval: 900  # в секундах
+  #     retry_cooldown: 300
 
-  - name: "wind_speed_forecast"
-    parser:
-      type: "OpenMeteo"
-      params:
-        latitude: 55.7558
-        longitude: 37.6176
-        hourly: "wind_speed_10m"
-        start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
-        end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
-    model:
-      type: "ARIMA"
-      observation_window_size: 100
-      params:
-        p: 5
-        d: 0
-        q: 2 
-        steps: 30
-        trend: "t"
-        significance_level: 0.05
-        enforce_stationarity: true
-        enforce_invertibility: true
-    database:
-      tablename: "wind_speed_forecast"
-    schedule:
-      pooling_interval: 900  # в секундах
-      retry_cooldown: 300
+  # - name: "wind_speed_forecast"
+  #   parser:
+  #     type: "OpenMeteo"
+  #     params:
+  #       latitude: 55.7558
+  #       longitude: 37.6176
+  #       hourly: "wind_speed_10m"
+  #       start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
+  #       end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
+  #   model:
+  #     type: "ARIMA"
+  #     observation_window_size: 100
+  #     params:
+  #       p: 5
+  #       d: 0
+  #       q: 2 
+  #       steps: 30
+  #       trend: "t"
+  #       significance_level: 0.05
+  #       enforce_stationarity: true
+  #       enforce_invertibility: true
+  #   database:
+  #     tablename: "wind_speed_forecast"
+  #   schedule:
+  #     pooling_interval: 900  # в секундах
+  #     retry_cooldown: 300
 
   - name: "precipitation_forecast"
     parser:

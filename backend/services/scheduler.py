@@ -7,6 +7,7 @@ from typing import Dict, List
 from datetime import datetime
 import traceback
 
+
 from database.crud import get_crud_for_table
 from database import get_db_session
 from .parsers import parse
