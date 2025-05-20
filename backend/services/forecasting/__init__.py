@@ -9,7 +9,7 @@
 
 from typing import Dict
 
-from .models import ARIMAModel
+from .models import SARIMAXModel, SimpleExpSmoothingModel
 from .utils import extend_dates, is_camel_case, camel_to_snake
 
 def forecast(data: Dict, model_type: str, settings: Dict):
@@ -33,15 +33,16 @@ def forecast(data: Dict, model_type: str, settings: Dict):
     steps = settings.pop('steps')
 
     print(settings)
+    print(model_type)
 
     # Преобразуем ключи словаря настроек settings из camelCase в snake_case
     for param in settings.copy().keys():
         if is_camel_case(param):
             settings[camel_to_snake(param)] = settings.pop(param)
 
-    if model_type == "ARIMA":
+    if model_type in ['SARIMA', 'ARIMA', 'ARMA', 'AR', 'MA']:
         significance_level = settings.pop('significance_level')
-        model = ARIMAModel(**settings)
+        model = SARIMAXModel(**settings)
         summary = model.fit(data).summary().as_text()
 
         prediction_result = model.detailed_forecast(steps)
@@ -61,11 +62,26 @@ def forecast(data: Dict, model_type: str, settings: Dict):
             }
         }
     
-    # # elif model_type == "LSTM":
-    # #     input_shape = (data.shape[1], 1)  # Определяем форму входных данных
-    # #     model = LSTMModel(input_shape)
-    # #     model.train(X_train, y_train, epochs=10)
-    # #     return model.predict(X_input)
+    elif model_type in ['SES']:
+        if settings['initialization_method'] != 'known':
+            settings.pop('initial_level')
+        model = SimpleExpSmoothingModel(**settings)
+        full_dates = extend_dates(data, steps)
+        data.pop('dates')
+        summary = model.fit(data).summary().as_text()
+
+        prediction_vals = model.forecast(steps).tolist()
+
+        return {
+            "summary" : summary,  
+            "full_dates" : full_dates, 
+            "endog" : data.get("endog"),
+            "prediction" : prediction_vals, 
+            "confidence_intervals": {
+                "intervals" : None,
+                "confidence_level" : None
+            }
+        }
     
     else:
         raise ValueError("Неизвестная модель")

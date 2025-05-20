@@ -6,7 +6,7 @@ import { FileText, Sheet, X, Maximize2, Minimize2, Play,
          Settings } from "lucide-react";
 
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
-import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import { SARIMASettings, ARIMASettings, ARMASettings, ARSettings, MASettings, SESSettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
 import { API_CONFIG } from "../../api/apiConfig";
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
@@ -28,7 +28,7 @@ const calculateAverage = (data) => {
 function ModelSelector({ onChange, theme }) {
   const models = {
     "1. Статистические методы": {
-      "1.1 Линейные модели": ["ARIMA", "SARIMA"],
+      "1.1 Линейные модели": ["AR", "MA", "ARMA", "ARIMA", "SARIMA"],
       "1.2 Экспоненциальное сглаживание": ["SES", "Holt-Winters"]
     },
     "2. Машинное обучение": {
@@ -262,10 +262,19 @@ function DataUploader({ onUpload, theme }) {
 function ModelSettingsPanel({ selectedModel, onChange, theme }) {
   const renderSettings = () => {
     switch (selectedModel) {
-      case "ARIMA":
-        return <ARIMASettings onChange={onChange} theme={theme}/>;
       case "SARIMA":
         return <SARIMASettings onChange={onChange} theme={theme}/>;
+      case "ARIMA":
+        return <ARIMASettings onChange={onChange} theme={theme}/>;
+      case "ARMA":
+        return <ARMASettings onChange={onChange} theme={theme}/>;
+      case "AR":
+        return <ARSettings onChange={onChange} theme={theme}/>;
+      case "MA":
+        return <MASettings onChange={onChange} theme={theme}/>;
+      case "SES":
+        return <SESSettings onChange={onChange} theme={theme}/>;
+
       default:
         return <div className="text-center text-gray-500">Модель не выбрана</div>;
     }
