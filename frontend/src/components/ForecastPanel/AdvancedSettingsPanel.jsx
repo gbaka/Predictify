@@ -139,7 +139,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "showEndogExtremes")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">
               Показывать экстремумы исходных данных
@@ -153,7 +153,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "showEndogAverage")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">
               Показывать среднее исходных данных
@@ -167,7 +167,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "showForecastExtremes")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">
               Показывать экстремумы прогнозов
@@ -181,7 +181,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "showForecastAverage")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">
               Показывать среднее прогнозов
@@ -195,7 +195,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "isSmooth")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">Сглаживание графика</label>
           </div>
@@ -207,7 +207,7 @@ export default function AdvancedSettingsPanel({ isOpen, onClose, onChange, theme
               onChange={(e) =>
                 handleInputChange(e, "graphSettings", "showLegend")
               }
-              className="h-5 w-5"
+              className="h-5 w-5 flex-shrink-0"
             />
             <label className="font-medium">Показывать легенду</label>
           </div>

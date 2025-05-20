@@ -9,7 +9,7 @@
 """
 
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-from statsmodels.tsa.holtwinters import SimpleExpSmoothing
+from statsmodels.tsa.holtwinters import SimpleExpSmoothing, Holt, ExponentialSmoothing
 
 
 class SARIMAXModel:
@@ -105,17 +105,13 @@ class SARIMAXModel:
         """
         return self.model.get_forecast(steps=steps)
 
-# Simple Exponential Smoothing
-class SimpleExpSmoothingModel:
-    """Модель простого экспоненциального сглаживания для прогнозирования временных рядов.
+
+class ExponentialSmoothingModel:
+    """Модель тройного экспоненциального сглаживания Холта-Винтерса для прогнозирования временных рядов.
 
     Attributes
     ----------
-    alpha : float
-        Параметр сглаживания (0 ≤ alpha ≤ 1), где:
-        - Ближе к 0: модель медленнее реагирует на новые данные
-        - Ближе к 1: модель быстрее адаптируется к последним изменениям
-    model : SimpleExpSmoothing
+    model : ExponentialSmoothing
         Объект модели после её подгонки.
 
     Methods
@@ -126,28 +122,61 @@ class SimpleExpSmoothingModel:
         Прогнозирование на заданное количество шагов вперёд.
     """
 
-    def __init__(self, initialization_method: str = None, initial_level: float = None):
+    def __init__(
+        self,
+        initialization_method: str = None,
+        initial_level: float = None,
+        initial_trend: float = None,
+        trend: str = None,
+        seasonal: str = None,
+        seasonal_periods: int = None,
+        damped_trend: bool = False,
+    ):
         """
         Parameters
         ----------
-        alpha : float, optional
-            Параметр сглаживания (по умолчанию 0.5).
+        initialization_method : str, optional
+            Метод инициализации ('known', 'heuristic', 'estimated').
+        initial_level : float, optional
+            Начальный уровень (требуется при initialization_method='known').
+        initial_trend : float, optional
+            Начальный тренд (требуется при initialization_method='known').
+        trend : str, optional
+            Тип трендовой компоненты:
+        seasonal : str, optional
+            Тип сезонной компоненты:
+        seasonal_periods : int, optional
+            Количество периодов в полном сезонном цикле.
+        exponential : bool, optional
+            Тип тренда.
+        damped_trend : bool, optional
+            Затухание тренда.
         """
         self.settings = {
-            "initialization_method" : initialization_method,
-            "initial_level" : initial_level
+            "initialization_method": initialization_method,
+            "initial_level": initial_level,
+            "initial_trend": initial_trend,
+            "trend": trend,
+            "seasonal": seasonal, 
+            "seasonal_periods": seasonal_periods,
+            "damped_trend": damped_trend
         }
         self.model = None
 
     def fit(self, data: dict):
-        """Обучение модели SimpleExpSmoothingModel на данных.
+        """Обучение модели ExponentialSmoothing на данных.
 
         Parameters
         ----------
         data : dict
             Словарь с ключом 'endog' - одномерный массив данных временного ряда.
+
+        Returns
+        -------
+        ExponentialSmoothing
+            Обученная модель.
         """
-        self.model = SimpleExpSmoothing(**data, **self.settings)
+        self.model = ExponentialSmoothing(**data, **self.settings)
         self.model = self.model.fit()
         return self.model
 

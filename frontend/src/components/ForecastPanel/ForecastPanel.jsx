@@ -6,7 +6,7 @@ import { FileText, Sheet, X, Maximize2, Minimize2, Play,
          Settings } from "lucide-react";
 
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
-import { SARIMASettings, ARIMASettings, ARMASettings, ARSettings, MASettings, SESSettings } from "./ModelSettingsUI"
+import { SARIMASettings, ARIMASettings, ARMASettings, ARSettings, MASettings, SESSettings, HESSettings, HWESSettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
 import { API_CONFIG } from "../../api/apiConfig";
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
@@ -29,7 +29,7 @@ function ModelSelector({ onChange, theme }) {
   const models = {
     "1. Статистические методы": {
       "1.1 Линейные модели": ["AR", "MA", "ARMA", "ARIMA", "SARIMA"],
-      "1.2 Экспоненциальное сглаживание": ["SES", "Holt-Winters"]
+      "1.2 Экспоненциальное сглаживание": ["SES", "HES", "HWES"]
     },
     "2. Машинное обучение": {
       "2.1 Деревья решений": ["Random Forest", "XGBoost"],
@@ -272,8 +272,19 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
         return <ARSettings onChange={onChange} theme={theme}/>;
       case "MA":
         return <MASettings onChange={onChange} theme={theme}/>;
+
       case "SES":
         return <SESSettings onChange={onChange} theme={theme}/>;
+      case "HES":
+        return <HESSettings onChange={onChange} theme={theme}/>;
+      case "HWES":
+        return <HWESSettings onChange={onChange} theme={theme}/>;
+
+      case "LSTM":
+      case "GRU":
+      case "XGBoost":
+      case "Random Forest":
+        return  <div className="text-center text-gray-500">Ждите в следующих обновлениях</div>;
 
       default:
         return <div className="text-center text-gray-500">Модель не выбрана</div>;
