@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Home, BookOpen, BarChart3 } from "lucide-react";
+import { Search, Home, BookOpen, ChartSpline } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { index, pages } from "../../api/searchIndex"; 
 import LogoSvg from "../../assets/logo4.svg?react";
@@ -10,7 +10,7 @@ import LogoSvg from "../../assets/logo4.svg?react";
 const navItems = [
   { name: "Главная", path: "/", icon: Home },
   { name: "Вики", path: "/wiki", icon: BookOpen },
-  { name: "Прогнозирование", path: "/forecast", icon: BarChart3 },
+  { name: "Прогнозирование", path: "/forecast", icon: ChartSpline },
 ];
 
 
@@ -134,11 +134,11 @@ function SearchBar({ className = "", inputClassName = "" }) {
           ref={searchInputRef}
           type="text"
           placeholder="Поиск..."
-          className={`rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 pr-14
+          className={`rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 pr-14
             ${
               theme === "dark"
-                ? "bg-gray-800 text-gray-100 focus:ring-gray-600"
-                : "bg-gray-100 text-gray-900 focus:ring-gray-400"
+                ? "bg-gray-800 text-gray-100"
+                : "bg-gray-100 text-gray-900"
             } 
             ${inputClassName}`}
           value={searchQuery}
