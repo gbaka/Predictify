@@ -151,7 +151,6 @@ function DataUploader({ onUpload, theme }) {
   const handleDrop = (event) => {
     event.preventDefault();
     setIsDragging(false);
-
     const file = event.dataTransfer.files[0];
     processFile(file);
   };

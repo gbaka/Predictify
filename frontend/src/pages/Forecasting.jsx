@@ -25,7 +25,7 @@ export default function Forecasting() {
               }`}
               onClick={() => setActiveTab("parsedData")}
             >
-              Парсинг
+              Примеры
             </button>
             <button
               className={`px-4 py-2 transition-all border-b-2 ${
@@ -44,23 +44,19 @@ export default function Forecasting() {
           {activeTab === "parsedData" ? (
             <>
               <h1 className="text-3xl font-bold mb-4 mt-2 text-center">
-                Парсеры
+                Примеры
               </h1>
               <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
-                Здесь будет что-то. Lorem ipsum, dolor
-                sit amet consectetur adipisicing elit. Labore maxime, soluta
-                ratione hic libero vero ducimus illum voluptatem aut quos.
+                Здесь вы можете увидеть, как выглядят прогнозы, созданные в Predictify. <br/>
+                Прогнозы построены посредством разных моделей и основаны на данных, взятых с открытых API.
               </p>
               <ForecastTiles theme={theme} />
 
                {/* Добавленные параграфы о сервисе */}
                <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
                 <p>
-                  Мы уделяем особое внимание безопасности ваших данных. Все
-                  файлы, загруженные в наш сервис, обрабатываются в
-                  зашифрованном виде и хранятся на защищенных серверах. Мы не
-                  передаем ваши данные третьим лицам и гарантируем их
-                  конфиденциальность.
+                  Мы уделяем особое внимание безопасности ваших данных. <br/>
+                  Мы не сохраняем загруженные файлы и не передаём их третьим лицам. 
                 </p>
               </div>
             </>
@@ -70,20 +66,15 @@ export default function Forecasting() {
                 Прогнозирование
               </h1>
               <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
-                Здесь будет интерфейс для прогнозирования. Lorem ipsum, dolor
-                sit amet consectetur adipisicing elit. Labore maxime, soluta
-                ratione hic libero vero ducimus illum voluptatem aut quos.
+                Здесь вы можете построить прогноз временного ряда на основе собственных данных. Загрузите данные в формате Excel или CSV, выберите модель и настройте ее параметры, после этого нажмите кнопку &laquo;Начать&raquo;.
               </p>
               <ForecastPanel theme={theme}/>
 
               {/* Добавленные параграфы о сервисе */}
               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
-                <p>
-                  Мы уделяем особое внимание безопасности ваших данных. Все
-                  файлы, загруженные в наш сервис, обрабатываются в
-                  зашифрованном виде и хранятся на защищенных серверах. Мы не
-                  передаем ваши данные третьим лицам и гарантируем их
-                  конфиденциальность.
+                 <p>
+                  Мы уделяем особое внимание безопасности ваших данных. <br/>
+                  Мы не сохраняем загруженные файлы и не передаём их третьим лицам. 
                 </p>
               </div>
             </>
