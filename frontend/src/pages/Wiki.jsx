@@ -94,7 +94,6 @@ export default function Wiki() {
         </ul>
       </nav>
 
-      {/* <div className="mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">  */}
       <div className="container mt-3 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 p-6 px-8">
         <h1 id="main" className="text-3xl font-bold text-center">
           Вики

@@ -1,60 +1,43 @@
 export default function Help() {
-    return (
-      <div className="container mx-auto p-6 px-8">
-        <h1 className="text-4xl font-bold">Помощь</h1>
-        <p className="mt-4 text-lg">
-          Добро пожаловать в раздел помощи! Здесь вы найдете ответы на часто задаваемые вопросы и инструкции по использованию
-          нашего сервиса.
+  return (
+    <div className="container mt-3 mx-auto p-6 px-8 max-w-5xl">
+      <h1 className="text-3xl font-bold text-center">Помощь</h1>
+      <p className="mt-4 text-lg text-center">
+        Здесь вы найдете краткую инструкцию по загрузке данных и использованию сервиса прогнозирования.
+      </p>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">1. Поддерживаемые форматы</h2>
+        <p className="mt-4">
+          Вы можете загружать файлы в формате <strong>CSV</strong> или <strong>Excel (.xlsx/.xls)</strong>. Файл должен иметь размер до <strong>10 МБ</strong>.
         </p>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">1. Как зарегистрироваться?</h2>
-          <p className="mt-4">
-            Для регистрации на нашем сервисе просто нажмите на кнопку &quot;Зарегистрироваться&quot; на главной странице, введите свои
-            данные и следуйте инструкциям на экране.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">2. Как загрузить данные?</h2>
-          <p className="mt-4">
-            Чтобы загрузить данные, перейдите на страницу &quot;Загрузка данных&quot;, выберите файл и нажмите кнопку &quot;Загрузить&quot;.
-            Убедитесь, что файл соответствует формату, указанному в инструкциях на странице.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">3. Как настроить уведомления?</h2>
-          <p className="mt-4">
-            Уведомления можно настроить в разделе &quot;Настройки&quot;. Перейдите в этот раздел и включите необходимые уведомления для
-            получения актуальной информации.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">4. Как получить помощь?</h2>
-          <p className="mt-4">
-            Если у вас возникли вопросы, вы можете обратиться в нашу службу поддержки, написав нам на адрес:
-            <a href="mailto:support@example.com">support@example.com</a>. Мы ответим на ваш запрос в кратчайшие сроки.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">5. Часто задаваемые вопросы</h2>
-          <p className="mt-4">
-            Здесь вы найдете ответы на самые распространенные вопросы. Если ваш вопрос не был освещен в этом разделе,
-            пожалуйста, свяжитесь с нами напрямую.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">6. Обратная связь</h2>
-          <p className="mt-4">
-            Мы всегда рады услышать ваше мнение о нашем сервисе. Оставьте свои отзывы или предложения, отправив сообщение
-            на адрес: <a href="mailto:feedback@example.com">feedback@example.com</a>.
-          </p>
-        </section>
-      </div>
-    );
-  }
-  
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">2. Требования к структуре данных</h2>
+        <p className="mt-4">
+          Для построения прогноза необходимо, чтобы данные содержали хотя бы один числовой столбец — <strong>endog</strong> (значения временного ряда).  
+          Для разметки данных по времени в файле может находится столбец с датами — <strong>date</strong>, но его наличие необязательно.
+          Строка заголовков (названия столбцов) тажке необязательно должна присутствовать в файле.
+        </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">3. Как загрузить данные</h2>
+        <p className="mt-4">
+          Для загрузки данных, перейдите на вкладку <strong>&laquo;Попробовать&raquo;</strong> раздела <strong>&laquo;Прогнозирование&raquo;</strong>, далее перетащите нужный файл в Drag&apos;n&apos;drop поле (или кликните по нему и выберите файл в Проводнике).
+        </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">4. Контакты</h2>
+        <p className="mt-4">
+          Если вы столкнулись с проблемой или у вас есть вопрос, напишите нам на{" "}
+          <a href="mailto:project.predictify@proton.me">
+            project.predictify@proton.me
+          </a>. Мы поможем вам в кратчайшие сроки.
+        </p>
+      </section>
+    </div>
+  );
+}

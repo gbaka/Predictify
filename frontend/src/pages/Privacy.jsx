@@ -1,60 +1,48 @@
 export default function Privacy() {
-    return (
-      <div className="container mx-auto p-6 px-8">
-        <h1 className="text-4xl font-bold">Политика конфиденциальности</h1>
-        <p className="mt-4 text-lg">
-          Мы заботимся о вашей конфиденциальности и обеспечиваем надежную защиту ваших данных.
-          В этой политике конфиденциальности изложены подробности о том, какие данные мы собираем и как их используем.
+  return (
+    <div className="container mt-3 mx-auto p-6 px-8 max-w-5xl">
+      <h1 className="text-3xl font-bold text-center">Политика конфиденциальности</h1>
+      <p className="mt-4 text-lg text-center">
+        Мы уважаем вашу конфиденциальность и стремимся быть максимально прозрачными в работе с данными.
+      </p>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">1. Какие данные мы собираем</h2>
+        <p className="mt-4">
+          Мы можем автоматически собирать минимальную техническую информацию (например, тип браузера, продолжительность сессии) для улучшения работы сервиса.
         </p>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">1. Сбор данных</h2>
-          <p className="mt-4">
-            Мы собираем данные, когда вы используете наш сервис. Это может включать личные данные,
-            такие как имя, адрес электронной почты, а также данные о том, как вы взаимодействуете с нашими сервисами.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">2. Использование данных</h2>
-          <p className="mt-4">
-            Собранные данные используются для предоставления, персонализации и улучшения наших услуг.
-            Мы можем использовать эти данные для анализа, улучшения качества обслуживания и обработки запросов.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">3. Безопасность данных</h2>
-          <p className="mt-4">
-            Мы принимаем все необходимые меры для обеспечения безопасности ваших данных. Это включает в себя использование
-            современных методов защиты данных и соблюдение стандартов безопасности.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">4. Права пользователя</h2>
-          <p className="mt-4">
-            Вы имеете право на доступ, исправление и удаление ваших данных. Вы также можете ограничить использование ваших
-            данных, обратившись к нам через контактные данные, указанные на сайте.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">5. Изменения в политике конфиденциальности</h2>
-          <p className="mt-4">
-            Мы можем время от времени обновлять нашу политику конфиденциальности. Мы уведомим вас о любых значительных
-            изменениях путем размещения обновленной политики на этой странице.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">6. Контактная информация</h2>
-          <p className="mt-4">
-            Если у вас есть вопросы по поводу нашей политики конфиденциальности, пожалуйста, свяжитесь с нами по адресу:
-            <a href="mailto:privacy@example.com">privacy@example.com</a>
-          </p>
-        </section>
-      </div>
-    );
-  }
-  
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">2. Что мы не делаем</h2>
+        <p className="mt-4">
+          Мы не сохраняем загруженные вами файлы и не передаём ваши данные третьим лицам.
+        </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">3. Безопасность</h2>
+        <p className="mt-4">
+          Мы используем технические меры защиты, чтобы обеспечить безопасность при передаче и обработке данных.
+        </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">4. Изменения</h2>
+        <p className="mt-4">
+          При обновлении политики все изменения будут опубликованы на этой странице.
+        </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold">5. Контакты</h2>
+        <p className="mt-4">
+          Если у вас есть вопросы, напишите нам:{" "}
+          <a href="mailto:project.predictify@proton.me">
+            project.predictify@proton.me
+          </a>
+        </p>
+      </section>
+    </div>
+  );
+}
