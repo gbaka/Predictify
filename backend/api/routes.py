@@ -30,7 +30,7 @@ MAX_SAMPLES_FROM_PARSERS  = 300
 router = APIRouter()
 
 
-@router.post("/test")
+@router.post("/forecast")
 async def test(
     request: Request,
     selectedModel: str = Form(...),
