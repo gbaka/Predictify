@@ -216,16 +216,16 @@ const helpContentRu = `
 Здесь вы найдете краткую инструкцию по загрузке данных и использованию сервиса прогнозирования.
 
 1. Поддерживаемые форматы
-Вы можете загружать файлы в формате <strong>CSV</strong> или <strong>Excel (.xlsx/.xls)</strong>. Файл должен иметь размер до <strong>10 МБ</strong>.
+Вы можете загружать файлы в формате CSV или Excel (.xlsx/.xls). Файл должен иметь размер до 10 МБ.
 
 2. Требования к структуре данных
-Для построения прогноза необходимо, чтобы данные содержали хотя бы один числовой столбец — <strong>endog</strong> (значения временного ряда). Для разметки данных по времени в файле может находится столбец с датами — <strong>date</strong>, но его наличие необязательно. Строка заголовков (названия столбцов) тажке необязательно должна присутствовать в файле.
+Для построения прогноза необходимо, чтобы данные содержали хотя бы один числовой столбец — endog (значения временного ряда). Для разметки данных по времени в файле может находится столбец с датами — date, но его наличие необязательно. Строка заголовков (названия столбцов) также необязательно должна присутствовать в файле.
 
 3. Как загрузить данные
-Для загрузки данных, перейдите на вкладку <strong>«Попробовать»</strong> раздела <strong>«Прогнозирование»</strong>, далее перетащите нужный файл в Drag'n'drop поле (или кликните по нему и выберите файл в Проводнике).
+Для загрузки данных, перейдите на вкладку «Попробовать» раздела «Прогнозирование», далее перетащите нужный файл в Drag'n'drop поле (или кликните по нему и выберите файл в Проводнике).
 
 4. Контакты
-Если вы столкнулись с проблемой или у вас есть вопрос, напишите нам на <a href="mailto:project.predictify@proton.me">project.predictify@proton.me</a>. <br /> Мы поможем вам в кратчайшие сроки.
+Если вы столкнулись с проблемой или у вас есть вопрос, напишите нам на project.predictify@proton.me. Мы поможем вам в кратчайшие сроки.
 `.trim();
 
 const helpContentEn = `
@@ -234,16 +234,16 @@ Help
 Here you will find a brief guide on how to upload your data and use the forecasting service.
 
 1. Supported formats
-You can upload files in <strong>CSV</strong> or <strong>Excel (.xlsx/.xls)</strong> format. The file size must not exceed <strong>10 MB</strong>.
+You can upload files in CSV or Excel (.xlsx/.xls) format. The file size must not exceed 10 MB.
 
 2. Data structure requirements
-To build a forecast, the data must contain at least one numerical column — <strong>endog</strong> (time series values). To associate data with time, a column with dates — <strong>date</strong> — can be included, but it is optional. A header row (with column names) is also optional.
+To build a forecast, the data must contain at least one numerical column — endog (time series values). To associate data with time, a column with dates — date — can be included, but it is optional. A header row (with column names) is also optional.
 
 3. How to upload data
-To upload your data, go to the <strong>“Try it”</strong> tab in the <strong>“Forecasting”</strong> section, then drag and drop your file into the upload area (or click it and choose a file from your computer).
+To upload your data, go to the “Try it” tab in the “Forecasting” section, then drag and drop your file into the upload area (or click it and choose a file from your computer).
 
 4. Contact
-If you encounter a problem or have a question, write to us at <a href="mailto:project.predictify@proton.me">project.predictify@proton.me</a>. <br /> We’ll get back to you as soon as possible.
+If you encounter a problem or have a question, write to us at project.predictify@proton.me. We’ll get back to you as soon as possible.
 `.trim();
 
 
@@ -266,60 +266,70 @@ const pages = [
     title: "Главная",
     content: homeContentRu,
     path: "/",
+    lang: "ru"
   },
   {
     id: 2,
     title: "Home",
     content: homeContentEn,
     path: "/",
+    lang: "en"
   },
   {
     id: 3,
     title: "Вики",
     content: wikiContentRu,
     path: "/wiki",
+    lang: "ru"
   },
   {
     id: 4,
     title: "Wiki",
     content: wikiContentEn,
     path: "/wiki",
+    lang: "en"
   },
   {
     id: 5,
     title: "Прогнозирование",
     content: forecastingContentRu,
     path: "/forecast",
+    lang: "ru"
   },
   {
     id: 6,
     title: "Forecasting",
     content: forecastingContentEn,
     path: "/forecast",
+    lang: "en"
   },
   {
     id: 7,
     title: "Политика Конфиденциальности",
     content: privacyContentRu,
     path: "/privacy",
+    lang: "ru"
   },
   {
     id: 8,
     title: "Privacy Policy",
     content: privacyContentEn,
     path: "/privacy",
+    lang: "en"
   },
   {
     id: 9,
     title: "Помощь",
     content: helpContentRu,
     path: "/help",
+    lang: "ru"
   },
   {
     id: 10,
     title: "Help",
     content: helpContentEn,
     path: "/help",
+    lang: "en"
   },
 ];
 

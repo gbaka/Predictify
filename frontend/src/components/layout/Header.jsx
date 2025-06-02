@@ -69,7 +69,7 @@ function Logo() {
 
 
 function SearchBar({ className = "", inputClassName = "" }) {
-  const { t } = useTranslation(I18nNamespace);
+  const { t, i18n } = useTranslation(I18nNamespace);
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]); // Состояние для хранения найденных результатов
   const searchInputRef = useRef(null);
@@ -105,6 +105,9 @@ function SearchBar({ className = "", inputClassName = "" }) {
         .map((id) => {
           const page = pages.find((p) => p.id === id);
           if (!page) return null;
+
+          // Фильтрация по языку
+          if (page.lang !== i18n.language) return null;
 
           const match = page.content.match(
             new RegExp(`.{0,30}${query}.{0,30}`, "i")
