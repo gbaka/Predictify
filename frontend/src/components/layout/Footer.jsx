@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Sun, Moon, Globe, Github } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import createI18nText from "../../i18n/createI18nText";
 
@@ -13,6 +13,7 @@ export default function Footer() {
   // useTranslation(I18nNamespace);
   const { t, i18n } = useTranslation(I18nNamespace);
   const { theme, toggleTheme } = useTheme();
+  const languageMenuRef = useRef(null);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("Русский");
 
@@ -33,6 +34,21 @@ export default function Footer() {
     localStorage.setItem("language", langCode);
     setLanguageMenuOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        languageMenuRef.current &&
+        !languageMenuRef.current.contains(event.target)
+      ) {
+        setLanguageMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <footer className={`
@@ -57,7 +73,7 @@ export default function Footer() {
       </div>
 
       {/* Переключатель языка */}
-      <div className="flex items-center space-x-2 relative">
+      <div className="flex items-center space-x-2 relative" ref={languageMenuRef}>
         <button
           onClick={toggleLanguageMenu}
           className={`
@@ -131,7 +147,6 @@ export default function Footer() {
           </li>
         </ul>
       </div>
-
       
       <div>
         {/* Полезные ссылки */}
@@ -190,6 +205,5 @@ export default function Footer() {
     </div>
   </div>
 </footer>
-
   );
 }

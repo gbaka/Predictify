@@ -235,7 +235,7 @@ function DataUploader({ onUpload, theme }) {
               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
             </button>
           </div>
-          <p className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+          <p className={`text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
             {t("forecast-panel.file-selected")}
           </p>
