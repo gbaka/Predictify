@@ -1,0 +1,52 @@
+{
+  "nav-section-1": "Линейные модели",
+  "nav-section-2": "Экспоненциальное сглаживание",
+  "nav-section-3": "Машинное обучение",
+
+  "title": "Вики",
+
+  "descr": "В этом разделе собрана справочная информация о моделях прогнозирования временных рядов, используемых в Predictify.",
+
+  "section-1.title": "Линейные модели",
+  "section-1.descr": "Линейные модели — класс моделей временных рядов, описывающих текущее значение ряда как линейную комбинацию его прошлых значений и случайных ошибок. Эти модели — основа классического прогнозирования временных рядов.",
+
+  "section-1.1.title": "Автокорреляционная модель (AR)",
+  "section-1.1.descr": "Модель AR(p) выражает текущее значение ряда через сумму прошлых <TeX>p</TeX> значений:",
+  "section-1.1.notation": "<p>Где:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>c</TeX></dt><dd className=\"inline\"> — константа;</dd><br /><dt className=\"inline font-mono\"><TeX>\\varepsilon_t</TeX></dt><dd className=\"inline\"> — белый шум (случайная ошибка);</dd><br /><dt className=\"inline font-mono\"><TeX>\\phi_i</TeX></dt><dd className=\"inline\"> — коэффициенты модели.</dd></dl>",
+
+  "section-1.2.title": "Модель скользящего среднего (MA)",
+  "section-1.2.descr": "Модель MA(q) описывает текущее значение ряда как сумму текущей и прошлых случайных ошибок:",
+  "section-1.2.notation": "<p>Где:</p><dl class=\"ml-6\"><dt class=\"inline font-mono\"><TeX>c</TeX></dt><dd class=\"inline\"> — константа.</dd><br /><dt class=\"inline font-mono\"><TeX>\\varepsilon_t</TeX></dt><dd class=\"inline\"> — белый шум (случайная ошибка);</dd><br /><dt class=\"inline font-mono\"><TeX>\\theta_j</TeX></dt><dd class=\"inline\"> — коэффициенты модели;</dd></dl>",
+
+  "section-1.3.title": "Модель ARMA",
+  "section-1.3.descr": "Модель ARMA(p,q) объединяет компоненты AR и MA:",
+  "section-1.3.notation": "Параметры аналогичны параметрам моделей AR и MA.",
+
+  "section-1.4.title": "Модель ARIMA",
+  "section-1.4.descr": "ARIMA(p,d,q) включает дифференцирование порядка <TeX>d</TeX> для работы с нестационарными рядами:",
+  "section-1.4.notation": "<p>Где:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>L</TeX></dt><dd className=\"inline\"> — оператор лага;</dd><br/><dt className=\"inline font-mono\"><TeX>d</TeX></dt><dd className=\"inline\"> — порядок дифференцирования;</dd><br/><dt className=\"inline font-mono\"><TeX>p, q</TeX></dt><dd className=\"inline\"> — порядки AR и MA (аналогично ARMA);</dd><br/><dt className=\"inline font-mono\"><TeX>c</TeX>, <TeX>\\phi_i</TeX>, <TeX>\\theta_j</TeX>, <TeX>\\varepsilon_t</TeX></dt><dd className=\"inline\"> — константа, коэффициенты и белый шум (аналогично ARMA).</dd></dl>",
+
+  "section-1.5.title": "Модель ARIMA",
+  "section-1.5.descr": "SARIMA расширяет ARIMA, добавляя сезонные компоненты с порядками <TeX>P, D, Q</TeX> и сезонным периодом <TeX>m</TeX>:",
+  "section-1.5.notation": "<p>Где:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\Phi_P, \\Theta_Q</TeX></dt><dd className=\"inline\"> — сезонные коэффициенты AR и MA;</dd><br/><dt className=\"inline font-mono\"><TeX>P, D, Q</TeX></dt><dd className=\"inline\"> — порядки сезонных AR, дифференцирования и MA;</dd><br/><dt className=\"inline font-mono\"><TeX>m</TeX></dt><dd className=\"inline\"> — сезонный период;</dd><br/><dt className=\"inline font-mono\"><TeX>p, d, q</TeX>, <TeX>c, \\phi_i, \\theta_j, \\varepsilon_t</TeX></dt><dd className=\"inline\"> — аналогичные параметры ARIMA.</dd></dl>",
+
+  "section-2.title": "Экспоненциальное сглаживание",
+  "section-2.descr": "Экспоненциальное сглаживание — класс моделей, основанных на взвешенном усреднении прошлых наблюдений, где более свежие данные получают больший вес.",
+
+  "section-2.1.title": "Simple Exponential Smoothing (SES)",
+  "section-2.1.descr": "В модели SES прогноз строится на основе единственного уравнения сглаживания уровня:",
+  "section-2.1.notation": "<p>Где:</p><dl class=\"ml-6\"><dt class=\"inline font-mono\"><TeX>\\alpha</TeX></dt><dd class=\"inline\"> — коэффициент сглаживания уровня (<TeX>0 \\le \\alpha \\le 1</TeX>);</dd><br /><dt class=\"inline font-mono\"><TeX>y_{t-1}</TeX></dt><dd class=\"inline\"> — наблюдаемое значение в предыдущий момент;</dd><br /><dt class=\"inline font-mono\"><TeX>\\hat{y}_{t-1}</TeX></dt><dd class=\"inline\"> — сглаженное значение уровня из прошлого шага.</dd></dl>",
+
+  "section-2.2.title": "Holt’s Exponential Smoothing (HES)",
+  "section-2.2.descr": "В модели HES добавляется линейный тренд. Используются две связи для уровня <TeX>l_t</TeX> и тренда <TeX>b_t</TeX>:",
+  "section-2.2.notation": "<p>Где:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\alpha</TeX></dt><dd className=\"inline\"> — коэффициент сглаживания уровня (<TeX>0 \\le \\alpha \\le 1</TeX>);</dd><br /><dt className=\"inline font-mono\"><TeX>\\beta</TeX></dt><dd className=\"inline\"> — коэффициент сглаживания тренда (<TeX>0 \\le \\beta \\le 1</TeX>);</dd><br /><dt className=\"inline font-mono\"><TeX>y_t</TeX></dt><dd className=\"inline\"> — текущее наблюдаемое значение;</dd><br /><dt className=\"inline font-mono\"><TeX>l_{t-1}</TeX>, <TeX>b_{t-1}</TeX></dt><dd className=\"inline\"> — уровень и тренд из предыдущего шага;</dd><br /><dt className=\"inline font-mono\"><TeX>\\hat{y}_{t+h}</TeX></dt><dd className=\"inline\"> — прогноз на <TeX>h</TeX> шагов вперёд.</dd></dl>",
+
+  "section-2.3.title": "Holt-Winters Exponential Smoothing (HWES)",
+  "section-2.3.descr": "HWES включает сезонную компоненту. Рассмотрим аддитивный вариант (сезонные колебания добавляются к тренду и уровню):",
+  "section-2.3.notation": "<p>Где:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\alpha</TeX>, <TeX>\\beta</TeX></dt><dd className=\"inline\"> — коэффициенты сглаживания уровня и тренда (аналогично HES);</dd><br/><dt className=\"inline font-mono\"><TeX>\\gamma</TeX></dt><dd className=\"inline\"> — коэффициент сглаживания сезонности (<TeX>0 \\le \\gamma \\le 1</TeX>);</dd><br/><dt className=\"inline font-mono\"><TeX>m</TeX></dt><dd className=\"inline\"> — длина сезонного периода (количество шагов в сезоне);</dd><br/><dt className=\"inline font-mono\"><TeX>y_t</TeX></dt><dd className=\"inline\"> — текущее наблюдаемое значение;</dd><br/><dt className=\"inline font-mono\"><TeX>l_{t-1}</TeX>, <TeX>b_{t-1}</TeX>, <TeX>s_{t-m}</TeX></dt><dd className=\"inline\"> — предыдущие значения уровня, тренда и сезонности;</dd><br/><dt className=\"inline font-mono\"><TeX>\\hat{y}_{t+h}</TeX></dt><dd className=\"inline\"> — прогноз на <TeX>h</TeX> шагов вперёд с учётом сезонного компонента.</dd></dl>",
+
+  "section-3.title": "Машинное обучение",
+  "section-3.descr": "Подходы машинного обучения позволяют выявлять сложные нелинейные зависимости во временных рядах и строить более точные прогнозы на основе различных признаков.",
+  "section-3.notation": "<h3 className=\"text-xl font-semibold mt-6 mb-2\">Основные этапы</h3><p className=\"mb-2\">Типичный ML-пайплайн включает:</p><ol className=\"ml-6 mb-6 list-decimal list-inside\"><li><span className=\"font-mono\">Фиче-инжиниринг</span> — преобразование ряда в табличный формат: лаговые значения, скользящие статистики, календарные признаки;</li><li className=\"mt-2\"><span className=\"font-mono\">Разбиение данных</span> — деление на тренировочный и валидационный наборы;</li><li className=\"mt-2\"><span className=\"font-mono\">Обучение модели</span> — поиск оптимальных гиперпараметров и обучение на тренировочных данных;</li><li className=\"mt-2\"><span className=\"font-mono\">Оценка качества</span> — проверка на валидационных данных и выбор лучшей конфигурации параметров модели.</li></ol>",
+  "section-3.examples": "<h3 className=\"text-xl font-semibold mt-6 mb-2\">Примеры алгоритмов</h3><dl className=\"ml-6 mb-6\"><dt className=\"inline font-mono\">Ансамбли деревьев</dt><dd className=\"inline\"> — Random Forest, XGBoost, LightGBM: настраиваются количество деревьев, глубина и скорость обучения;</dd><br/><dt className=\"inline font-mono\">Нейронные сети</dt><dd className=\"inline\"> — RNN, LSTM, GRU: ключевые параметры — число слоёв, число нейронов, скорость обучения;</dd><br/><dt className=\"inline font-mono\">Линейные модели</dt><dd className=\"inline\"> — Lasso, Ridge: регулируются коэффициенты регуляризации.</dd></dl>"
+}

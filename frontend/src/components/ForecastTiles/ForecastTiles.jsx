@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios"
 
 import ForecastTile from "./ForecastTile";
@@ -6,7 +7,10 @@ import FullscreenForecastTile from "./FullscreenForecastTile";
 import { API_CONFIG } from "../../api/apiConfig";
 
 
+const I18nNamespace = "common";
+
 export default function ForecastTiles({ theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const [selectedData, setSelectedData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [apiData, setApiData] = useState({});
@@ -15,51 +19,51 @@ export default function ForecastTiles({ theme }) {
   // Базовый шаблон для mappingTable с описанием характеристик парсеров
   const baseMappingTable = {
     temperature_forecast: {
-      title: "Температура",
+      title: t("forecasting-tiles.temp"),
       parserInfo: {
         status: "online",
         source: "Open Meteo API",
-        updateInterval: "15 мин",
+        updateInterval: `15 ${t("forecasting-tiles.min")}`,
         model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
-        details: "Температура воздуха в точке 55.7558 37.6176 (Над УЛК)"
+        details: t("forecasting-tiles.temp-details")
       } 
     },
     relative_humidity_forecast: {
-      title: "Относительная влажность",
+      title: t("forecasting-tiles.humidity"),
       parserInfo: {
         status: "online",
         source: "Open Meteo API",
-        updateInterval: "15 мин",
+        updateInterval: `15 ${t("forecasting-tiles.min")}`,
         model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
-        details: "Влажность в точке 55.7558 37.6176 (Над УЛК)"
+        details: t("forecasting-tiles.humidity-details")
       } 
     },
     wind_speed_forecast: {
-      title: "Скорость ветра",
+      title: t("forecasting-tiles.wind"),
       parserInfo: {
         status: "online",
         source: "Open Meteo API",
-        updateInterval: "15 мин",
+        updateInterval: `15 ${t("forecasting-tiles.min")}`,
         model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
-        details: "Скорость ветра в точке 55.7558 37.6176 (Над УЛК)"
+        details: t("forecasting-tiles.wind-details")
       } 
     },
     precipitation_forecast: {
-      title: "Осадки",
+      title: t("forecasting-tiles.precipitation"),
       parserInfo: {
         status: "online",
         source: "Open Meteo API",
-        updateInterval: "15 мин",
+        updateInterval: `15 ${t("forecasting-tiles.min")}`,
         model: "ARIMA(5,0,2)",
         lastUpdate: null,
         dataPoints: 0,
-        details: "Осадки в точке 55.7558 37.6176 (Над УЛК)"
+        details: t("forecasting-tiles.precipitation-details")
       } 
     },
   };

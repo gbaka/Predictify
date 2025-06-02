@@ -1,8 +1,12 @@
 import { Check, ClipboardCopy } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
+const I18nNamespace = "common";
 
 
 export default function DataSummary({ summary, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const isDarkMode = theme === "dark";
   
     const [copied, setCopied] = useState(false);
@@ -39,9 +43,9 @@ export default function DataSummary({ summary, theme }) {
         </button>
   
         <div style={{ height: 0, color: 'rgba(0, 0, 0, 0)' }}><br /></div>
-        <h3 className="font-bold">Сводка данных:</h3>
+        <h3 className="font-bold">{t("data-summary.title")}</h3>
         <pre className={`text-center whitespace-pre-wrap text-xs ${!summary ? 'text-gray-500' : ''}`}>
-          {summary || "Нет данных"}
+          {summary || t("data-summary.no-data")}
         </pre>
       </div>
     );

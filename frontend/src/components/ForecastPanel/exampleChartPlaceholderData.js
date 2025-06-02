@@ -6,7 +6,7 @@ export const placeholderDates = [
   ];
   
 export const placeholderValues = [
-  7, 12, 14, 15, 17, 
+  7,  12, 14, 15, 17, 
   14, 16, 15, 17, 18, 
   19, 18, 14, 16, 15, 
   13, 17, 18, 20, 22

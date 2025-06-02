@@ -1,0 +1,17 @@
+{
+  "title": "Help",
+
+  "descr": "Here you will find a brief guide on how to upload your data and use the forecasting service.",
+
+  "section-1.title": "1. Supported formats",
+  "section-1.descr": "You can upload files in <strong>CSV</strong> or <strong>Excel (.xlsx/.xls)</strong> format. The file size must not exceed <strong>10 MB</strong>.",
+
+  "section-2.title": "2. Data structure requirements",
+  "section-2.descr": "To build a forecast, the data must contain at least one numerical column — <strong>endog</strong> (time series values). To associate data with time, a column with dates — <strong>date</strong> — can be included, but it is optional. A header row (with column names) is also optional.",
+
+  "section-3.title": "3. How to upload data",
+  "section-3.descr": "To upload your data, go to the <strong>“Try it”</strong> tab in the <strong>“Forecasting”</strong> section, then drag and drop your file into the upload area (or click it and choose a file from your computer).",
+
+  "section-4.title": "4. Contact",
+  "section-4.descr": "If you encounter a problem or have a question, write to us at <a href=\"mailto:project.predictify@proton.me\">project.predictify@proton.me</a>. <br /> We’ll get back to you as soon as possible."
+}

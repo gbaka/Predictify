@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   SARIMA_DEFAULTS,
@@ -11,10 +12,12 @@ import {
   HWES_DEFAULTS
 } from "./defaultModelSettings";
 
+const I18nNamespace = "common";
+
 
 export function SARIMASettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...SARIMA_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -54,7 +57,7 @@ export function SARIMASettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -70,7 +73,7 @@ export function SARIMASettings({ onChange, theme }) {
             {/* Остальные параметры SARIMAX */}
             {["p", "d", "q", "P", "D", "Q", "s"].map((param) => (
                 <div key={param} className="flex flex-col space-y-2">
-                    <label className="font-medium">Параметр {param}:</label>
+                    <label className="font-medium">{t("model-settings.param")} {param}:</label>
                     <input
                         type="number"
                         min={0}
@@ -85,7 +88,7 @@ export function SARIMASettings({ onChange, theme }) {
 
             {/* Уровень значимости */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <label className="font-medium">{t("model-settings.conf-level")}</label>
                 <input
                     type="number"
                     step={0.01}
@@ -101,7 +104,7 @@ export function SARIMASettings({ onChange, theme }) {
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип тренда:</label>
+                <label className="font-medium">{t("model-settings.trend-type")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -109,10 +112,10 @@ export function SARIMASettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="n">Нет тренда</option>
-                    <option value="c">Постоянный тренд</option>
-                    <option value="t">Линейный тренд</option>
-                    <option value="ct">Линейный тренд с постоянным значением</option>
+                    <option value="n">{t("model-settings.no-trend")}</option>
+                    <option value="c">{t("model-settings.const-trend")}</option>
+                    <option value="t">{t("model-settings.linear-trend")}</option>
+                    <option value="ct">{t("model-settings.linear-const-trend")}</option>
                 </select>
             </div>
 
@@ -124,7 +127,7 @@ export function SARIMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceStationarity")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная стационарность</label>
+                <label className="font-medium">{t("model-settings.stationarity")}</label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -134,7 +137,7 @@ export function SARIMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceInvertibility")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная обратимость</label>
+                <label className="font-medium">{t("model-settings.invertibility")}</label>
             </div>
         </div>
     );
@@ -142,8 +145,8 @@ export function SARIMASettings({ onChange, theme }) {
 
 
 export function ARIMASettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...ARIMA_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -183,7 +186,7 @@ export function ARIMASettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -199,7 +202,7 @@ export function ARIMASettings({ onChange, theme }) {
             {/* Остальные параметры ARIMA */}
             {["p", "d", "q"].map((param) => (
                 <div key={param} className="flex flex-col space-y-2">
-                    <label className="font-medium">Параметр {param}:</label>
+                    <label className="font-medium">{t("model-settings.param")} {param}:</label>
                     <input
                         type="number"
                         min={0}
@@ -214,7 +217,7 @@ export function ARIMASettings({ onChange, theme }) {
 
             {/* Уровень значимости */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <label className="font-medium">{t("model-settings.conf-level")}</label>
                 <input
                     type="number"
                     step={0.01}
@@ -230,7 +233,7 @@ export function ARIMASettings({ onChange, theme }) {
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип тренда:</label>
+                <label className="font-medium">{t("model-settings.trend-type")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -238,10 +241,10 @@ export function ARIMASettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="n">Нет тренда</option>
-                    <option value="c">Постоянный тренд</option>
-                    <option value="t">Линейный тренд</option>
-                    <option value="ct">Линейный тренд с постоянным значением</option>
+                    <option value="n">{t("model-settings.no-trend")}</option>
+                    <option value="c">{t("model-settings.const-trend")}</option>
+                    <option value="t">{t("model-settings.linear-trend")}</option>
+                    <option value="ct">{t("model-settings.linear-const-trend")}</option>
                 </select>
             </div>
 
@@ -253,7 +256,7 @@ export function ARIMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceStationarity")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная стационарность</label>
+                <label className="font-medium">{t("model-settings.stationarity")}</label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -263,7 +266,7 @@ export function ARIMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceInvertibility")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная обратимость</label>
+                <label className="font-medium">{t("model-settings.invertibility")}</label>
             </div>
         </div>
     );
@@ -271,6 +274,7 @@ export function ARIMASettings({ onChange, theme }) {
 
 
 export function ARMASettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...ARMA_DEFAULTS });
 
     const isDarkMode = theme === "dark";
@@ -312,7 +316,7 @@ export function ARMASettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>                
                 <input
                     type="number"
                     value={settings.steps}
@@ -328,7 +332,7 @@ export function ARMASettings({ onChange, theme }) {
             {/* Остальные параметры ARMA */}
             {["p", "q"].map((param) => (
                 <div key={param} className="flex flex-col space-y-2">
-                    <label className="font-medium">Параметр {param}:</label>
+                    <label className="font-medium">{t("model-settings.param")} {param}:</label>
                     <input
                         type="number"
                         min={0}
@@ -343,7 +347,7 @@ export function ARMASettings({ onChange, theme }) {
 
             {/* Уровень значимости */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <label className="font-medium">{t("model-settings.conf-level")}</label>
                 <input
                     type="number"
                     step={0.01}
@@ -359,7 +363,7 @@ export function ARMASettings({ onChange, theme }) {
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип тренда:</label>
+                <label className="font-medium">{t("model-settings.trend-type")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -367,10 +371,10 @@ export function ARMASettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="n">Нет тренда</option>
-                    <option value="c">Постоянный тренд</option>
-                    <option value="t">Линейный тренд</option>
-                    <option value="ct">Линейный тренд с постоянным значением</option>
+                    <option value="n">{t("model-settings.no-trend")}</option>
+                    <option value="c">{t("model-settings.const-trend")}</option>
+                    <option value="t">{t("model-settings.linear-trend")}</option>
+                    <option value="ct">{t("model-settings.linear-const-trend")}</option>
                 </select>
             </div>
 
@@ -382,7 +386,7 @@ export function ARMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceStationarity")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная стационарность</label>
+                <label className="font-medium">{t("model-settings.stationarity")}</label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -392,7 +396,7 @@ export function ARMASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceInvertibility")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная обратимость</label>
+                <label className="font-medium">{t("model-settings.invertibility")}</label>
             </div>
         </div>
     );
@@ -400,8 +404,8 @@ export function ARMASettings({ onChange, theme }) {
 
 
 export function ARSettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...AR_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -441,7 +445,7 @@ export function ARSettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -457,7 +461,7 @@ export function ARSettings({ onChange, theme }) {
             {/* Остальные параметры AR */}
             {["p"].map((param) => (
                 <div key={param} className="flex flex-col space-y-2">
-                    <label className="font-medium">Параметр {param}:</label>
+                    <label className="font-medium">{t("model-settings.param")} {param}:</label>
                     <input
                         type="number"
                         min={0}
@@ -472,7 +476,7 @@ export function ARSettings({ onChange, theme }) {
 
             {/* Уровень значимости */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <label className="font-medium">{t("model-settings.conf-level")}</label>
                 <input
                     type="number"
                     step={0.01}
@@ -488,7 +492,7 @@ export function ARSettings({ onChange, theme }) {
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип тренда:</label>
+                <label className="font-medium">{t("model-settings.trend-type")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -496,10 +500,10 @@ export function ARSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="n">Нет тренда</option>
-                    <option value="c">Постоянный тренд</option>
-                    <option value="t">Линейный тренд</option>
-                    <option value="ct">Линейный тренд с постоянным значением</option>
+                    <option value="n">{t("model-settings.no-trend")}</option>
+                    <option value="c">{t("model-settings.const-trend")}</option>
+                    <option value="t">{t("model-settings.linear-trend")}</option>
+                    <option value="ct">{t("model-settings.linear-const-trend")}</option>
                 </select>
             </div>
 
@@ -511,7 +515,7 @@ export function ARSettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceStationarity")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная стационарность</label>
+                <label className="font-medium">{t("model-settings.stationarity")}</label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -521,7 +525,7 @@ export function ARSettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceInvertibility")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная обратимость</label>
+                <label className="font-medium">{t("model-settings.invertibility")}</label>
             </div>
         </div>
     );
@@ -529,8 +533,8 @@ export function ARSettings({ onChange, theme }) {
 
 
 export function MASettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...MA_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -570,7 +574,7 @@ export function MASettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -586,7 +590,7 @@ export function MASettings({ onChange, theme }) {
             {/* Остальные параметры MA */}
             {["q"].map((param) => (
                 <div key={param} className="flex flex-col space-y-2">
-                    <label className="font-medium">Параметр {param}:</label>
+                    <label className="font-medium">{t("model-settings.param")} {param}:</label>
                     <input
                         type="number"
                         min={0}
@@ -601,7 +605,7 @@ export function MASettings({ onChange, theme }) {
 
             {/* Уровень значимости */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Уровень значимости доверительных интервалов:</label>
+                <label className="font-medium">{t("model-settings.conf-level")}</label>
                 <input
                     type="number"
                     step={0.01}
@@ -617,7 +621,7 @@ export function MASettings({ onChange, theme }) {
 
             {/* Тип тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип тренда:</label>
+                <label className="font-medium">{t("model-settings.trend-type")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -625,10 +629,10 @@ export function MASettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="n">Нет тренда</option>
-                    <option value="c">Постоянный тренд</option>
-                    <option value="t">Линейный тренд</option>
-                    <option value="ct">Линейный тренд с постоянным значением</option>
+                    <option value="n">{t("model-settings.no-trend")}</option>
+                    <option value="c">{t("model-settings.const-trend")}</option>
+                    <option value="t">{t("model-settings.linear-trend")}</option>
+                    <option value="ct">{t("model-settings.linear-const-trend")}</option>
                 </select>
             </div>
 
@@ -640,7 +644,7 @@ export function MASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceStationarity")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная стационарность</label>
+                <label className="font-medium">{t("model-settings.stationarity")}</label>
             </div>
             <div className="flex items-center space-x-2">
                 <input
@@ -649,7 +653,7 @@ export function MASettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "enforceInvertibility")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Принудительная обратимость</label>
+                <label className="font-medium">{t("model-settings.invertibility")}</label>
             </div>
         </div>
     );
@@ -657,8 +661,8 @@ export function MASettings({ onChange, theme }) {
 
 
 export function SESSettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...SES_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -694,7 +698,7 @@ export function SESSettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -709,7 +713,7 @@ export function SESSettings({ onChange, theme }) {
 
             {/* Метод инициализации */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Метод инициализации:</label>
+                <label className="font-medium">{t("model-settings.init-method")}</label>
                 <select
                     value={settings.initializationMethod}
                     onChange={(e) => handleInputChange(e, "initializationMethod")}
@@ -717,16 +721,16 @@ export function SESSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="estimated">Оценка</option>
-                    <option value="heuristic">Эвристически [1]</option>
-                    <option value="legacy-heuristic">Эвристически [2]</option>
-                    <option value="known">Известное значение</option>
+                    <option value="estimated">{t("model-settings.estimated")}</option>
+                    <option value="heuristic">{t("model-settings.heuristic")}</option>
+                    <option value="legacy-heuristic">{t("model-settings.legacy-heuristic")}</option>
+                    <option value="known">{t("model-settings.known")}</option>
                 </select>
             </div>
 
             {/* Начальный уровень */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Начальный уровень</label>
+                <label className="font-medium">{t("model-settings.init-level")}</label>
                 <input
                     type="number"
                     step={0.1}
@@ -752,8 +756,8 @@ export function SESSettings({ onChange, theme }) {
 
 
 export function HESSettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...HES_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -796,7 +800,7 @@ export function HESSettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -811,7 +815,7 @@ export function HESSettings({ onChange, theme }) {
 
             {/* Метод инициализации */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Метод инициализации:</label>
+                <label className="font-medium">{t("model-settings.init-method")}</label>
                 <select
                     value={settings.initializationMethod}
                     onChange={(e) => handleInputChange(e, "initializationMethod")}
@@ -819,16 +823,16 @@ export function HESSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="estimated">Оценка</option>
-                    <option value="heuristic">Эвристически [1]</option>
-                    <option value="legacy-heuristic">Эвристически [2]</option>
-                    <option value="known">Известное значение</option>
+                    <option value="estimated">{t("model-settings.estimated")}</option>
+                    <option value="heuristic">{t("model-settings.heuristic")}</option>
+                    <option value="legacy-heuristic">{t("model-settings.legacy-heuristic")}</option>
+                    <option value="known">{t("model-settings.known")}</option>
                 </select>
             </div>
 
             {/* Начальный уровень */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Начальный уровень</label>
+                <label className="font-medium">{t("model-settings.init-level")}</label>
                 <input
                     type="number"
                     step={0.1}
@@ -849,8 +853,9 @@ export function HESSettings({ onChange, theme }) {
                 />
             </div>
 
+            {/* Начальное значение тренда */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Начальное значение тренда</label>
+                <label className="font-medium">{t("model-settings.init-trend")}</label>
                 <input
                     type="number"
                     step={0.1}
@@ -879,7 +884,7 @@ export function HESSettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "exponential")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Экспоненциальность</label>
+                <label className="font-medium">{t("model-settings.exponential")}</label>
             </div>
             <div className="flex items-center space-x-2">
                 <input
@@ -888,7 +893,7 @@ export function HESSettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "dampedTrend")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Угасающий тренд</label>
+                <label className="font-medium">{t("model-settings.fading")}</label>
             </div>
         </div>
     );
@@ -896,8 +901,8 @@ export function HESSettings({ onChange, theme }) {
 
 
 export function HWESSettings({ onChange, theme }) {
+    const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...HWES_DEFAULTS });
-
     const isDarkMode = theme === "dark";
 
     const handleInputChange = (e, key) => {
@@ -931,7 +936,7 @@ export function HWESSettings({ onChange, theme }) {
         <div className="max-h-[200px] flex-grow space-y-4">
             {/* Поле ввода количества шагов */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Количество шагов:</label>
+                <label className="font-medium">{t("model-settings.steps")}</label>
                 <input
                     type="number"
                     value={settings.steps}
@@ -946,7 +951,7 @@ export function HWESSettings({ onChange, theme }) {
 
             {/* Метод инициализации */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Метод инициализации:</label>
+                <label className="font-medium">{t("model-settings.init-method")}</label>
                 <select
                     value={settings.initializationMethod}
                     onChange={(e) => handleInputChange(e, "initializationMethod")}
@@ -962,7 +967,7 @@ export function HWESSettings({ onChange, theme }) {
 
             {/* Кол-во периодов в полном сезонном цикле */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Кол-во периодов в полном сезонном цикле:</label>
+                <label className="font-medium">{t("model-settings.seasonal-periods")}</label>
                 <input
                     type="number"
                     min={2}
@@ -976,7 +981,7 @@ export function HWESSettings({ onChange, theme }) {
 
             {/* Тип трендовой компоненты */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип трендовой компоненты:</label>
+                <label className="font-medium">{t("model-settings.trend-component")}</label>
                 <select
                     value={settings.trend}
                     onChange={(e) => handleInputChange(e, "trend")}
@@ -984,16 +989,16 @@ export function HWESSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="add">Аддитивная</option>
-                    <option value="mul">Мультипликативная</option>
-                    <option value="none">Без тренда</option>
+                    <option value="add">{t("model-settings.add-trend")}</option>
+                    <option value="mul">{t("model-settings.mul-trend")}</option>
+                    <option value="none">{t("model-settings.no-trend")}</option>
                 </select>
             </div>
 
 
             {/* Тип сезонной компоненты */}
             <div className="flex flex-col space-y-2">
-                <label className="font-medium">Тип сезонной компоненты:</label>
+                <label className="font-medium">{t("model-settings.seasonal-component")}</label>
                 <select
                     value={settings.seasonal}
                     onChange={(e) => handleInputChange(e, "seasonal")}
@@ -1001,9 +1006,9 @@ export function HWESSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="add">Аддитивная</option>
-                    <option value="mul">Мультипликативная</option>
-                    <option value="none">Без тренда</option>
+                    <option value="add">{t("model-settings.add-trend")}</option>
+                    <option value="mul">{t("model-settings.mul-trend")}</option>
+                    <option value="none">{t("model-settings.no-trend")}</option>
                 </select>
             </div>
 
@@ -1015,7 +1020,7 @@ export function HWESSettings({ onChange, theme }) {
                     onChange={(e) => handleInputChange(e, "dampedTrend")}
                     className="h-5 w-5 flex-shrink-0"
                 />
-                <label className="font-medium">Угасающий тренд</label>
+                <label className="font-medium">{t("model-settings.fading")}</label>
             </div>
         </div>
     );

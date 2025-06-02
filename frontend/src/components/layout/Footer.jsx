@@ -1,12 +1,17 @@
 import { Link } from "react-router-dom";
 import { Sun, Moon, Globe, Github } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import createI18nText from "../../i18n/createI18nText";
 
+
+const I18nNamespace = "common";
+const I18nText = createI18nText(I18nNamespace);
 
 export default function Footer() {
-  const { t, i18n } = useTranslation();
+  // useTranslation(I18nNamespace);
+  const { t, i18n } = useTranslation(I18nNamespace);
   const { theme, toggleTheme } = useTheme();
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("Русский");
@@ -14,7 +19,7 @@ export default function Footer() {
   useEffect(() => {
     // Проверяем сохранённый язык
     const savedLanguage = localStorage.getItem("language") || "ru";
-    setSelectedLanguage(savedLanguage === "ru" ? "Русский" : "Английский");
+    setSelectedLanguage(savedLanguage === "ru" ? "Русский" : "English");
     i18n.changeLanguage(savedLanguage);
   }, [i18n]);
 
@@ -47,7 +52,7 @@ export default function Footer() {
           aria-label="Toggle theme"
         >
           {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
-          <span className="text-sm">{theme === "dark" ? "Темная" : "Светлая"}</span>
+          <span className="text-sm">{theme === "dark" ? t("footer.dark") : t("footer.light") }</span>
         </button>
       </div>
 
@@ -84,13 +89,13 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => changeLanguage("Английский", "en")}
+                  onClick={() => changeLanguage("English", "en")}
                   className={`
                     w-full text-left py-2 px-4 transition-all
                     ${theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-400"}
                   `}
                 >
-                  Английский
+                  English
                 </button>
               </li>
             </ul>
@@ -109,7 +114,9 @@ export default function Footer() {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
       {/* Контактная информация */}
       <div>
-        <h3 className="text-xl font-semibold mb-3">Контакты</h3>
+        <h3 className="text-xl font-semibold mb-3">
+          <I18nText textKey={"footer.contacts"}/>
+        </h3>
         <ul>
           <li>
             <p>
@@ -125,16 +132,19 @@ export default function Footer() {
         </ul>
       </div>
 
-      {/* Полезные ссылки */}
+      
       <div>
-        <h3 className="text-xl font-semibold mb-3">Полезные ссылки</h3>
+        {/* Полезные ссылки */}
+        <h3 className="text-xl font-semibold mb-3">
+          <I18nText textKey={"footer.helpful-links"}/>
+        </h3>
         <ul>
           <li>
             <Link to="/privacy" className={`
               transition-all
               ${theme === "dark" ? "hover:text-gray-400" : "hover:text-gray-600"}
             `}>
-              Политика конфиденциальности
+              <I18nText textKey={"footer.privacy"}/>
             </Link>
           </li>
           <li>
@@ -142,7 +152,7 @@ export default function Footer() {
               transition-all
               ${theme === "dark" ? "hover:text-gray-400" : "hover:text-gray-600"}
             `}>
-              Помощь
+              <I18nText textKey={"footer.help"}/>
             </Link>
           </li>
         </ul>
@@ -150,23 +160,24 @@ export default function Footer() {
 
       {/* Социальные сети */}
       <div>
-        <h3 className="text-xl font-semibold mb-3">Социальные сети</h3>
+        <h3 className="text-xl font-semibold mb-3">
+          <I18nText textKey={"footer.social"}/>
+        </h3>
         <ul>
           <li>
              <a
-      href="https://github.com/gbaka/Predictify"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`
-        flex items-center mb-2 transition-all
-        ${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-black"}
-      `}
-    >
-      <Github size={20} className="mr-2" />
-      GitHub
-    </a>
+                href="https://github.com/gbaka/Predictify"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`
+                  flex items-center mb-2 transition-all
+                  ${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-black"}
+                `}
+              >
+                <Github size={20} className="mr-2" />
+                GitHub
+              </a>
           </li>
-         
         </ul>
       </div>
     </div>
@@ -175,9 +186,7 @@ export default function Footer() {
       border-t mt-8 pt-4 text-center text-sm
       ${theme === "dark" ? "border-gray-700" : "border-gray-400"}
     `}>
-      <p>&copy; {new Date().getFullYear()} Predictify. {t("footer_text")}.</p>
-      {/* <p>{t("welcome")}</p> */}
-
+      <p>&copy; {new Date().getFullYear()} Predictify. {t("footer.rights")}</p>
     </div>
   </div>
 </footer>
