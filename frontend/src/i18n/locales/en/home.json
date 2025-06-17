@@ -1,0 +1,16 @@
+{
+  "welcome": "Welcome to Predictify",
+
+  "descr": "A simple and user-friendly service for time series forecasting and visualization. <br />Predictify allows you to test various forecasting models through an intuitive interface.",
+
+  "vizualization.title": "Data Visualization",
+  "vizualization.descr": "Visualize results with clear and interactive charts.",
+
+  "testing.title": "Model Testing",
+  "testing.descr": "Evaluate the performance of different models and choose the best ones.",
+
+  "settings.title": "Flexible Settings",
+  "settings.descr": "Adjust a wide range of parameters for models and charts.",
+
+  "help": "To see examples or try it yourself — go to the «Forecasting» section."
+}

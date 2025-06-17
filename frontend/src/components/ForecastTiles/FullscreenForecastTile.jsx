@@ -1,7 +1,10 @@
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Split from "react-split";
 import BaseChart from "../shared/BaseChart";
 import DataSummary from "../shared/DataSummary";
+
+const I18nNamespace = "common";
 
 
 function StatusIndicator({ status, label, theme }) {
@@ -55,49 +58,50 @@ function InfoRow({ label, value, theme }) {
 
 
 function ParserInfoPanel({ parserInfo, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
 
   return (
     <div className={`rounded-lg h-full p-4 overflow-y-auto ${
       isDarkMode ? "bg-gray-800" : "bg-gray-100"
     }`}>
-      <h3 className="font-semibold mb-4">Информация о парсере</h3>
+      <h3 className="font-semibold mb-4">{t("fullscreen-tile.parser-info")}</h3>
       
       <div className="max-h-[200px] flex-grow space-y-4">
-        <StatusIndicator status="online" label="Статус:" theme={theme} />
+        <StatusIndicator status="online" label={t("fullscreen-tile.status")} theme={theme} />
 
         <InfoRow 
-          label="Источник:" 
+          label={t("fullscreen-tile.source")} 
           value={parserInfo.source} 
           theme={theme} 
         />
 
         <InfoRow 
-          label="Последнее обновление:" 
+          label={t("fullscreen-tile.last-update")} 
           value={parserInfo.lastUpdate} 
           theme={theme} 
         />
 
         <InfoRow 
-          label="Интервал обновления:" 
+          label={t("fullscreen-tile.update-interval")}
           value={parserInfo.updateInterval} 
           theme={theme} 
         />
 
         <InfoRow 
-          label="Модель:" 
+          label={t("fullscreen-tile.model")}
           value={parserInfo.model} 
           theme={theme} 
         />
 
         <InfoRow 
-          label="Получено значений:" 
+          label={t("fullscreen-tile.values-received")}
           value={parserInfo.dataPoints} 
           theme={theme} 
         />
 
         <InfoRow 
-          label="Подробнее:" 
+          label={t("fullscreen-tile.details")}
           value={parserInfo.details} 
           theme={theme} 
         />
@@ -108,7 +112,7 @@ function ParserInfoPanel({ parserInfo, theme }) {
 
 
 export default function FullscreenForecastTile({ data, onClose, theme }) {
-  console.log("FullScreenForecastTile", data)
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
 
   const allSeries = [
@@ -124,7 +128,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         },
         // Ряд прогнозных значений
         {
-          name: "Прогноз",
+          name: t("fullscreen-tile.forecast"),
           type: "line",
           data: data.prediction.map((el) => el ? el.toFixed(3) : el),
           smooth: false,
@@ -135,7 +139,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         },
         // Вспомогательный ряд для корректного отображения подсказки
         {
-          name: `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          name: `${t("fullscreen-tile.conf-interval")} (${Math.trunc(data.confidence_level*100)}%)`,
           type: "line",
           itemStyle: { color: "#F54242" },
           lineStyle: { width: 0 },  
@@ -147,7 +151,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         }, 
         // Нижняя граница
         {
-          name:`Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          name:`${t("fullscreen-tile.conf-interval")} (${Math.trunc(data.confidence_level*100)}%)`,
           type: "line",
           stack: "confidence",
           itemStyle: { color: "#F54242" },
@@ -164,7 +168,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         },
         // Верхняя граница
         {
-          name: `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`,
+          name: `${t("fullscreen-tile.conf-interval")} (${Math.trunc(data.confidence_level*100)}%)`,
           type: "line",
           stack: "confidence",
           itemStyle: { color: "#F54242" },
@@ -183,7 +187,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         }, 
         // Ряд абсолютных ошибок
         {
-        name: "Абсолютная ошибка",
+        name: t("fullscreen-tile.abs-error"),
         type: "line",
         data: data.absolute_error, 
         lineStyle: { width: 0 }, 
@@ -193,7 +197,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
         },
         // Исходные данные
         {
-          name: "Исходные данные",
+          name: t("fullscreen-tilel.initial-data"),
           type: "line",
           data: data.endog,
           smooth: false,
@@ -207,7 +211,7 @@ export default function FullscreenForecastTile({ data, onClose, theme }) {
     legend: {
       show: true,
       top: '1.5%',
-      data: ["Исходные данные", "Прогноз", `Доверительный интервал (${Math.trunc(data.confidence_level*100)}%)`]
+      data: [t("fullscreen-tilel.initial-data"), t("fullscreen-tile.forecast"), `${t("fullscreen-tile.conf-interval")} (${Math.trunc(data.confidence_level*100)}%)`]
     },
     title: {
       show: false,

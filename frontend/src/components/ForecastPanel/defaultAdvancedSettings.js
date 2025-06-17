@@ -8,7 +8,7 @@ export const ADVANCED_SETTINGS_DEFAULTS = {
     showLegend: true,
     dataColor: "#3582FF",
     forecastColor: "#F54242",
-    title: "График прогноза",
+    title: "Forecast chart",
     gridType: "horizontal",
   },
   fileSettings: {

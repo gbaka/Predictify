@@ -1,20 +1,25 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Home, BookOpen, BarChart3 } from "lucide-react";
+import { Search, Home, BookOpen, ChartSpline } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { index, pages } from "../../api/searchIndex"; 
-import LogoSvg from "../../assets/logo4.svg?react";
+import { useTranslation } from "react-i18next";
+import createI18nText from "../../i18n/createI18nText";
+import LogoSvg from "../../assets/logo.svg?react";
 
+
+const I18nNamespace = "common";
+const I18nText = createI18nText(I18nNamespace);
 
 const navItems = [
-  { name: "Главная", path: "/", icon: Home },
-  { name: "Вики", path: "/wiki", icon: BookOpen },
-  { name: "Прогнозирование", path: "/forecast", icon: BarChart3 },
+  { name: "header-nav.home", path: "/", icon: Home },
+  { name: "header-nav.wiki", path: "/wiki", icon: BookOpen },
+  { name: "header-nav.forecasting", path: "/forecast", icon: ChartSpline },
 ];
 
-
 function Navigation() {
+  useTranslation(I18nNamespace);
   const { theme } = useTheme();
 
   return (
@@ -27,7 +32,9 @@ function Navigation() {
             ${theme === "dark" ? "text-gray-100 hover:text-gray-400" : "text-gray-900 hover:text-gray-600"}`}
         >
           <Icon size={15} />
-          <span>{name}</span>
+          <span>
+            <I18nText textKey={name}/>
+          </span>
         </Link>
       ))}
     </nav>
@@ -62,6 +69,7 @@ function Logo() {
 
 
 function SearchBar({ className = "", inputClassName = "" }) {
+  const { t, i18n } = useTranslation(I18nNamespace);
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]); // Состояние для хранения найденных результатов
   const searchInputRef = useRef(null);
@@ -98,6 +106,9 @@ function SearchBar({ className = "", inputClassName = "" }) {
           const page = pages.find((p) => p.id === id);
           if (!page) return null;
 
+          // Фильтрация по языку
+          if (page.lang !== i18n.language) return null;
+
           const match = page.content.match(
             new RegExp(`.{0,30}${query}.{0,30}`, "i")
           );
@@ -111,11 +122,9 @@ function SearchBar({ className = "", inputClassName = "" }) {
               (match) => `<mark class="bg-yellow-300">${match}</mark>`
             );
           }
-
           return { ...page, snippet };
         })
         .filter(Boolean);
-
       setResults(foundPages);
     }
   };
@@ -126,19 +135,18 @@ function SearchBar({ className = "", inputClassName = "" }) {
     return aIsTitleMatch - bIsTitleMatch; // title-результаты должны идти в конце
   });
 
-
   return (
     <div className={`relative w-full ${className}`}>
       <div className="flex items-center">
         <input
           ref={searchInputRef}
           type="text"
-          placeholder="Поиск..."
-          className={`rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 pr-14
+          placeholder={t("search-bar.placeholder")}
+          className={`rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 pr-14
             ${
               theme === "dark"
-                ? "bg-gray-800 text-gray-100 focus:ring-gray-600"
-                : "bg-gray-100 text-gray-900 focus:ring-gray-400"
+                ? "bg-gray-800 text-gray-100"
+                : "bg-gray-100 text-gray-900"
             } 
             ${inputClassName}`}
           value={searchQuery}
@@ -246,6 +254,7 @@ function BurgerMenu({ menuOpen, setMenuOpen }) {
 
 
 export default function Header() {
+  useTranslation(I18nNamespace);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const { theme } = useTheme();
@@ -318,7 +327,7 @@ export default function Header() {
                       }`}
                       onClick={() => setMenuOpen(false)}
                     >
-                      {name}
+                      <I18nText textKey={name}/>
                     </Link>
                   );
                 })}

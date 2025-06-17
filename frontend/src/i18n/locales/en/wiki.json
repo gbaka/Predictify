@@ -1,0 +1,52 @@
+{
+  "nav-section-1": "Linear Models",
+  "nav-section-2": "Exponential Smoothing",
+  "nav-section-3": "Machine Learning",
+
+  "title": "Wiki",
+
+  "descr": "This section contains reference information about time series forecasting models used in Predictify.",
+
+  "section-1.title": "Linear Models",
+  "section-1.descr": "Linear models are a class of time series models that describe the current value of the series as a linear combination of its past values and random errors. These models form the basis of classical time series forecasting.",
+
+  "section-1.1.title": "Autoregressive Model (AR)",
+  "section-1.1.descr": "The AR(p) model expresses the current value of the series as the sum of the past <TeX>p</TeX> values:",
+  "section-1.1.notation": "<p>Where:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>c</TeX></dt><dd className=\"inline\"> — constant;</dd><br /><dt className=\"inline font-mono\"><TeX>\\varepsilon_t</TeX></dt><dd className=\"inline\"> — white noise (random error);</dd><br /><dt className=\"inline font-mono\"><TeX>\\phi_i</TeX></dt><dd className=\"inline\"> — model coefficients.</dd></dl>",
+
+  "section-1.2.title": "Moving Average Model (MA)",
+  "section-1.2.descr": "The MA(q) model describes the current value of the series as the sum of the current and past random errors:",
+  "section-1.2.notation": "<p>Where:</p><dl class=\"ml-6\"><dt class=\"inline font-mono\"><TeX>c</TeX></dt><dd class=\"inline\"> — constant.</dd><br /><dt class=\"inline font-mono\"><TeX>\\varepsilon_t</TeX></dt><dd class=\"inline\"> — white noise (random error);</dd><br /><dt class=\"inline font-mono\"><TeX>\\theta_j</TeX></dt><dd class=\"inline\"> — model coefficients;</dd></dl>",
+
+  "section-1.3.title": "ARMA Model",
+  "section-1.3.descr": "The ARMA(p,q) model combines the AR and MA components:",
+  "section-1.3.notation": "Parameters are analogous to those of the AR and MA models.",
+
+  "section-1.4.title": "ARIMA Model",
+  "section-1.4.descr": "ARIMA(p,d,q) includes differencing of order <TeX>d</TeX> to handle non-stationary series:",
+  "section-1.4.notation": "<p>Where:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>L</TeX></dt><dd className=\"inline\"> — lag operator;</dd><br/><dt className=\"inline font-mono\"><TeX>d</TeX></dt><dd className=\"inline\"> — differencing order;</dd><br/><dt className=\"inline font-mono\"><TeX>p, q</TeX></dt><dd className=\"inline\"> — orders of AR and MA (same as ARMA);</dd><br/><dt className=\"inline font-mono\"><TeX>c</TeX>, <TeX>\\phi_i</TeX>, <TeX>\\theta_j</TeX>, <TeX>\\varepsilon_t</TeX></dt><dd className=\"inline\"> — constant, coefficients and white noise (same as ARMA).</dd></dl>",
+
+  "section-1.5.title": "SARIMA Model",
+  "section-1.5.descr": "SARIMA extends ARIMA by adding seasonal components with orders <TeX>P, D, Q</TeX> and seasonal period <TeX>m</TeX>:",
+  "section-1.5.notation": "<p>Where:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\Phi_P, \\Theta_Q</TeX></dt><dd className=\"inline\"> — seasonal AR and MA coefficients;</dd><br/><dt className=\"inline font-mono\"><TeX>P, D, Q</TeX></dt><dd className=\"inline\"> — orders of seasonal AR, differencing and MA;</dd><br/><dt className=\"inline font-mono\"><TeX>m</TeX></dt><dd className=\"inline\"> — seasonal period;</dd><br/><dt className=\"inline font-mono\"><TeX>p, d, q</TeX>, <TeX>c, \\phi_i, \\theta_j, \\varepsilon_t</TeX></dt><dd className=\"inline\"> — analogous ARIMA parameters.</dd></dl>",
+
+  "section-2.title": "Exponential Smoothing",
+  "section-2.descr": "Exponential smoothing is a class of models based on weighted averaging of past observations, where more recent data receive greater weight.",
+
+  "section-2.1.title": "Simple Exponential Smoothing (SES)",
+  "section-2.1.descr": "The SES model builds forecasts based on a single level smoothing equation:",
+  "section-2.1.notation": "<p>Where:</p><dl class=\"ml-6\"><dt class=\"inline font-mono\"><TeX>\\alpha</TeX></dt><dd class=\"inline\"> — level smoothing coefficient (<TeX>0 \\le \\alpha \\le 1</TeX>);</dd><br /><dt class=\"inline font-mono\"><TeX>y_{t-1}</TeX></dt><dd class=\"inline\"> — observed value at the previous time;</dd><br /><dt class=\"inline font-mono\"><TeX>\\hat{y}_{t-1}</TeX></dt><dd class=\"inline\"> — smoothed level value from the previous step.</dd></dl>",
+
+  "section-2.2.title": "Holt’s Exponential Smoothing (HES)",
+  "section-2.2.descr": "The HES model adds a linear trend. Two equations are used for level <TeX>l_t</TeX> and trend <TeX>b_t</TeX>:",
+  "section-2.2.notation": "<p>Where:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\alpha</TeX></dt><dd className=\"inline\"> — level smoothing coefficient (<TeX>0 \\le \\alpha \\le 1</TeX>);</dd><br /><dt className=\"inline font-mono\"><TeX>\\beta</TeX></dt><dd className=\"inline\"> — trend smoothing coefficient (<TeX>0 \\le \\beta \\le 1</TeX>);</dd><br /><dt className=\"inline font-mono\"><TeX>y_t</TeX></dt><dd className=\"inline\"> — current observed value;</dd><br /><dt className=\"inline font-mono\"><TeX>l_{t-1}</TeX>, <TeX>b_{t-1}</TeX></dt><dd className=\"inline\"> — level and trend from the previous step;</dd><br /><dt className=\"inline font-mono\"><TeX>\\hat{y}_{t+h}</TeX></dt><dd className=\"inline\"> — forecast for <TeX>h</TeX> steps ahead.</dd></dl>",
+
+  "section-2.3.title": "Holt-Winters Exponential Smoothing (HWES)",
+  "section-2.3.descr": "HWES includes a seasonal component. Consider the additive variant (seasonal fluctuations added to trend and level):",
+  "section-2.3.notation": "<p>Where:</p><dl className=\"ml-6\"><dt className=\"inline font-mono\"><TeX>\\alpha</TeX>, <TeX>\\beta</TeX></dt><dd className=\"inline\"> — smoothing coefficients for level and trend (same as HES);</dd><br/><dt className=\"inline font-mono\"><TeX>\\gamma</TeX></dt><dd className=\"inline\"> — seasonal smoothing coefficient (<TeX>0 \\le \\gamma \\le 1</TeX>);</dd><br/><dt className=\"inline font-mono\"><TeX>m</TeX></dt><dd className=\"inline\"> — length of the seasonal period (number of steps in a season);</dd><br/><dt className=\"inline font-mono\"><TeX>y_t</TeX></dt><dd className=\"inline\"> — current observed value;</dd><br/><dt className=\"inline font-mono\"><TeX>l_{t-1}</TeX>, <TeX>b_{t-1}</TeX>, <TeX>s_{t-m}</TeX></dt><dd className=\"inline\"> — previous values of level, trend and seasonality;</dd><br/><dt className=\"inline font-mono\"><TeX>\\hat{y}_{t+h}</TeX></dt><dd className=\"inline\"> — forecast for <TeX>h</TeX> steps ahead accounting for seasonal component.</dd></dl>",
+
+  "section-3.title": "Machine Learning",
+  "section-3.descr": "Machine learning approaches allow detecting complex nonlinear dependencies in time series and building more accurate forecasts based on various features.",
+  "section-3.notation": "<h3 className=\"text-xl font-semibold mt-6 mb-2\">Main Steps</h3><p className=\"mb-2\">A typical ML pipeline includes:</p><ol className=\"ml-6 mb-6 list-decimal list-inside\"><li><span className=\"font-mono\">Feature engineering</span> — transforming the series into tabular format: lagged values, moving statistics, calendar features;</li><li className=\"mt-2\"><span className=\"font-mono\">Data splitting</span> — dividing into training and validation sets;</li><li className=\"mt-2\"><span className=\"font-mono\">Model training</span> — hyperparameter tuning and training on training data;</li><li className=\"mt-2\"><span className=\"font-mono\">Quality evaluation</span> — checking on validation data and selecting the best model configuration.</li></ol>",
+  "section-3.examples": "<h3 className=\"text-xl font-semibold mt-6 mb-2\">Algorithm Examples</h3><dl className=\"ml-6 mb-6\"><dt className=\"inline font-mono\">Tree ensembles</dt><dd className=\"inline\"> — Random Forest, XGBoost, LightGBM: tune number of trees, depth, and learning rate;</dd><br/><dt className=\"inline font-mono\">Neural networks</dt><dd className=\"inline\"> — RNN, LSTM, GRU: key parameters are number of layers, number of neurons, learning rate;</dd><br/><dt className=\"inline font-mono\">Linear models</dt><dd className=\"inline\"> — Lasso, Ridge: regularization coefficients are tuned.</dd></dl>"
+}

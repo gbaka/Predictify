@@ -1,60 +1,63 @@
+import { useTranslation } from "react-i18next";
+import createI18nText from "../i18n/createI18nText";
+
+const I18nNamespace = "help";
+const I18nText = createI18nText(I18nNamespace);
+
 export default function Help() {
-    return (
-      <div className="container mx-auto p-6 px-8">
-        <h1 className="text-4xl font-bold">Помощь</h1>
-        <p className="mt-4 text-lg">
-          Добро пожаловать в раздел помощи! Здесь вы найдете ответы на часто задаваемые вопросы и инструкции по использованию
-          нашего сервиса.
+  useTranslation(I18nNamespace);
+
+  return (
+    <>
+      <title>Predictify | Help</title>
+
+      <div className="container mt-3 mx-auto p-6 px-8 max-w-5xl">
+        <h1 className="text-3xl font-bold text-center">
+          <I18nText textKey={"title"} />
+        </h1>
+        <p className="mt-4 text-lg text-center">
+          <I18nText textKey={"descr"} />
         </p>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">1. Как зарегистрироваться?</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-1.title"} />
+          </h2>
           <p className="mt-4">
-            Для регистрации на нашем сервисе просто нажмите на кнопку &quot;Зарегистрироваться&quot; на главной странице, введите свои
-            данные и следуйте инструкциям на экране.
+            <I18nText textKey={"section-1.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">2. Как загрузить данные?</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-2.title"} />
+          </h2>
           <p className="mt-4">
-            Чтобы загрузить данные, перейдите на страницу &quot;Загрузка данных&quot;, выберите файл и нажмите кнопку &quot;Загрузить&quot;.
-            Убедитесь, что файл соответствует формату, указанному в инструкциях на странице.
+            <I18nText textKey={"section-2.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">3. Как настроить уведомления?</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-3.title"} />
+          </h2>
           <p className="mt-4">
-            Уведомления можно настроить в разделе &quot;Настройки&quot;. Перейдите в этот раздел и включите необходимые уведомления для
-            получения актуальной информации.
+            <I18nText textKey={"section-3.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">4. Как получить помощь?</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-4.title"} />
+          </h2>
           <p className="mt-4">
-            Если у вас возникли вопросы, вы можете обратиться в нашу службу поддержки, написав нам на адрес:
-            <a href="mailto:support@example.com">support@example.com</a>. Мы ответим на ваш запрос в кратчайшие сроки.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">5. Часто задаваемые вопросы</h2>
-          <p className="mt-4">
-            Здесь вы найдете ответы на самые распространенные вопросы. Если ваш вопрос не был освещен в этом разделе,
-            пожалуйста, свяжитесь с нами напрямую.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">6. Обратная связь</h2>
-          <p className="mt-4">
-            Мы всегда рады услышать ваше мнение о нашем сервисе. Оставьте свои отзывы или предложения, отправив сообщение
-            на адрес: <a href="mailto:feedback@example.com">feedback@example.com</a>.
+            <I18nText
+              textKey={"section-4.descr"}
+              link="mailto:project.predictify@proton.me"
+            />
           </p>
         </section>
       </div>
-    );
-  }
-  
+    </>
+  );
+}

@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/shared/ScrollToTop";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Wiki from "./pages/Wiki";
 import Home from "./pages/Home";
 import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
 import Help from "./pages/Help";
 import Forecast from "./pages/Forecasting";
 
@@ -12,6 +12,7 @@ import Forecast from "./pages/Forecasting";
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Header />
       <main className="pt-16">
         <Routes>
@@ -19,7 +20,6 @@ function App() {
           <Route path="/wiki" element={<Wiki />} />
           <Route path="/forecast" element={<Forecast />} />
           <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
           <Route path="/help" element={<Help />} />
         </Routes>
       </main>

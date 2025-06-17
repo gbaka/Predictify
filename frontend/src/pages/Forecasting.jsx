@@ -2,12 +2,21 @@ import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import ForecastPanel from "../components/ForecastPanel/ForecastPanel";
 import ForecastTiles from "../components/ForecastTiles/ForecastTiles";
+import { useTranslation } from "react-i18next";
+import createI18nText from "../i18n/createI18nText";
+
+const I18nNamespace = "forecasting";
+const I18nText = createI18nText(I18nNamespace);
 
 export default function Forecasting() {
-    const [activeTab, setActiveTab] = useState("parsedData");
-    const { theme } = useTheme();
+  useTranslation(I18nNamespace);
+  const [activeTab, setActiveTab] = useState("parsedData");
+  const { theme } = useTheme();
 
-    return (
+  return (
+    <>
+      <title>Predictify | Forecasting</title>
+
       <div className="w-full">
         <div
           className={`w-full flex items-center p-4 mt-2 top-0 z-10 ${
@@ -25,7 +34,7 @@ export default function Forecasting() {
               }`}
               onClick={() => setActiveTab("parsedData")}
             >
-              Парсинг
+              <I18nText textKey={"tab-1"} />
             </button>
             <button
               className={`px-4 py-2 transition-all border-b-2 ${
@@ -35,7 +44,7 @@ export default function Forecasting() {
               }`}
               onClick={() => setActiveTab("forecasting")}
             >
-              Попробовать
+              <I18nText textKey={"tab-2"} />
             </button>
           </div>
         </div>
@@ -44,52 +53,40 @@ export default function Forecasting() {
           {activeTab === "parsedData" ? (
             <>
               <h1 className="text-3xl font-bold mb-4 mt-2 text-center">
-                Парсеры
+                <I18nText textKey={"tab-1.title"} />
               </h1>
               <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
-                Здесь будет что-то. Lorem ipsum, dolor
-                sit amet consectetur adipisicing elit. Labore maxime, soluta
-                ratione hic libero vero ducimus illum voluptatem aut quos.
+                <I18nText textKey={"tab-1.descr"} />
               </p>
               <ForecastTiles theme={theme} />
 
-               {/* Добавленные параграфы о сервисе */}
-               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
+              {/* Добавленные параграфы о сервисе */}
+              <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
                 <p>
-                  Мы уделяем особое внимание безопасности ваших данных. Все
-                  файлы, загруженные в наш сервис, обрабатываются в
-                  зашифрованном виде и хранятся на защищенных серверах. Мы не
-                  передаем ваши данные третьим лицам и гарантируем их
-                  конфиденциальность.
+                  <I18nText textKey={"tab-1.footer"} />
                 </p>
               </div>
             </>
           ) : (
             <>
               <h1 className="text-3xl font-bold mb-4 mt-2 text-center">
-                Прогнозирование
+                <I18nText textKey={"tab-2.title"} />
               </h1>
               <p className="text-center mb-14 mt-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16">
-                Здесь будет интерфейс для прогнозирования. Lorem ipsum, dolor
-                sit amet consectetur adipisicing elit. Labore maxime, soluta
-                ratione hic libero vero ducimus illum voluptatem aut quos.
+                <I18nText textKey={"tab-2.descr"} />
               </p>
-              <ForecastPanel theme={theme}/>
+              <ForecastPanel theme={theme} />
 
               {/* Добавленные параграфы о сервисе */}
               <div className="p-6 text-center text-gray-500 mt-12 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 space-y-6">
                 <p>
-                  Мы уделяем особое внимание безопасности ваших данных. Все
-                  файлы, загруженные в наш сервис, обрабатываются в
-                  зашифрованном виде и хранятся на защищенных серверах. Мы не
-                  передаем ваши данные третьим лицам и гарантируем их
-                  конфиденциальность.
+                  <I18nText textKey={"tab-2.footer"} />
                 </p>
               </div>
             </>
           )}
         </div>
       </div>
-    );
+    </>
+  );
 }
-

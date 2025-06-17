@@ -1,4 +1,5 @@
 from datetime import timedelta
+import numpy as np
 from typing import List, Dict
 import re
 
@@ -70,3 +71,24 @@ def camel_to_snake(s: str) -> str:
     snake_str = re.sub('([A-Z])', r'_\1', s).lower()
     
     return snake_str.lstrip('_')
+
+
+def validate_no_nans(data: np.ndarray, message: str) -> None:
+    """
+    Проверяет np.array массив на наличие NaN значение, если таковые найдены - генерирует ValueError с сообщением message.
+    
+    Parameters
+    ----------
+    data : np.ndarray
+        Данные для проверки 
+    
+    Raises
+    ------
+    ValueError
+        Если обнаружены NaN значения
+    """
+  
+    if np.isnan(data).any():
+        raise ValueError(message)
+    return
+    

@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import BaseChart from "../shared/BaseChart";
+
+const I18nNamespace = "common";
 
 
 export default function ForecastTile({ data, title, onClick, isLoading, isClickable, theme }) {
-  console.log("ForecastTile: ",title, data)
-  
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme == "dark"
   const visiblePoints = 200; 
 
@@ -128,7 +130,7 @@ export default function ForecastTile({ data, title, onClick, isLoading, isClicka
             <span className={`ml-1 text-sm ${
               isDarkMode ? "text-gray-300" : "text-gray-600"
             }`}>
-              {isLoading ? "Соединение" : "Онлайн"}
+              {isLoading ? t("forecast-tile.connection"): t("forecast-tile.online")}
             </span>
           </div>
 

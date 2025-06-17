@@ -1,4 +1,9 @@
+import { useTranslation } from "react-i18next";
+
+const I18nNamespace = "common";
+
 export default function ErrorModal({ isOpen, message, onClose, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
 
   if (!isOpen) return null;
@@ -14,19 +19,21 @@ export default function ErrorModal({ isOpen, message, onClose, theme }) {
           isDarkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
         }`}
       >
-        <h2 className="text-xl font-bold mb-4">Ошибка</h2>
+        <h2 className="text-xl font-bold mb-4">{t("modal.error")}</h2>
         <p className="mb-4">{message.title}</p>
 
         {message.detail && (
           <div className="mb-4">
             <p className="font-semibold mb-2 flex items-center">
-              Подробности:
+              {t("modal.details")}
             </p>
-            <div className={`p-2.5 rounded text-sm ${
-              isDarkMode 
-                ? "bg-gray-700/40 border border-gray-600" 
-                : "bg-gray-100/80 border border-gray-200"
-            }`}>
+            <div
+              className={`p-2.5 rounded text-sm ${
+                isDarkMode
+                  ? "bg-gray-700/40 border border-gray-600"
+                  : "bg-gray-100/80 border border-gray-200"
+              }`}
+            >
               <p className="whitespace-pre-wrap">{message.detail}</p>
             </div>
           </div>
@@ -40,7 +47,7 @@ export default function ErrorModal({ isOpen, message, onClose, theme }) {
               : "bg-blue-500 hover:bg-blue-600 text-white"
           }`}
         >
-          Закрыть
+          {t("modal.close")}
         </button>
       </div>
     </div>

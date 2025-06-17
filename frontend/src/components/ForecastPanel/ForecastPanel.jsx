@@ -2,11 +2,12 @@ import Split from "react-split";
 import axios from "axios"
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { FileText, Sheet, X, Maximize2, Minimize2, Play, 
          Settings } from "lucide-react";
 
 import { placeholderDates, placeholderValues } from './exampleChartPlaceholderData';
-import { ARIMASettings, SARIMASettings } from "./ModelSettingsUI"
+import { SARIMASettings, ARIMASettings, ARMASettings, ARSettings, MASettings, SESSettings, HESSettings, HWESSettings } from "./ModelSettingsUI"
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings"
 import { API_CONFIG } from "../../api/apiConfig";
 import AdvancedSettingsPanel from "./AdvancedSettingsPanel";
@@ -14,6 +15,8 @@ import ErrorModal from "../modals/ErrorModal"
 import BaseChart from "../shared/BaseChart";
 import DataSummary from "../shared/DataSummary";
 
+
+const I18nNamespace = "common";
 
 const calculateAverage = (data) => {
   if (data) {
@@ -26,14 +29,15 @@ const calculateAverage = (data) => {
 
 
 function ModelSelector({ onChange, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const models = {
-    "1. Статистические методы": {
-      "1.1 Линейные модели": ["ARIMA", "SARIMA"],
-      "1.2 Экспоненциальное сглаживание": ["SES", "Holt-Winters"]
+    "forecast-panel.stat-methods": {
+      "forecast-panel.linear-models": ["AR", "MA", "ARMA", "ARIMA", "SARIMA"],
+      "forecast-panel.exp-smoothing": ["SES", "HES", "HWES"]
     },
-    "2. Машинное обучение": {
-      "2.1 Деревья решений": ["Random Forest", "XGBoost"],
-      "2.2 Нейросети": ["LSTM", "GRU"]
+    "forecast-panel.machine-learning": {
+      "forecast-panel.decision-trees": ["Random Forest", "XGBoost"],
+      "forecast-panel.neuralnetworks": ["LSTM", "GRU"]
     }
   };
 
@@ -85,7 +89,7 @@ function ModelSelector({ onChange, theme }) {
     >
       {/* Кастомный элемент для отображения выбранной модели */}
       <div className="p-1  w-full ">
-        {selectedModel || "Выберите модель"}
+        {selectedModel || t("forecast-panel.choose-model")}
       </div>
 
       {/* Выпадающий список */}
@@ -96,10 +100,10 @@ function ModelSelector({ onChange, theme }) {
         >
           {Object.keys(models).map((category) => (
             <div key={category}>
-              <div className="p-1 font-bold">{category}</div>
+              <div className="p-1 font-bold">{t(category)}</div>
               {Object.keys(models[category]).map((subcategory) => (
                 <div key={subcategory}>
-                  <div className="p-1 pl-2 font-semibold">&nbsp;&nbsp;{subcategory}</div>
+                  <div className="p-1 pl-2 font-semibold">&nbsp;&nbsp;{t(subcategory)}</div>
                   {models[category][subcategory].map((model) => (
                     <div
                       key={model}
@@ -109,7 +113,7 @@ function ModelSelector({ onChange, theme }) {
                         handleSelect(model);
                       }}
                     >
-                      &nbsp;&nbsp;&nbsp;&nbsp;{model}
+                      &nbsp;&nbsp;&nbsp;&nbsp;{t(model)}
                     </div>
                   ))}
                 </div>
@@ -124,9 +128,9 @@ function ModelSelector({ onChange, theme }) {
 
 
 function DataUploader({ onUpload, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const [selectedFile, setSelectedFile] = useState(null); 
   const [isDragging, setIsDragging] = useState(false); 
-
   const isDarkMode = theme === "dark";
 
   // Обработчик клика по области загрузки
@@ -151,7 +155,6 @@ function DataUploader({ onUpload, theme }) {
   const handleDrop = (event) => {
     event.preventDefault();
     setIsDragging(false);
-
     const file = event.dataTransfer.files[0];
     processFile(file);
   };
@@ -232,9 +235,9 @@ function DataUploader({ onUpload, theme }) {
               <X className="w-4 h-4" /> {/* Иконка для удаления файла */}
             </button>
           </div>
-          <p className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+          <p className={`text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-            Файл успешно выбран
+            {t("forecast-panel.file-selected")}
           </p>
         </div>
       ) : (
@@ -246,11 +249,11 @@ function DataUploader({ onUpload, theme }) {
           </div>
           <p className={`text-center mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-            Перетащите файл сюда или нажмите для загрузки
+            {t("forecast-panel.download-file")}
           </p>
           <p className={`text-center text-sm ${isDarkMode ? "text-gray-600" : "text-gray-400"}`}
              style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-            Поддерживаются форматы: CSV, Excel
+            {t("forecast-panel.supported-formats")}
           </p>
         </>
       )}
@@ -260,14 +263,35 @@ function DataUploader({ onUpload, theme }) {
 
 
 function ModelSettingsPanel({ selectedModel, onChange, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const renderSettings = () => {
     switch (selectedModel) {
-      case "ARIMA":
-        return <ARIMASettings onChange={onChange} theme={theme}/>;
       case "SARIMA":
         return <SARIMASettings onChange={onChange} theme={theme}/>;
+      case "ARIMA":
+        return <ARIMASettings onChange={onChange} theme={theme}/>;
+      case "ARMA":
+        return <ARMASettings onChange={onChange} theme={theme}/>;
+      case "AR":
+        return <ARSettings onChange={onChange} theme={theme}/>;
+      case "MA":
+        return <MASettings onChange={onChange} theme={theme}/>;
+
+      case "SES":
+        return <SESSettings onChange={onChange} theme={theme}/>;
+      case "HES":
+        return <HESSettings onChange={onChange} theme={theme}/>;
+      case "HWES":
+        return <HWESSettings onChange={onChange} theme={theme}/>;
+
+      case "LSTM":
+      case "GRU":
+      case "XGBoost":
+      case "Random Forest":
+        return  <div className="text-center text-gray-500">{t("forecast-panel.in-next-updates")}</div>;
+
       default:
-        return <div className="text-center text-gray-500">Модель не выбрана</div>;
+        return <div className="text-center text-gray-500">{t("forecast-panel.not-selected")}</div>;
     }
   };
 
@@ -316,6 +340,7 @@ function SettingsButton({ onClick, theme }) {
 
 
 function StartButton({ onClick, theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark"
   return (
     <button
@@ -329,13 +354,14 @@ function StartButton({ onClick, theme }) {
       onClick={onClick}
     >
       <Play className="w-5 h-5 text-gray-600" />
-      Начать
+      {t("forecast-panel.start")}
     </button>
   );
 }
 
 
 export default function ForecastingPanel({ theme }) {
+  const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
 
   const modelSettingsRef = useRef(null);
@@ -382,13 +408,13 @@ export default function ForecastingPanel({ theme }) {
 
   const handleStartForecast = async () => {
     if (isLoading) {
-      setErrorMessage({title: "Дождитесь результатов прогнозирования.", detail: null});
+      setErrorMessage({title: t("forecast-panel.wait-for-results"), detail: null});
       setIsErrorModalOpen(true);
       return
     }
     
     if (!selectedModel || !modelSettingsRef.current || !uploadedDataRef.current) {
-      setErrorMessage({title: "Пожалуйста, заполните все поля.", detail: null});
+      setErrorMessage({title: t("forecast-panel.fill-forms"), detail: null});
       setIsErrorModalOpen(true);
       return;
     }
@@ -400,7 +426,7 @@ export default function ForecastingPanel({ theme }) {
     formData.append("fileSettings", JSON.stringify(advancedSettingsRef.current["fileSettings"]));
     
     setIsLoading(true); 
-    dataSummaryRef.current = "Загрузка...";
+    dataSummaryRef.current = t("forecast-panel.loading");
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT); 
@@ -425,8 +451,6 @@ export default function ForecastingPanel({ theme }) {
         confidenceLevel: response.data.confidence_intervals.confidence_level
       });
 
-      // console.log("Forecasting results (доверительные интервалы):", response.data.confidence_intervals.invervals);
-      // console.log("CI", chartData.confidenceLevel)
     } catch (error) {
       clearTimeout(timeoutId)
       dataSummaryRef.current = ""
@@ -434,15 +458,15 @@ export default function ForecastingPanel({ theme }) {
 
       if (error.name === 'AbortError' || error.code === 'ECONNABORTED' || error.code === 'ERR_CANCELED') {
         setErrorMessage({
-          title: `Превышено время ожидания. Сервер не ответил за ${Math.round(API_CONFIG.TIMEOUT/1000)} секунд. Пожалуйста, попробуйте позже.`,
+          title: `The waiting time has been exceeded. The server did not respond for ${Math.round(API_CONFIG.TIMEOUT/1000)} seconds. Please try again later.`,
           detail: null
         });
       } else if (error.response && error.response.status === 400) {
         console.log("Detail:", error.response.data.detail)
         const detailedErrorMessage = error?.response?.data?.detail || 'Unknown error.';
-        setErrorMessage({title: "Неверные данные. Пожалуйста, проверьте введённые значения и формат данных в файле.", detail: detailedErrorMessage});
+        setErrorMessage({title: t("forecast-panel.input-error"), detail: detailedErrorMessage});
       } else {
-        setErrorMessage({title: "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.", detail: null});
+        setErrorMessage({title: t("forecast-panel.sending-error"), detail: null});
       }
       setIsErrorModalOpen(true);
     } finally {
@@ -466,7 +490,7 @@ export default function ForecastingPanel({ theme }) {
           tooltip: { show: false },
         },
         {
-          name: "Прогноз",
+          name: t("forecast-panel.forecast"),
           type: "line",
           data: chartData.prediction.map((el) => el ? el.toFixed(3) : el),
           smooth: advancedSettingsRef.current.graphSettings.isSmooth,
@@ -504,7 +528,7 @@ export default function ForecastingPanel({ theme }) {
               ],
               label: {
                 show: true,
-                formatter: "Среднее:\n{c}", // Отображаем значение среднего
+                formatter: `${t("forecast-panel.average")}:\n{c}`, // Отображаем значение среднего
                 position: "end", // Позиция подписи
                 align: 'center',
                 padding: [0, 0, 0, 30], // Отступ слева 20px
@@ -522,7 +546,7 @@ export default function ForecastingPanel({ theme }) {
         // Вспомогательный ряд для корректного отображения подсказки
         chartData.confidenceIntervals
           ? {
-              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              name: `${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
               lineStyle: { width: 0 },  
@@ -538,7 +562,7 @@ export default function ForecastingPanel({ theme }) {
         // Нижняя граница
         chartData.confidenceIntervals
           ? {
-              name:`Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              name:`${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
@@ -559,7 +583,7 @@ export default function ForecastingPanel({ theme }) {
         // Верхняя граница
         chartData.confidenceIntervals 
           ? {
-              name: `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              name: `${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
@@ -580,7 +604,7 @@ export default function ForecastingPanel({ theme }) {
             }
           : null,
           {
-            name: "Исходные данные",
+            name: t("forecast-panel.initial-data"),
             type: "line",
             data: chartData.endog,
             smooth: advancedSettingsRef.current.graphSettings.isSmooth,
@@ -611,12 +635,12 @@ export default function ForecastingPanel({ theme }) {
                 data: [
                   {
                     yAxis: averageEndog, 
-                    name: "Среднее", 
+                    name: t("forecast-panel.average"), 
                   },
                 ],
                 label: {
                   show: true,
-                  formatter: "Среднее:\n{c}", 
+                  formatter: `${t("forecast-panel.average")}:\n{c}`, 
                   position: "end",
                   align: 'center',
                   padding: [0, 0, 0, 30], 
@@ -635,7 +659,7 @@ export default function ForecastingPanel({ theme }) {
       ]
     : [
         {
-          name: "Пример данных",
+          name: t("forecast-panel.example-data"),
           type: "line",
           data: placeholderValues,
           smooth: advancedSettingsRef.current.graphSettings.isSmooth,
@@ -647,9 +671,9 @@ export default function ForecastingPanel({ theme }) {
   const chartOptions = {
     legend: {
       show: advancedSettingsRef.current.graphSettings.showLegend,
-      data: hasData ? ["Исходные данные", "Прогноз", `Доверительный интервал (${Math.trunc(chartData.confidenceLevel*100)}%)`] : ["Пример данных"]
+      data: hasData ? [t("forecast-panel.initial-data"), t("forecast-panel.forecast"), `${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`] : [t("forecast-panel.example-data")]
     },
-    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : "Пример графика" },
+    title: { text: hasData ? advancedSettingsRef.current.graphSettings.title : t("forecast-panel.example-chart") },
     xAxis: {
       type: "category",
       data: hasData ? chartData.fullDates : placeholderDates,

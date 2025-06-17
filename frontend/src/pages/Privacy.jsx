@@ -1,60 +1,72 @@
+import { useTranslation } from "react-i18next";
+import createI18nText from "../i18n/createI18nText";
+
+const I18nNamespace = "privacy";
+const I18nText = createI18nText(I18nNamespace);
+
 export default function Privacy() {
-    return (
-      <div className="container mx-auto p-6 px-8">
-        <h1 className="text-4xl font-bold">Политика конфиденциальности</h1>
-        <p className="mt-4 text-lg">
-          Мы заботимся о вашей конфиденциальности и обеспечиваем надежную защиту ваших данных.
-          В этой политике конфиденциальности изложены подробности о том, какие данные мы собираем и как их используем.
+  useTranslation(I18nNamespace);
+
+  return (
+    <>
+      <title>Predictify | Privacy</title>
+
+      <div className="container mt-3 mx-auto p-6 px-8 max-w-5xl">
+        <h1 className="text-3xl font-bold text-center">
+          <I18nText textKey={"title"} />
+        </h1>
+        <p className="mt-4 text-lg text-center">
+          <I18nText textKey={"descr"} />
         </p>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">1. Сбор данных</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-1.title"} />
+          </h2>
           <p className="mt-4">
-            Мы собираем данные, когда вы используете наш сервис. Это может включать личные данные,
-            такие как имя, адрес электронной почты, а также данные о том, как вы взаимодействуете с нашими сервисами.
+            <I18nText textKey={"section-1.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">2. Использование данных</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-2.title"} />
+          </h2>
           <p className="mt-4">
-            Собранные данные используются для предоставления, персонализации и улучшения наших услуг.
-            Мы можем использовать эти данные для анализа, улучшения качества обслуживания и обработки запросов.
+            <I18nText textKey={"section-2.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">3. Безопасность данных</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-3.title"} />
+          </h2>
           <p className="mt-4">
-            Мы принимаем все необходимые меры для обеспечения безопасности ваших данных. Это включает в себя использование
-            современных методов защиты данных и соблюдение стандартов безопасности.
+            <I18nText textKey={"section-3.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">4. Права пользователя</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-4.title"} />
+          </h2>
           <p className="mt-4">
-            Вы имеете право на доступ, исправление и удаление ваших данных. Вы также можете ограничить использование ваших
-            данных, обратившись к нам через контактные данные, указанные на сайте.
+            <I18nText textKey={"section-4.descr"} />
           </p>
         </section>
-  
+
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold">5. Изменения в политике конфиденциальности</h2>
+          <h2 className="text-2xl font-semibold">
+            <I18nText textKey={"section-5.title"} />
+          </h2>
           <p className="mt-4">
-            Мы можем время от времени обновлять нашу политику конфиденциальности. Мы уведомим вас о любых значительных
-            изменениях путем размещения обновленной политики на этой странице.
-          </p>
-        </section>
-  
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">6. Контактная информация</h2>
-          <p className="mt-4">
-            Если у вас есть вопросы по поводу нашей политики конфиденциальности, пожалуйста, свяжитесь с нами по адресу:
-            <a href="mailto:privacy@example.com">privacy@example.com</a>
+            <I18nText
+              textKey={"section-5.descr"}
+              link="mailto:project.predictify@proton.me"
+            />
           </p>
         </section>
       </div>
-    );
-  }
-  
+    </>
+  );
+}

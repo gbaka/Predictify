@@ -1,0 +1,20 @@
+{
+  "title": "Privacy Policy",
+
+  "descr": "We respect your privacy and are committed to being as transparent as possible in how we handle data.",
+
+  "section-1.title": "1. What data we collect",
+  "section-1.descr": "We may automatically collect minimal technical information (such as browser type and session duration) to improve the service.",
+
+  "section-2.title": "2. What we don’t do",
+  "section-2.descr": "We do not store the files you upload or share your data with third parties.",
+
+  "section-3.title": "3. Security",
+  "section-3.descr": "We use technical safeguards to ensure the security of data during transmission and processing.",
+
+  "section-4.title": "4. Changes",
+  "section-4.descr": "Any updates to the policy will be published on this page.",
+
+  "section-5.title": "5. Contact",
+  "section-5.descr": "If you have any questions, feel free to contact us: <a href=\"mailto:project.predictify@proton.me\">project.predictify@proton.me</a>."
+}

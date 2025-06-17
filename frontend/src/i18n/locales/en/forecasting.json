@@ -1,0 +1,11 @@
+{
+  "tab-1": "Examples",
+  "tab-1.title": "Examples",
+  "tab-1.descr": "Here you can see how forecasts created in Predictify look like. <br/> Forecasts are built using different models and based on data taken from open APIs.",
+  "tab-1.footer": "We pay special attention to the security of your data. <br/> We do not store uploaded files or share them with third parties.",
+
+  "tab-2": "Try",
+  "tab-2.title": "Forecasting",
+  "tab-2.descr": "Here you can build a time series forecast based on your own data. Upload data in Excel or CSV format, select a model and adjust its parameters, then click the 'Start' button.",
+  "tab-2.footer": "We pay special attention to the security of your data. <br/> We do not store uploaded files or share them with third parties."
+}
