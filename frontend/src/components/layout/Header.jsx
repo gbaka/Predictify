@@ -6,7 +6,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { index, pages } from "../../api/searchIndex"; 
 import { useTranslation } from "react-i18next";
 import createI18nText from "../../i18n/createI18nText";
-import LogoSvg from "../../assets/logo4.svg?react";
+import LogoSvg from "../../assets/logo.svg?react";
 
 
 const I18nNamespace = "common";

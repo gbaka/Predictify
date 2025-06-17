@@ -562,7 +562,7 @@ export default function ForecastingPanel({ theme }) {
         // Нижняя граница
         chartData.confidenceIntervals
           ? {
-              name:`${"forecast-panel.conf-interval"} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              name:`${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },
@@ -583,7 +583,7 @@ export default function ForecastingPanel({ theme }) {
         // Верхняя граница
         chartData.confidenceIntervals 
           ? {
-              name: `${"forecast-panel.conf-interval"} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
+              name: `${t("forecast-panel.conf-interval")} (${Math.trunc(chartData.confidenceLevel*100)}%)`,
               type: "line",
               stack: "confidence",
               itemStyle: { color: advancedSettingsRef.current.graphSettings.forecastColor },

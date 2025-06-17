@@ -22,19 +22,6 @@ export function I18nTeX({ children }) {
  *   const I18nText = createI18nText('home');
  *   <I18nText textKey="welcome" link="https://example.com" />
  */
-/**
- * Создаёт компонент перевода с поддержкой HTML-тегов и ссылок для заданного namespace.
- * 
- * Поддерживаются: br, strong, em, u, a, TeX, dl, dt, dd.
- * Можно передавать `link`, а также классы:
- *   - dlClass
- *   - dtClass
- *   - ddClass
- *
- * Пример:
- *   const I18nText = createI18nText("home");
- *   <I18nText textKey="welcome" link="https://example.com" dlClass="..." />
- */
 export default function createI18nText(ns) {
   return function I18nText({
     textKey,
