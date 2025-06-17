@@ -60,6 +60,8 @@
   "forecast-panel.initial-data": "Original Data",
   "forecast-panel.example-data": "Sample Data",
   "forecast-panel.example-chart": "Sample Chart",
+  "forecast-panel.save-as-png": "Save as PNG",
+  "forecast-panel.reset-scale": "Reset scale",
 
   "model-settings.steps": "Number of Steps:",
   "model-settings.param": "Parameter",

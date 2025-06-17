@@ -60,6 +60,8 @@
   "forecast-panel.initial-data": "Исходные данные",
   "forecast-panel.example-data": "Пример данных",
   "forecast-panel.example-chart": "Пример графика",
+  "forecast-panel.save-as-png": "Сохранить как PNG",
+  "forecast-panel.reset-scale": "Сбросить масштаб",
 
   "model-settings.steps": "Количество шагов:",
   "model-settings.param": "Параметр",

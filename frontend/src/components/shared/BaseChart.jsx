@@ -1,8 +1,11 @@
 import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
+const I18nNamespace = "common";
 
 export default function BaseChart({ options, isLoading, theme,  bordered }) {
+    const { t } = useTranslation(I18nNamespace);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
   
@@ -154,7 +157,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
           feature: {
             saveAsImage: {
               show: true,
-              title: "Сохранить как PNG",
+              title: t("forecast-panel.save-as-png"),
               iconStyle: {
                 borderColor: `${isDarkMode ? "rgb(72, 86, 108)" : "rgb(150, 150, 150)"}`, 
               },
@@ -166,7 +169,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
             },
             restore: {
               show: true,
-              title: "Сбросить масштаб",
+              title: t("forecast-panel.reset-scale"),
               iconStyle: {
                 borderColor:  `${isDarkMode ? "rgb(72, 86, 108)" : "rgb(150, 150, 150)"}`,    
               },
@@ -183,7 +186,7 @@ export default function BaseChart({ options, isLoading, theme,  bordered }) {
       // Загрузка при отправке данных
       if (isLoading) {
         chartInstanceRef.current.showLoading('default', {
-          text: 'Загрузка...',
+          text: t("forecast-panel.loading"),
           fontFamily: defaultFontFamily,
           fontSize: 16,
           textColor: `${theme === "dark" ? "#FFF" : "#000"}`,
