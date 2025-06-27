@@ -40,8 +40,6 @@ def detect_delimiter(first_line: str, delimiters: List[str], default_delimeter: 
     `return`: Разделитель из списка `delimiters` или разделитель по умолчанию.
     """
     delimiter_counts = {delim: first_line.count(delim) for delim in delimiters}
-    print("detect_delimiter", delimiter_counts)
-
     detected_delimiter = max(delimiter_counts, key=delimiter_counts.get)
 
     if delimiter_counts[detected_delimiter] == 0:

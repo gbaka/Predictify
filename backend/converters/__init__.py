@@ -1,14 +1,23 @@
 from starlette.datastructures import UploadFile
 from .excel_to_dict import excel_to_dict
 from .csv_to_dict import csv_to_dict
+from logger import Logger
+
+logger = Logger().get_logger()
+
 
 def convert_to_dict(file: UploadFile, settings: dict):
     """Определяет тип файла и вызывает нужный конвертер."""
-    if file.filename.endswith('.csv'):
+    if file.filename.endswith(".csv"):
         settings["delimiter"] = settings.pop("csvDelimiter")
         settings["date_format"] = settings.pop("dateFormat")
-        return csv_to_dict(file, **settings)
-    elif file.filename.endswith('.xlsx'):
-        return excel_to_dict(file)
+        result = csv_to_dict(file, **settings)
+        logger.info("CSV-файл успешно преобразован в словарь.")
+        return result
+    elif file.filename.endswith(".xlsx"):
+        result = excel_to_dict(file)
+        logger.info("Excel-файл успешно преобразован в словарь.")
+        return result
     else:
+        logger.error(f"Неподдерживаемый формат файла: {file.filename}")
         raise ValueError("Файл должен быть в формате CSV или Excel (.xlsx)")

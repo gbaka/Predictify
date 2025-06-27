@@ -4,6 +4,7 @@
 # Backend
 **/__pycache__/
 backend/venv
+backend/logs
 
 # Frontend
 /frontend/logs

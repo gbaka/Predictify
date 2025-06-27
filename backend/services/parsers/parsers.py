@@ -71,4 +71,4 @@ if __name__ == "__main__":
     }
     parser = OpenMeteoParser()
     res = parser.fetch_sync(myd)
-    print(res)
+    print('Results:', res)
