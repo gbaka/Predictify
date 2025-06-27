@@ -959,9 +959,9 @@ export function HWESSettings({ onChange, theme }) {
                         isDarkMode ? "bg-gray-850 border-gray-600" : "bg-gray-50 border-gray-400"
                     }`}
                 >
-                    <option value="estimated">Оценка</option>
-                    <option value="heuristic">Эвристически [1]</option>
-                    <option value="legacy-heuristic">Эвристически [2]</option>
+                    <option value="estimated">{t("model-settings.estimated")}</option>
+                    <option value="heuristic">{t("model-settings.heuristic")}</option>
+                    <option value="legacy-heuristic">{t("model-settings.legacy-heuristic")}</option>
                 </select>
             </div>
 
