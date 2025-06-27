@@ -19,14 +19,8 @@ from converters import convert_to_dict
 from database import get_db_session
 from database.crud import get_crud_for_table, TABLE_CRUD_MAPPING
 from .utils import format_db_forecast_data, validate_file_size
+from .config import ApiConfig
 from logger import Logger
-
-
-# Максимальное кол-во записей которые мы извлекаем из бд для отображения на фронте
-MAX_SAMPLES_FROM_PARSERS = 300
-
-# Максимально допустимый размер файла (в байтах)
-MAX_FILE_SIZE = 1024 * 100
 
 
 logger = Logger().get_logger()
@@ -52,7 +46,7 @@ async def forecast_endpoint(
         raise HTTPException(status_code=400, detail=f"Error loading file: {str(e)}")
 
     try:
-        validate_file_size(uploadedData, MAX_FILE_SIZE)
+        validate_file_size(uploadedData, ApiConfig.MAX_FILE_SIZE)
         logger.debug(f"Файл прошёл проверку размера: {uploadedData.size} байт")
         file_data_dict = convert_to_dict(file=uploadedData, settings=file_settings_dict)
         logger.debug("Файл успешно преобразован в словарь")
@@ -72,7 +66,9 @@ async def forecast_endpoint(
         logger.info("Прогноз успешно построен")
     except Exception as e:
         logger.error(f"Ошибка при построении прогноза: {e}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=400, detail=f"Error creating forecast: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Error creating forecast: {str(e)}"
+        )
 
     return response
 
@@ -88,13 +84,17 @@ def forecasts_from_parsers_endpoint():
 
         for tablename in forecast_tables:
             crud = get_crud_for_table(tablename)
-            instances = crud.get_all(db_session, limit=MAX_SAMPLES_FROM_PARSERS)
+            instances = crud.get_all(
+                db_session, limit=ApiConfig.MAX_SAMPLES_FROM_PARSERS
+            )
             logger.debug(f"{len(instances)} записей загружено из таблицы '{tablename}'")
             response[tablename] = format_db_forecast_data(instances)
 
         logger.info("Прогнозы для данных из парсеров успешно получены")
     except Exception as e:
-        logger.error(f"Ошибка при извлечении данных из БД: {e}\n{traceback.format_exc()}")
+        logger.error(
+            f"Ошибка при извлечении данных из БД: {e}\n{traceback.format_exc()}"
+        )
         raise HTTPException(
             status_code=400, detail=f"Error fetching the data from DB: {str(e)}"
         )

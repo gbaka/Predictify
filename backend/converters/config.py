@@ -1,5 +1,5 @@
 class ConvertersConfig:
-    """Конфигурация для модуля конвертеров"""
+    """Конфигурация для модуля backend/converters"""
     
     # Максимальное количество строк в CSV/Excel файле
     MAX_FILE_ROWS = 500
