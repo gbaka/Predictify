@@ -21,11 +21,15 @@ from services.forecasting import forecast
 from converters import convert_to_dict
 from database import get_db_session
 from database.crud import get_crud_for_table, TABLE_CRUD_MAPPING
-from .utils import format_db_forecast_data
+from .utils import format_db_forecast_data, validate_file_size
 
 
 # Максимальное кол-во записей которые мы извлекаем из бд для отображения на фронте 
 MAX_SAMPLES_FROM_PARSERS  = 300
+
+# Максимально допустимый размер файла (в байтах)
+MAX_FILE_SIZE = 1024*100
+
 
 router = APIRouter()
 
@@ -55,6 +59,8 @@ async def test(
     # print(f"file:", type(uploadedData))
 
     try:
+        print("uploadedData", uploadedData)
+        validate_file_size(uploadedData, MAX_FILE_SIZE)
         file_data_dict = convert_to_dict(file=uploadedData, settings=file_settings_dict)
         print(f"File converted to dict:", file_data_dict)
     except Exception as e:

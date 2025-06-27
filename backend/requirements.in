@@ -6,6 +6,7 @@ python-multipart
 httpx
 requests
 PyYAML
+openpyxl
 psycopg2-binary
 gunicorn
 uvicorn[standard]

@@ -22,7 +22,7 @@ def csv_to_dict(file: UploadFile, delimiter: str = "auto", date_format: str = "a
 
     if delimiter == "auto":
         first_line = content.split('\n')[0]
-        delimiter = detect_delimiter(first_line, ConvertersConfig.CSV_DELIMITERS)
+        delimiter = detect_delimiter(first_line, ConvertersConfig.CSV_DELIMITERS, ConvertersConfig.CSV_DEFAULT_DELIMETER)
 
     reader = csv.DictReader(StringIO(content), delimiter=delimiter)  
     use_index = "dates" not in reader.fieldnames  
