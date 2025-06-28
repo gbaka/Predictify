@@ -20,11 +20,11 @@ def extend_dates(data: Dict, steps: int) -> List:
         List: Расширенный список дат или индексов.
     """
     dates = data["dates"]
-    if len(dates) < 2:
-        raise ValueError("Список дат должен состоять хотя бы из 2ух элементов.")
-        
-    delta = dates[-1] - dates[-2]
+   
     if dates:
+        if len(dates) < 2:
+            raise ValueError("Список дат должен состоять хотя бы из 2ух элементов.")  
+        delta = dates[-1] - dates[-2]
         last_date = dates[-1]
         new_dates = [last_date + i*delta for i in range(1, steps + 1)]
         return dates + new_dates

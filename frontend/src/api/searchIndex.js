@@ -216,10 +216,10 @@ const helpContentRu = `
 Здесь вы найдете краткую инструкцию по загрузке данных и использованию сервиса прогнозирования.
 
 1. Поддерживаемые форматы
-Вы можете загружать файлы в формате CSV или Excel (.xlsx/.xls). Файл должен иметь размер до 10 МБ.
+Вы можете загружать файлы в формате CSV или Excel (.xlsx/.xls). Файл должен иметь размер до 100 КБ.
 
 2. Требования к структуре данных
-Для построения прогноза необходимо, чтобы данные содержали хотя бы один числовой столбец — endog (значения временного ряда). Для разметки данных по времени в файле может находится столбец с датами — date, но его наличие необязательно. Строка заголовков (названия столбцов) также необязательно должна присутствовать в файле.
+Для построения прогноза необходимо, чтобы данные содержали хотя бы один числовой столбец — endog (значения временного ряда). Для разметки данных по времени в файле может находится столбец с датами — date, но его наличие необязательно. Строка заголовков (названия столбцов) также необязательно должна присутствовать в файле. Для действительных чисел в качестве разделителя целой и дробной частей необходимо использовать точку.
 
 3. Как загрузить данные
 Для загрузки данных, перейдите на вкладку «Попробовать» раздела «Прогнозирование», далее перетащите нужный файл в Drag'n'drop поле (или кликните по нему и выберите файл в Проводнике).
@@ -234,10 +234,10 @@ Help
 Here you will find a brief guide on how to upload your data and use the forecasting service.
 
 1. Supported formats
-You can upload files in CSV or Excel (.xlsx/.xls) format. The file size must not exceed 10 MB.
+You can upload files in CSV or Excel (.xlsx/.xls) format. The file size must not exceed 100 KB.
 
 2. Data structure requirements
-To build a forecast, the data must contain at least one numerical column — endog (time series values). To associate data with time, a column with dates — date — can be included, but it is optional. A header row (with column names) is also optional.
+To build a forecast, the data must contain at least one numerical column — endog (time series values). To associate data with time, a column with dates — date — can be included, but it is optional. A header row (with column names) is also optional. For real numbers, a dot must be used as the decimal separator between the integer and fractional parts.
 
 3. How to upload data
 To upload your data, go to the “Try it” tab in the “Forecasting” section, then drag and drop your file into the upload area (or click it and choose a file from your computer).

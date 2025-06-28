@@ -24,6 +24,8 @@ click==8.1.8
     # via
     #   pip-tools
     #   uvicorn
+et-xmlfile==2.0.0
+    # via openpyxl
 fastapi==0.115.8
     # via -r requirements.in
 greenlet==3.1.1
@@ -51,6 +53,8 @@ numpy==2.2.3
     #   patsy
     #   scipy
     #   statsmodels
+openpyxl==3.1.5
+    # via -r requirements.in
 packaging==24.2
     # via
     #   build

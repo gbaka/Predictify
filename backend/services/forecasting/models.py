@@ -69,7 +69,6 @@ class SARIMAXModel:
         data : List[float]
             Данные временного ряда для обучения.
         """
-        print("FIT", data["endog"], type(data["endog"]))
         self.model = SARIMAX(**data, **self.settings)
         self.model = self.model.fit()
         return self.model

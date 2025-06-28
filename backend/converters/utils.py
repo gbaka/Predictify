@@ -29,23 +29,21 @@ def detect_date_format(date_str: str) -> str:
         raise ValueError(f"Unknown date format: {date_str}")
     
 
-def detect_delimiter(first_line: str, delimiters: List[str]) -> str:
+def detect_delimiter(first_line: str, delimiters: List[str], default_delimeter: str) -> str:
     """
     Определяет разделитель в CSV-файле на основе первой строки. 
-    Принимает на вход строку и список допустимых разделителей.
+    Принимает на вход строку, список допустимых разделителей и разделитель по-умолчанию.
 
     `first_line`: Первая строка CSV-файла.\n
     `delimiters`: Список допустимых разделителей.\n
 
-    `return`: Разделитель из списка `delimiters`.
+    `return`: Разделитель из списка `delimiters` или разделитель по умолчанию.
     """
     delimiter_counts = {delim: first_line.count(delim) for delim in delimiters}
-    print("detect_delimiter", delimiter_counts)
-
     detected_delimiter = max(delimiter_counts, key=delimiter_counts.get)
 
     if delimiter_counts[detected_delimiter] == 0:
-        raise ValueError("Couldn't identify separator in CSV file.")
+        return default_delimeter
     return detected_delimiter
 
 

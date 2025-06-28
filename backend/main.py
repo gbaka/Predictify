@@ -11,33 +11,37 @@ from services.config_loader import ConfigLoader
 from database import init_db
 from utils import SimpleFileLock
 
+from logger import Logger
+
+logger = Logger().get_logger()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.forecasting_process_pool = ProcessPoolExecutor(os.cpu_count() * 2)
 
     # Запуск планировщика только в одном из воркеров
-    lock = SimpleFileLock('/tmp/scheduler.lock')
+    lock = SimpleFileLock("/tmp/scheduler.lock")
     if lock.acquire():
-        print("🔄 [Master] Initializing scheduler")
+        logger.info("[Scheduler] Initializing scheduler")
         init_db()
 
-        # Пул процесса планировщика 
+        # Пул процесса планировщика
         app.state.scheduler_proccess_pool = ProcessPoolExecutor(os.cpu_count())
         config_loader = ConfigLoader("./services/scheduler_config.yml")
         tasks_config = config_loader.tasks
         app.state.scheduler = Scheduler(tasks_config, app.state.scheduler_proccess_pool)
 
-        print("Starting a scheduler")
+        logger.info("[Scheduler] Starting a scheduler")
         asyncio.create_task(app.state.scheduler.start())
-        print("Scheduler started")
-    else: 
-        print("🔄 Scheduler running in another worker")
-        
+        logger.info("[Scheduler] Scheduler started")
+    else:
+        logger.info("🔄 Scheduler running in another worker")
+
     yield
 
     if hasattr(app.state, "scheduler"):
-        print("🛑 Stopping scheduler")
+        logger.info("[Scheduler] Stopping scheduler")
         await app.state.scheduler.stop()
         app.state.scheduler_proccess_pool.shutdown(wait=True)
         lock.release()
@@ -47,16 +51,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Forecasting API", lifespan=lifespan)
 
-# Подключаем маршруты
 app.include_router(api_router, prefix="/api")
 
-# Настройка CORS: разрешаем доступ с нужных источников (например, с фронтенда)
+# Настройка CORS: разрешаем доступ с нужных источников
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        # "http://localhost:80",    # CORS не нужны т.к. запросы с фронта проксируются через Nginx
-        "http://localhost:3030"   # frontend-dev
-    ],  
+    allow_origins=["http://localhost:3030"],  # frontend-dev
     allow_credentials=True,
     allow_methods=["*"],  # Разрешаем все методы, например, GET, POST
     allow_headers=["*"],  # Разрешаем все заголовки

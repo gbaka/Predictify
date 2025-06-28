@@ -1,4 +1,3 @@
-# services/scheduler.py
 import asyncio
 import logging
 from concurrent.futures import ProcessPoolExecutor
@@ -7,11 +6,13 @@ from typing import Dict, List
 from datetime import datetime
 import traceback
 
-
 from database.crud import get_crud_for_table
 from database import get_db_session
 from .parsers import parse
 from .forecasting import forecast
+from logger import Logger
+
+logger = Logger().get_logger()
 
 
 class Scheduler:
@@ -29,7 +30,7 @@ class Scheduler:
 
     async def start(self):
         """Асинхронный запуск всех задач"""
-        print(f"🚀 Starting scheduler with {len(self.tasks_config)} tasks")
+        logger.info(f"🚀 Starting scheduler with {len(self.tasks_config)} tasks")
 
         for task_config in self.tasks_config:
             task = asyncio.create_task(
@@ -37,12 +38,11 @@ class Scheduler:
             )
             self._running_tasks.append(task)
 
-        print("✅ All tasks running in background")
+        logger.info("✅ All tasks running in background")
 
     async def _process_task_wrapper(self, task_config: Dict):
         """Обертка для запуска задачи в процессе"""
         loop = asyncio.get_running_loop()
-        print("Wrapper:", task_config['name'])
 
         while not self._shutdown_event.is_set():
             try:
@@ -57,9 +57,9 @@ class Scheduler:
                 await asyncio.sleep(sleep_time)
 
             except Exception as e:
-                print(f"⚠️ Task '{task_config['name']}' failed: {str(e)}")
-                print(traceback.format_exc())
-                print(f"🔄 Retrying in {task_config['schedule']['retry_cooldown']}s...")
+                logger.info(f"⚠️ Task '{task_config['name']}' failed: {str(e)}")
+                logger.info(traceback.format_exc())
+                logger.info(f"🔄 Retrying in {task_config['schedule']['retry_cooldown']}s...")
                 await asyncio.sleep(task_config['schedule']['retry_cooldown'])
 
     @staticmethod
@@ -73,11 +73,11 @@ class Scheduler:
         Исключения:
             ValueError: При ошибках парсинга или прогнозирования
         """
-        print(f"\n{'='*50}")
-        print(f"🔧 Starting task: {task_config['name']} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
-        print(f"📌 Table: {task_config['database']['tablename']}")
-        print(f"🔮 Model: {task_config['model']['type']}")
-        print(f"{'='*50}")
+        logger.info(f"\n{'='*50}")
+        logger.info(f"🔧 Starting task: {task_config['name']} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
+        logger.info(f"📌 Table: {task_config['database']['tablename']}")
+        logger.info(f"🔮 Model: {task_config['model']['type']}")
+        logger.info(f"{'='*50}")
 
         try:
             # Открываем сессию БД
@@ -93,16 +93,16 @@ class Scheduler:
                 .first()
             )
             last_obs_date = last_observation.date if last_observation else None
-            print(f"\n📅 Last observation date in DB: {last_obs_date or 'No data'}")
+            logger.info(f"\n📅 Last observation date in DB: {last_obs_date or 'No data'}")
 
             # Парсим новые наблюдаемые данные
-            print("\n🔄 Fetching new data from source...")
+            logger.info("\n🔄 Fetching new data from source...")
             parsed_data = parse(
                 parser_type=task_config['parser']['type'],
                 params=task_config['parser']['params']
             )
-            print(f"✅ Received {len(parsed_data['dates'])} data points")
-            print(f"📆 Date range: {parsed_data['dates'][0]} to {parsed_data['dates'][-1]}")
+            logger.info(f"✅ Received {len(parsed_data['dates'])} data points")
+            logger.info(f"📆 Date range: {parsed_data['dates'][0]} to {parsed_data['dates'][-1]}")
 
             # Фильтруем напарсенные данные и вычисляем ошибки для старых прогнозов
             updated_forecasts = 0
@@ -117,7 +117,7 @@ class Scheduler:
                         if parsed_data["endog"][i] is not None:
                             existing_record.absolute_error = abs(parsed_data["endog"][i] - existing_record.predict)
                         updated_forecasts += 1
-                        print(f"🔄 Updated forecast for {date} with actual data")
+                        logger.info(f"🔄 Updated forecast for {date} with actual data")
                     else:
                         new_observations.append({
                             "date": date, 
@@ -131,18 +131,18 @@ class Scheduler:
                         })  
             if updated_forecasts > 0:
                 db_session.commit()
-                print(f"📊 Updated {updated_forecasts} existing forecasts with actual data")
+                logger.info(f"📊 Updated {updated_forecasts} existing forecasts with actual data")
             if new_observations:
                 crud.bulk_create(db_session, new_observations)
-                print(f"💾 Saved {len(new_observations)} new observations")
+                logger.info(f"💾 Saved {len(new_observations)} new observations")
             else:
-                print("\n🆗 No new observations to save")
+                logger.info("\n🆗 No new observations to save")
             if not updated_forecasts and not new_observations:
                 return True
 
             # Получаем данные для прогнозирования
             observation_window_size = task_config['model']['observation_window_size']
-            print(f"\n🔍 Loading last {observation_window_size} observations for forecasting...")
+            logger.info(f"\n🔍 Loading last {observation_window_size} observations for forecasting...")
             observations_for_forecast = db_session.query(crud.model)\
                             .filter(crud.model.endog.isnot(None))\
                             .order_by(desc(crud.model.date))\
@@ -152,8 +152,8 @@ class Scheduler:
             if not observations_for_forecast:
                 raise ValueError("No training data available")
             
-            print(f"📊 Observations loaded: {len(observations_for_forecast)} points")
-            print(f"📆 From {observations_for_forecast[-1].date} to {observations_for_forecast[0].date}")  
+            logger.info(f"📊 Observations loaded: {len(observations_for_forecast)} points")
+            logger.info(f"📆 From {observations_for_forecast[-1].date} to {observations_for_forecast[0].date}")  
 
             # Подготовка данных для прогноза
             forecast_input = {
@@ -162,19 +162,19 @@ class Scheduler:
             }
 
             # Строим прогноз
-            print('forecast_input: ', forecast_input)
-            print("\n🔮 Running forecast...")
+            logger.info('forecast_input: ', forecast_input)
+            logger.info("\n🔮 Running forecast...")
             forecast_result = forecast(
                 data=forecast_input,
                 model_type=task_config['model']['type'],
                 settings=task_config['model']['params']
             )
-            print(f"✅ Forecast completed for {len(forecast_result['prediction'])} future points")
+            logger.info(f"✅ Forecast completed for {len(forecast_result['prediction'])} future points")
 
             # Добавление прогнозов в БД
             historical_len = len(forecast_input['endog'])
             forecast_dates = forecast_result['full_dates'][historical_len:]
-            print(f"\n📝 Updating {len(forecast_dates)} forecast points in DB...")
+            logger.info(f"\n📝 Updating {len(forecast_dates)} forecast points in DB...")
             
             updated = 0
             created = 0
@@ -205,25 +205,24 @@ class Scheduler:
                     db_session.add(new_forecast)
 
             db_session.commit()
-            print(f"📊 Forecast points updated: {updated}")
-            print(f"📊 Forecast points created: {created}")
-            print(f"\n🎉 Task completed successfully!")
+            logger.info(f"📊 Forecast points updated: {updated}")
+            logger.info(f"📊 Forecast points created: {created}")
+            logger.info(f"\n🎉 Task completed successfully!")
             return True
 
         except Exception as e:
             db_session.rollback()
-            print(f"\n❌ {'!'*50}")
-            print(f"❌ Task FAILED: {str(e)}")
-            print(f"❌ {'!'*50}")
+            logger.error(f"\n❌ {'!'*50}")
+            logger.error(f"❌ Task FAILED: {str(e)}")
+            logger.error(f"❌ {'!'*50}")
             traceback.print_exc()
             raise
         finally:
             db_session.close()
-            print("\n" + "="*50)
     
     async def stop(self):
         """Корректная остановка всех задач"""
-        print("🛑 Stopping scheduler...")
+        logger.info("🛑 Stopping scheduler...")
         self._shutdown_event.set()
 
         for task in self._running_tasks:
@@ -231,4 +230,4 @@ class Scheduler:
 
         await asyncio.gather(*self._running_tasks, return_exceptions=True)
         self._running_tasks = []
-        print("✅ Scheduler stopped")
+        logger.info("✅ Scheduler stopped")
