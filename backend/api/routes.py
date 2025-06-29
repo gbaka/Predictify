@@ -23,7 +23,7 @@ from .config import ApiConfig
 from logger import Logger
 
 
-logger = Logger().get_logger()
+logger = Logger(name='backend', log_dir='logs', log_file='backend.log').get_logger()
 router = APIRouter()
 
 

@@ -13,7 +13,7 @@ from .models import SARIMAXModel, ExponentialSmoothingModel
 from .utils import extend_dates, is_camel_case, camel_to_snake, validate_no_nans
 from logger import Logger
 
-logger = Logger().get_logger()
+logger = Logger(name='forecasting', log_dir='logs', log_file='forecasting.log').get_logger()
 
 
 def forecast(data: Dict, model_type: str, settings: Dict):

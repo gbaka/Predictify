@@ -4,42 +4,25 @@
 #
 #    pip-compile
 #
-annotated-types==0.7.0
-    # via pydantic
-anyio==4.8.0
-    # via
-    #   httpx
-    #   starlette
-    #   watchfiles
+anyio==4.9.0
+    # via httpx
 build==1.2.2.post1
     # via pip-tools
-certifi==2025.1.31
+certifi==2025.6.15
     # via
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
-click==8.1.8
-    # via
-    #   pip-tools
-    #   uvicorn
-et-xmlfile==2.0.0
-    # via openpyxl
-fastapi==0.115.8
-    # via -r requirements.in
-greenlet==3.1.1
+click==8.2.1
+    # via pip-tools
+greenlet==3.2.3
     # via sqlalchemy
-gunicorn==23.0.0
-    # via -r requirements.in
-h11==0.14.0
-    # via
-    #   httpcore
-    #   uvicorn
-httpcore==1.0.7
+h11==0.16.0
+    # via httpcore
+httpcore==1.0.9
     # via httpx
-httptools==0.6.4
-    # via uvicorn
 httpx==0.28.1
     # via -r requirements.in
 idna==3.10
@@ -47,20 +30,17 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
-numpy==2.2.3
+numpy==2.3.1
     # via
     #   pandas
     #   patsy
     #   scipy
     #   statsmodels
-openpyxl==3.1.5
-    # via -r requirements.in
-packaging==24.2
+packaging==25.0
     # via
     #   build
-    #   gunicorn
     #   statsmodels
-pandas==2.2.3
+pandas==2.3.0
     # via statsmodels
 patsy==1.0.1
     # via statsmodels
@@ -68,57 +48,36 @@ pip-tools==7.4.1
     # via -r requirements.in
 psycopg2-binary==2.9.10
     # via -r requirements.in
-pydantic==2.10.6
-    # via fastapi
-pydantic-core==2.27.2
-    # via pydantic
 pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
 python-dateutil==2.9.0.post0
     # via pandas
-python-dotenv==1.1.0
-    # via uvicorn
-python-multipart==0.0.20
-    # via -r requirements.in
-pytz==2025.1
+pytz==2025.2
     # via pandas
 pyyaml==6.0.2
-    # via uvicorn
-requests==2.32.3
     # via -r requirements.in
-scipy==1.15.2
+requests==2.32.4
+    # via -r requirements.in
+scipy==1.16.0
     # via statsmodels
 six==1.17.0
     # via python-dateutil
 sniffio==1.3.1
     # via anyio
-sqlalchemy==2.0.38
+sqlalchemy==2.0.41
     # via -r requirements.in
-starlette==0.45.3
-    # via fastapi
 statsmodels==0.14.4
     # via -r requirements.in
-typing-extensions==4.12.2
+typing-extensions==4.14.0
     # via
     #   anyio
-    #   fastapi
-    #   pydantic
-    #   pydantic-core
     #   sqlalchemy
-tzdata==2025.1
+tzdata==2025.2
     # via pandas
-urllib3==2.3.0
+urllib3==2.5.0
     # via requests
-uvicorn[standard]==0.34.0
-    # via -r requirements.in
-uvloop==0.21.0
-    # via uvicorn
-watchfiles==1.0.5
-    # via uvicorn
-websockets==15.0.1
-    # via uvicorn
 wheel==0.45.1
     # via pip-tools
 

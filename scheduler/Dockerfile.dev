@@ -2,17 +2,20 @@
 FROM python:3.12-slim
 LABEL author="gbaka <geo.m2019@mail.ru>"
 
+# Для данного Dockerfile директорией сборки является корневая директория проекта!
+
+
 # Директория для сервиса внутри контейнера
-WORKDIR /app
+WORKDIR /app/scheduler
 
 # Копируем файл с зависимостями
-COPY requirements.txt .
+COPY scheduler/requirements.txt .
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Dev-сервер бэкэнда работает на 8000 порту
-EXPOSE 8000
+WORKDIR /app
 
-# Запускаем FastAPI с Uvicorn (дебаг-конфигурация)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "critical"]
+# Запускаем планировщик
+CMD ["python", "./scheduler/main.py"]
+

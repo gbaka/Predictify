@@ -3,7 +3,7 @@ from .excel_to_dict import excel_to_dict
 from .csv_to_dict import csv_to_dict
 from logger import Logger
 
-logger = Logger().get_logger()
+logger = Logger(name='converters', log_dir='logs', log_file='converters.log').get_logger()
 
 
 def convert_to_dict(file: UploadFile, settings: dict):

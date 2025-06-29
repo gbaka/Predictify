@@ -1,11 +1,7 @@
-fastapi
 sqlalchemy
 statsmodels
 pip-tools
-python-multipart
 httpx
 requests
-openpyxl
+PyYAML
 psycopg2-binary
-gunicorn
-uvicorn[standard]
