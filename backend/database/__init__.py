@@ -19,7 +19,7 @@ SQLALCHEMY_DATABASE_URL = (
 )
 
 
-logger = Logger().get_logger()
+logger = Logger(name='database', log_dir='logs', log_file='database.log').get_logger()
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

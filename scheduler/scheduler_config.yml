@@ -2,7 +2,6 @@
 # database -> tablename должны соответствовать моделям из backend/database/models.py (+crud объекты из backend/database/crud.py, +backend/routes.py)
 # - name должны соответствовать именам из маппинг таблицы baseMappingTable компонента frontend/src/components/ForecastTiles/ForecastTiles.jsx
 
-
 tasks:
   - name: "temperature_forecast"
     parser:

@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from concurrent.futures import ProcessPoolExecutor
 from sqlalchemy import desc
 from typing import Dict, List
@@ -8,11 +7,11 @@ import traceback
 
 from database.crud import get_crud_for_table
 from database import get_db_session
-from .parsers import parse
-from .forecasting import forecast
+from services.parsers import parse
+from services.forecasting import forecast
 from logger import Logger
 
-logger = Logger().get_logger()
+logger = Logger(name='scheduler', log_dir='logs', log_file='scheduler.log').get_logger()
 
 
 class Scheduler:
