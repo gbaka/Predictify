@@ -5,9 +5,17 @@ import createI18nText from "../i18n/createI18nText";
 import TeX from "@matejmazur/react-katex";
 import "katex/dist/katex.min.css";
 
+
 const I18nNamespace = "wiki";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Wiki — страница "Wiki" с описанием используемых методов прогнозирования временных рядов.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент.
+ */
 export default function Wiki() {
   useTranslation(I18nNamespace);
   const navRef = useRef(null);

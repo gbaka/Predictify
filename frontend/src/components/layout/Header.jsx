@@ -18,6 +18,15 @@ const navItems = [
   { name: "header-nav.forecasting", path: "/forecast", icon: ChartSpline },
 ];
 
+
+/**
+ * Navigation — горизонтальное навигационное меню, отображающее ссылки на основные разделы сайта.
+ * 
+ * Видно только на экранах шире md. Использует локализацию и тему оформления.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент
+ */
 function Navigation() {
   useTranslation(I18nNamespace);
   const { theme } = useTheme();
@@ -42,6 +51,14 @@ function Navigation() {
 }
 
 
+/**
+ * Logo — компонент логотипа сайта, включает иконку и название.
+ * 
+ * Использует анимацию плавного появления и адаптирует стили под текущую тему.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент
+ */
 function Logo() {
   const { theme } = useTheme();
 
@@ -68,6 +85,18 @@ function Logo() {
 }
 
 
+/**
+ * SearchBar — компонент поисковой строки с поддержкой горячей клавиши Ctrl+K,
+ * подсветкой совпадений и выпадающим списком результатов.
+ * 
+ * Производит поиск в локальном индексе по заголовкам и содержимому, фильтрует по текущему языку.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} [props.className] Дополнительные классы обертки
+ * @param {string} [props.inputClassName] Дополнительные классы для input
+ * @returns {JSX.Element} JSX элемент
+ */
 function SearchBar({ className = "", inputClassName = "" }) {
   const { t, i18n } = useTranslation(I18nNamespace);
   const [searchQuery, setSearchQuery] = useState("");
@@ -224,6 +253,19 @@ function SearchBar({ className = "", inputClassName = "" }) {
 }
 
 
+/**
+ * BurgerMenu — иконка бургер-меню для мобильных устройств. Открывает и закрывает мобильное меню.
+ * 
+ * Отображается только на экранах меньше md. Иконка переключается между ☰ и ✕.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.menuOpen — состояние меню (открыто/закрыто)
+ * @param {Function} props.setMenuOpen — функция для изменения состояния меню
+ * @returns {JSX.Element} JSX элемент
+ * @example
+ * return <BurgerMenu menuOpen={true} setMenuOpen={setMenuOpen} />;
+ */
 function BurgerMenu({ menuOpen, setMenuOpen }) {
   const { theme } = useTheme();
 
@@ -253,6 +295,18 @@ function BurgerMenu({ menuOpen, setMenuOpen }) {
 }
 
 
+
+/**
+ * Header — компонент шапки сайта. Содержит логотип, навигационное меню,
+ * строку поиска и адаптивное бургер-меню для мобильных устройств.
+ * 
+ * Обеспечивает адаптивную верстку, поддержку темной/светлой темы и анимацию появления элементов.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент
+ * @example
+ * return <Header />;
+ */
 export default function Header() {
   useTranslation(I18nNamespace);
   const [menuOpen, setMenuOpen] = useState(false);

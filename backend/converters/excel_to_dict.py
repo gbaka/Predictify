@@ -1,15 +1,33 @@
+"""
+Преобразование Excel-файлов во внутреннее словарное представление.
+
+Модуль содержит функцию, конвертирующую содержимое Excel-файла в структуру,
+пригодную для дальнейшего анализа и построения прогнозов.
+"""
+
 import pandas as pd
 from datetime import datetime
 from starlette.datastructures import UploadFile
 from .utils import detect_date_format
 
+
 def excel_to_dict(file: UploadFile) -> dict:
     """
-    Конвертирует загруженный Excel-файл в словарь со столбцами "dates" (если есть) или None.
+    Конвертирует загруженный Excel-файл в словарь с данными и, при наличии, датами.
 
-    `param file`: Загруженный Excel-файл (UploadFile)
-    `return`: Словарь с "dates" (список дат или None) и "endog" (список значений)
+    Parameters
+    ----------
+    file : UploadFile
+        Загруженный Excel-файл.
+
+    Returns
+    -------
+    dict
+        Словарь с ключами:
+        - "dates": список объектов datetime (если столбец дат присутствует) или None,
+        - "endog": список числовых значений временного ряда.
     """
+    
     df = pd.read_excel(file.file)  # Загружаем Excel-файл в DataFrame
 
     if "dates" not in df.columns:

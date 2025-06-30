@@ -5,6 +5,19 @@ import { useTranslation } from "react-i18next";
 const I18nNamespace = "common";
 
 
+/**
+ * DataSummary — компонент для отображения текстовой сводки с возможностью её копирования.
+ * 
+ * Компонент визуализирует текст `summary`, позволяет скопировать его в буфер обмена
+ * и отображает иконку подтверждения на 2 секунды после успешного копирования.
+ * Стилизуется в зависимости от текущей темы (светлая/тёмная).
+ * 
+ * @component
+ * @param {Object} props - Свойства компонента.
+ * @param {string} props.summary - Текст сводки для отображения и копирования.
+ * @param {"light" | "dark"} props.theme - Активная тема оформления.
+ * @returns {JSX.Element} JSX элемент с текстовой сводкой и кнопкой копирования.
+ */
 export default function DataSummary({ summary, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const isDarkMode = theme === "dark";

@@ -9,6 +9,10 @@ import Help from "./pages/Help";
 import Forecast from "./pages/Forecasting";
 
 
+/**
+ * Основной компонент приложения.
+ * Оборачивает пути к страницам в React Router.
+ */
 function App() {
   return (
     <Router>

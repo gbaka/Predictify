@@ -1,11 +1,7 @@
 """
 API-эндпоинты для взаимодействия с пользователем.
 
-Модуль описывает маршруты API, которые обрабатывают запросы для прогнозирования на основе
-временных рядов. В данном случае используется эндпоинт "/forecast", который принимает запросы
-с данными и возвращает прогноз.
-
-- get_forecast: Обрабатывает запрос на прогноз и возвращает результаты.
+Определяет маршруты для обработки запросов на построение прогноза и получения данных из базы.
 """
 
 from json import loads
@@ -35,6 +31,31 @@ async def forecast_endpoint(
     uploadedData: UploadFile = File(...),
     fileSettings: str = Form(...),
 ):
+    """
+    Обрабатывает POST-запрос на построение прогноза.
+
+    Параметры конфигурации модели и данные для прогнозирования передаются в теле запроса.
+    Выполняется валидация файла, парсинг параметров, и запуск расчёта прогноза.
+
+    Parameters
+    ----------
+    request : Request
+        Объект запроса FastAPI с доступом к состоянию приложения.
+    selectedModel : str
+        Имя выбранной модели прогнозирования.
+    modelSettings : str
+        JSON-строка с параметрами модели.
+    uploadedData : UploadFile
+        Загружаемый пользователем файл с временным рядом.
+    fileSettings : str
+        JSON-строка с параметрами для парсинга файла.
+
+    Returns
+    -------
+    dict
+        Результаты прогноза.
+    """
+    
     logger.info(f"[POST /forecast] Запрос получен. Файл: {uploadedData.filename}")
 
     try:
@@ -75,10 +96,23 @@ async def forecast_endpoint(
 
 @router.get("/forecasts-from-parsers")
 def forecasts_from_parsers_endpoint():
+    """
+    Обрабатывает GET-запрос для получения сохранённых прогнозов из БД.
+
+    Возвращает данные из всех таблиц, соответствующих источникам, ограничивая
+    количество записей значением из файла конфигурации.
+
+    Returns
+    -------
+    dict
+        Словарь с результатами прогнозов из всех таблиц, включённых в TABLE_CRUD_MAPPING.
+    """
+
     logger.info("[GET /forecasts-from-parsers] Запрос на получение прогнозов из БД")
+    session_generator = get_db_session()
 
     try:
-        db_session = next(get_db_session())
+        db_session = next(session_generator)
         forecast_tables = TABLE_CRUD_MAPPING.keys()
         response = {}
 

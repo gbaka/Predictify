@@ -1,9 +1,17 @@
 import { useTranslation } from "react-i18next";
 import createI18nText from "../i18n/createI18nText";
 
+
 const I18nNamespace = "privacy";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Privacy — страница политики конфиденциальности.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент.
+ */
 export default function Privacy() {
   useTranslation(I18nNamespace);
 

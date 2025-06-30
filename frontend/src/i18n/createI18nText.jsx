@@ -1,10 +1,18 @@
 import { Trans } from "react-i18next";
 import TeX from "@matejmazur/react-katex";
 
+
 /**
- * Компонент обёртка для <TeX /> из @matejmazur/react-katex,
- * предназначен для использования внутри <Trans />.
- * Приводит children к строке, чтобы избежать ошибки "KaTeX can only parse string typed expression".
+ * I18nTeX — обёртка для компонента <TeX /> из библиотеки @matejmazur/react-katex,
+ * предназначена для использования внутри компонента <Trans /> из react-i18next.
+ *
+ * Приводит переданные дочерние элементы к строке, чтобы избежать ошибки
+ * "KaTeX can only parse string typed expression".
+ *
+ * @component
+ * @param {object} props
+ * @param {React.ReactNode} props.children Дочерние элементы (формулы в KaTeX)
+ * @returns {JSX.Element} Компонент с отрендеренной формулой KaTeX
  */
 export function I18nTeX({ children }) {
   const content = Array.isArray(children)
@@ -15,12 +23,15 @@ export function I18nTeX({ children }) {
   return <TeX>{content}</TeX>;
 }
 
+
 /**
- * Создаёт компонент перевода с поддержкой HTML-тегов и одиночной ссылки для заданного namespace.
+ * createI18nText — функция, создающая компонент для интернационализированного текста с поддержкой HTML-тегов и KaTeX.
  *
- * Пример:
- *   const I18nText = createI18nText('home');
- *   <I18nText textKey="welcome" link="https://example.com" />
+ * Принимает namespace для переводов и возвращает компонент,
+ * который рендерит перевод с ключом `textKey` и поддержкой кастомных CSS классов и ссылки.
+ *
+ * @param {string} ns Namespace для i18next.
+ * @returns {function} Компонент с переведенным текстом.
  */
 export default function createI18nText(ns) {
   return function I18nText({

@@ -9,6 +9,17 @@ import { API_CONFIG } from "../../api/apiConfig";
 
 const I18nNamespace = "common";
 
+
+/**
+ * Компонент, отображающий сетку плиток с краткосрочными прогнозами.
+ * Получает данные с сервера, обрабатывает и визуализирует их в виде плиток с графиками.
+ * Поддерживает кликабельность плиток для отображения полной информации в полноэкранном режиме.
+ * 
+ * @component
+ * @param {Object} props - Свойства компонента.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая).
+ * @returns {JSX.Element} Сетка плиток с прогнозами.
+ */
 export default function ForecastTiles({ theme }) {
   const { t } = useTranslation(I18nNamespace);
   const [selectedData, setSelectedData] = useState(null);

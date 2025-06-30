@@ -2,8 +2,27 @@ import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
+
 const I18nNamespace = "common";
 
+
+/**
+ * BaseChart — компонент визуализации данных на базе библиотеки ECharts.
+ * 
+ * Компонент инициализирует и настраивает график с учётом темы оформления (светлая/тёмная),
+ * отображает загрузку во время ожидания данных, адаптирует стили и параметры в зависимости
+ * от переданных опций и текущего состояния.
+ * 
+ * Использует ResizeObserver для автоматического масштабирования при изменении размеров контейнера.
+ * 
+ * @component
+ * @param {Object} props - Свойства компонента.
+ * @param {Object} props.options - Конфигурация графика (опции ECharts).
+ * @param {boolean} props.isLoading - Отображать ли индикатор загрузки.
+ * @param {"dark"|"light"} props.theme Тема оформления (тёмная или светлая).
+ * @param {boolean} props.bordered - Отображать ли рамку вокруг графика.
+ * @returns {JSX.Element} JSX элемент с графиком.
+ */
 export default function BaseChart({ options, isLoading, theme,  bordered }) {
     const { t } = useTranslation(I18nNamespace);
     const chartRef = useRef(null);

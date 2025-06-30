@@ -1,13 +1,23 @@
+"""
+Основной модуль запуска FastAPI приложения.
+
+- Инициализирует базу данных.
+- Настраивает пул процессов для прогнозирования.
+- Подключает маршруты API.
+- Добавляет CORS middleware для frontend.
+"""
+
+import os
+from contextlib import asynccontextmanager
+from concurrent.futures import ProcessPoolExecutor
+
 from fastapi import FastAPI
 from api.routes import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from concurrent.futures import ProcessPoolExecutor
-import asyncio
-import os
 
 from database import init_db
 from logger import Logger
+
 
 logger = Logger(name="backend", log_dir="logs", log_file="backend.log").get_logger()
 

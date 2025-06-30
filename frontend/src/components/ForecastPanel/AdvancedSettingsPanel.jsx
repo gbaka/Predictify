@@ -1,10 +1,23 @@
 import { useRef, useEffect } from "react";
-import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { X } from "lucide-react";
+
 import { ADVANCED_SETTINGS_DEFAULTS } from "./defaultAdvancedSettings";
+
 
 const I18nNamespace = "common";
 
+/**
+ * Панель расширенных настроек графика.
+ *
+ * @component
+ * @param {Object} props - Свойства компонента
+ * @param {boolean} props.isOpen - Флаг, отображать ли панель
+ * @param {() => void} props.onClose - Колбэк при закрытии панели
+ * @param {(newSettings: Object) => void} props.onChange - Колбэк при изменении настроек
+ * @param {'light' | 'dark'} props.theme - Текущая тема оформления
+ * @returns {JSX.Element|null} JSX элемент панели или null
+ */
 export default function AdvancedSettingsPanel({
   isOpen,
   onClose,

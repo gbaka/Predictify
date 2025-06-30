@@ -4,9 +4,20 @@ import Split from "react-split";
 import BaseChart from "../shared/BaseChart";
 import DataSummary from "../shared/DataSummary";
 
+
 const I18nNamespace = "common";
 
 
+/**
+ * Компонент индикатора статуса парсера (онлайн/оффлайн).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {"online"|"offline"} props.status - Текущий статус.
+ * @param {string} props.label - Подпись к индикатору.
+ * @param {"light"|"dark"} props.theme - Тема интерфейса.
+ * @returns {JSX.Element|null} JSX элемент или null
+ */
 function StatusIndicator({ status, label, theme }) {
   const isDarkMode = theme === "dark";
   const isOnline = status === "online";
@@ -40,7 +51,17 @@ function StatusIndicator({ status, label, theme }) {
 }
 
 
-// Вспомогательный компонент для строк информации
+/**
+ * Компонент для отображения пары "подпись + значение".
+ * Используется в информационном блоке плитки.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} props.label - Название поля.
+ * @param {string|number} props.value - Значение поля.
+ * @param {"light"|"dark"} props.theme - Тема интерфейса.
+ * @returns {JSX.Element|null} JSX элемент или null
+ */
 function InfoRow({ label, value, theme }) {
   const isDarkMode = theme === "dark";
   
@@ -57,6 +78,15 @@ function InfoRow({ label, value, theme }) {
 }
 
 
+/**
+ * Панель с информацией о парсере (источник, модель, дата обновления и т.д.).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Object} props.parserInfo - Объект с деталями работы парсера.
+ * @param {"light"|"dark"} props.theme - Тема интерфейса.
+ * @returns {JSX.Element|null} JSX элемент или null
+ */
 function ParserInfoPanel({ parserInfo, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
@@ -111,6 +141,19 @@ function ParserInfoPanel({ parserInfo, theme }) {
 }
 
 
+/**
+ * Полноэкранный компонент для плитки с прогнозом:
+ * - Основной график (исходные данные, прогноз, ошибки, доверительный интервал);
+ * - Боковая панель с информацией о парсере;
+ * - Summary.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.data - Данные прогноза и метаинформация:
+ * @param {Function} props.onClose - Колбэк для закрытия окна.
+ * @param {"light"|"dark"} props.theme -  Тема оформления (тёмная или светлая).
+ * @returns {JSX.Element|null} JSX элемент или null
+ */
 export default function FullscreenForecastTile({ data, onClose, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";

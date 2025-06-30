@@ -5,9 +5,17 @@ import ForecastTiles from "../components/ForecastTiles/ForecastTiles";
 import { useTranslation } from "react-i18next";
 import createI18nText from "../i18n/createI18nText";
 
+
 const I18nNamespace = "forecasting";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Forecasting — страница с вкладками для отображения примеров и панели прогнозирования.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент.
+ */
 export default function Forecasting() {
   useTranslation(I18nNamespace);
   const [activeTab, setActiveTab] = useState("parsedData");

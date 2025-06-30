@@ -1,9 +1,23 @@
 import { useTranslation } from "react-i18next";
 import BaseChart from "../shared/BaseChart";
 
+
 const I18nNamespace = "common";
 
 
+/**
+ * Компонент плитки прогноза, отображающий график временного ряда (фактические и предсказанные значения),
+ * а также статус соединения (online/offline).
+ * 
+ * @component
+ * @param {Object} props - Объект с данными прогноза, включая даты, фактические значения, предсказания и интервалы доверия.
+ * @param {string} props.title - Заголовок плитки.
+ * @param {Function} props.onClick - Обработчик клика по плитке (активен, если `isClickable` === true).
+ * @param {boolean} props.isLoading - Флаг состояния загрузки, влияет на индикатор состояния.
+ * @param {boolean} props.isClickable - Делает плитку кликабельной, если true.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент
+ */
 export default function ForecastTile({ data, title, onClick, isLoading, isClickable, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme == "dark"

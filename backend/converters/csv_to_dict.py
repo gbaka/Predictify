@@ -1,3 +1,10 @@
+"""
+Преобразование CSV-файлов во внутреннее словарное представление.
+
+Модуль содержит функцию, конвертирующую содержимое CSV-файла в структуру, 
+пригодную для дальнейшего анализа и построения прогнозов.
+"""
+
 import csv
 from io import StringIO
 from starlette.datastructures import UploadFile
@@ -8,13 +15,28 @@ from .config import ConvertersConfig
 
 def csv_to_dict(file: UploadFile, delimiter: str = "auto", date_format: str = "auto") -> dict:
     """
-    Конвертирует загруженный CSV-файл в словарь со столбцами "dates" (если есть) или "index".
+    Конвертирует загруженный CSV-файл в словарь с данными и, при наличии, датами.
 
-    `param file`: Загруженный CSV-файл (UploadFile)
-    `param delimiter`: Разделитель в CSV-файле. Может быть ",", ";", " ", "\t", или "auto".
-    `param date_format`: Формат даты. Может быть "YYYY-MM-DD", "DD.MM.YYYY", "MM/DD/YYYY", "DD/MM/YYYY", или "auto".
-    `return`: Словарь с разделением по датам (если есть) или индексам
-    """
+    Parameters
+    ----------
+    file : UploadFile
+        Загруженный CSV-файл.
+
+    delimiter : str, optional
+        Разделитель значений в CSV. Может быть ',', ';', ' ', '\\t' или 'auto' (по умолчанию).
+
+    date_format : str, optional
+        Формат даты в столбце "dates". Допустимые значения: "YYYY-MM-DD", "DD.MM.YYYY",
+        "MM/DD/YYYY", "DD/MM/YYYY" или "auto" (по умолчанию).
+
+    Returns
+    -------
+    dict
+        Словарь с ключами:
+        - "dates": список объектов datetime (если столбец дат присутствует),
+        - "endog": список числовых значений временного ряда.
+    """  
+
     content = file.file.read().decode('utf-8')  
     validate_csv_size(content, ConvertersConfig.MAX_FILE_ROWS)
 
