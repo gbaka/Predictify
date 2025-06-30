@@ -8,6 +8,7 @@
 """
 
 import asyncio
+import signal
 from concurrent.futures import ProcessPoolExecutor
 
 from database import init_db
@@ -36,12 +37,22 @@ async def main():
     pool = ProcessPoolExecutor()
     scheduler = Scheduler(tasks_config, pool)
 
+    stop_event = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, stop_event.set)
+
     try:
         await scheduler.start()
-        while True:
-            await asyncio.sleep(3600)
-    except KeyboardInterrupt:
+        logger.info("Планировщик запущен. Ожидание сигнала завершения...")
+        await stop_event.wait()
+    except Exception as e:
+        logger.exception(f"Ошибка при работе планировщика: {e}")
+    finally:
+        logger.info("Завершение работы. Остановка планировщика...")
         await scheduler.stop()
+        pool.shutdown(wait=True)
+        logger.info("Планировщик остановлен. Выход.")
 
 
 if __name__ == "__main__":
