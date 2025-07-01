@@ -1,0 +1,8 @@
+pandas==2.2.3
+statsmodels==0.14.4
+scikit-learn==1.7.0
+matplotlib
+tqdm
+PyYAML
+requests
+httpx
