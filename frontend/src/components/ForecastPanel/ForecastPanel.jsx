@@ -1,6 +1,5 @@
 import Split from "react-split";
 import axios from "axios"
-
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { FileText, Sheet, X, Maximize2, Minimize2, Play, 
@@ -28,6 +27,16 @@ const calculateAverage = (data) => {
 };
 
 
+/**
+ * Компонент для выбора модели прогнозирования из выпадающего списка.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {(model: string) => void} props.onChange - Колбэк при выборе модели.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element|null} JSX элемент панели или null
+
+ */
 function ModelSelector({ onChange, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const models = {
@@ -127,6 +136,15 @@ function ModelSelector({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент загрузки данных с поддержкой drag & drop (CSV и Excel).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {(event: { target: { files: File[] } } | null) => void} props.onUpload - Колбэк при загрузке/удалении файла.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element} JSX элемент.
+ */
 function DataUploader({ onUpload, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const [selectedFile, setSelectedFile] = useState(null); 
@@ -262,6 +280,16 @@ function DataUploader({ onUpload, theme }) {
 }
 
 
+/**
+ * Компонент отображения настроек выбранной модели прогнозирования.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} props.selectedModel - Название выбранной модели.
+ * @param {(settings: any) => void} props.onChange - Колбэк при изменении настроек модели.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element} JSX элемент.
+ */
 function ModelSettingsPanel({ selectedModel, onChange, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const renderSettings = () => {
@@ -305,6 +333,16 @@ function ModelSettingsPanel({ selectedModel, onChange, theme }) {
 }
 
 
+/**
+ * Кнопка для переключения полноэкранного режима.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isFullScreen - Флаг полноэкранного режима.
+ * @param {() => void} props.onClick - Обработчик нажатия.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element} JSX элемент.
+ */
 function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
   const isDarkMode = theme === "dark";
   return (
@@ -324,6 +362,15 @@ function FullScreenToggleButton({ isFullScreen, onClick, theme }) {
 }
 
 
+/**
+ * Кнопка для открытия/закрытия панели дополнительных настроек.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {() => void} props.onClick - Обработчик нажатия.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element} JSX элемент.
+ */
 function SettingsButton({ onClick, theme }) {
   const isDarkMode = theme === "dark";
   return (
@@ -339,6 +386,15 @@ function SettingsButton({ onClick, theme }) {
 }
 
 
+/**
+ * Кнопка запуска расчёта прогноза.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {() => void} props.onClick - Обработчик нажатия.
+ * @param {"dark"|"light"} props.theme - Тема оформления.
+ * @returns {JSX.Element} JSX элемент.
+ */
 function StartButton({ onClick, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark"
@@ -360,6 +416,16 @@ function StartButton({ onClick, theme }) {
 }
 
 
+/**
+ * Компонент ForecastingPanel
+ * Основной интерфейс для пользовательского взаимодействия с системой прогнозирования временных рядов.
+ * Объединяет компоненты загрузки данных, настройки модели и отображения графика.
+ * 
+ * @component
+ * @param {Object} props - Свойства компонента.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая).
+ * @returns {JSX.Element} Компонент панели прогнозирования.
+ */
 export default function ForecastingPanel({ theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";
@@ -746,7 +812,6 @@ export default function ForecastingPanel({ theme }) {
           minSize={[250, 80]}
           gutterSize={7}
           snapOffset={0}
-          // onDragEnd={(sizes) => (verticalSizesRef.current = sizes)}
           gutter={(index, direction) => createGutter(direction)}
         >
           <Split
@@ -755,7 +820,6 @@ export default function ForecastingPanel({ theme }) {
             minSize={[200, 300, 210]}
             gutterSize={7}
             snapOffset={0}
-            // onDragEnd={(sizes) => (horizontalSizesRef.current = sizes)}
             gutter={(index, direction) => createGutter(direction)}
           >
             <div className="h-full mr-1 min-w-[130px] flex flex-col">

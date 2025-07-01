@@ -15,6 +15,14 @@ import {
 const I18nNamespace = "common";
 
 
+/**
+ * Компонент интерфейса настроек модели SARIMA.
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function SARIMASettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...SARIMA_DEFAULTS });
@@ -144,6 +152,14 @@ export function SARIMASettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели ARIMA.
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function ARIMASettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...ARIMA_DEFAULTS });
@@ -273,6 +289,15 @@ export function ARIMASettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели ARMA.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function ARMASettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...ARMA_DEFAULTS });
@@ -403,6 +428,15 @@ export function ARMASettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели AR.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function ARSettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...AR_DEFAULTS });
@@ -532,6 +566,15 @@ export function ARSettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели MA.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function MASettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace);
     const [settings, setSettings] = useState({ ...MA_DEFAULTS });
@@ -660,6 +703,15 @@ export function MASettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели SES (Simple Exponential Smoothing).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент.
+ */
 export function SESSettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...SES_DEFAULTS });
@@ -755,6 +807,15 @@ export function SESSettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели HES (Holt's Exponential Smoothing).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент
+ */
 export function HESSettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...HES_DEFAULTS });
@@ -900,6 +961,15 @@ export function HESSettings({ onChange, theme }) {
 }
 
 
+/**
+ * Компонент интерфейса настроек модели HWES (Holt-Winter's Exponential Smoothing).
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onChange - Callback, вызываемый при изменении настроек, передаёт объект параметров.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая)
+ * @returns {JSX.Element} JSX элемент
+ */
 export function HWESSettings({ onChange, theme }) {
     const { t } = useTranslation(I18nNamespace)
     const [settings, setSettings] = useState({ ...HWES_DEFAULTS });

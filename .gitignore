@@ -20,6 +20,9 @@ backend/logs
 /frontend/dist-ssr
 /frontend/*.local
 
+# Scripts
+/scripts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

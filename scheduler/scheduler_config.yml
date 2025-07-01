@@ -13,13 +13,17 @@ tasks:
         start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
         end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
     model:
-      type: "ARIMA"
+      type: "SARIMA"
       observation_window_size: 100
       params:
-        p: 5
-        d: 0
-        q: 2 
-        steps: 30
+        p: 2
+        d: 2
+        q: 1 
+        P: 2
+        D: 1
+        Q: 1
+        s: 24
+        steps: 24
         trend: "t"
         significance_level: 0.05
         enforce_stationarity: true
@@ -40,13 +44,17 @@ tasks:
         start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
         end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
     model:
-      type: "ARIMA"
+      type: "SARIMA"
       observation_window_size: 100
       params:
-        p: 5
-        d: 0
+        p: 2
+        d: 2
         q: 2 
-        steps: 30
+        P: 0
+        D: 2
+        Q: 2
+        s: 24
+        steps: 24
         trend: "t"
         significance_level: 0.05
         enforce_stationarity: true
@@ -67,13 +75,17 @@ tasks:
         start_date: !py3 "(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"
         end_date: !py3 "(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"
     model:
-      type: "ARIMA"
+      type: "SARIMA"
       observation_window_size: 100
       params:
-        p: 5
-        d: 0
+        p: 1
+        d: 2
         q: 2 
-        steps: 30
+        P: 1
+        D: 1
+        Q: 1
+        s: 24
+        steps: 24
         trend: "t"
         significance_level: 0.05
         enforce_stationarity: true
@@ -97,11 +109,11 @@ tasks:
       type: "ARIMA"
       observation_window_size: 100
       params:
-        p: 5
+        p: 0
         d: 0
-        q: 2 
-        steps: 30
-        trend: "t"
+        q: 1
+        steps: 24
+        trend: "c"
         significance_level: 0.05
         enforce_stationarity: true
         enforce_invertibility: true

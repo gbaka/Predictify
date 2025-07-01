@@ -1,11 +1,7 @@
 """
 Модели прогнозирования временных рядов.
 
-Этот модуль содержит реализации различных моделей прогнозирования, например, SARIMAX, 
-которые могут быть использованы для анализа и предсказания временных рядов.
-
-- SARIMAXModel: Класс для работы с моделью SARIMAX (Seasonal AutoRegressive Integrated Moving Average with eXogenous regressors).
-- SimpleExpSmoothingModel: Класс для простого экспоненциального сглаживания.
+Обертки моделей SARIMAX и экспоненциального сглаживания из библиотеки statsmodels.
 """
 
 from statsmodels.tsa.statespace.sarimax import SARIMAX
@@ -13,30 +9,19 @@ from statsmodels.tsa.holtwinters import SimpleExpSmoothing, Holt, ExponentialSmo
 
 
 class SARIMAXModel:
-    """Модель SARIMAX для прогнозирования временных рядов.
+    """
+    Модель SARIMAX для прогнозирования временных рядов.
 
-    Attributes
-    ----------
-    order : tuple
-        Параметры несезонной части модели (p, d, q), где:
-        - p: порядок авторегрессии (AR)
-        - d: степень дифференцирования (I)
-        - q: порядок скользящего среднего (MA)
-    seasonal_order : tuple
-        Параметры сезонной части модели (P, D, Q, s), где:
-        - P: сезонный порядок авторегрессии
-        - D: сезонная степень дифференцирования
-        - Q: сезонный порядок скользящего среднего 
-        - s: количество периодов в сезоне (например 12 для месячных данных)
-    model : SARIMAX
-        Объект модели SARIMAX после её подгонки.
+    Параметры модели задаются через конструктор (order, seasonal_order, тренд и др.).
 
     Methods
     -------
     fit(data)
         Обучение модели на данных.
-    predict(steps=10)
-        Прогнозирование на заданное количество шагов вперёд.
+    forecast(steps)
+        Прогнозирование на заданное число шагов.
+    detailed_forecast(steps)
+        Прогноз с доверительными интервалами.
     """
 
     def __init__(
@@ -52,6 +37,30 @@ class SARIMAXModel:
         enforce_stationarity: bool = True,
         enforce_invertibility: bool = True,
     ):
+        """
+        Parameters
+        ----------
+        p : int, optional
+            Порядок авторегрессии (AR) несезонной части модели.
+        d : int, optional
+            Степень дифференцирования (I) несезонной части.
+        q : int, optional
+            Порядок скользящего среднего (MA) несезонной части.
+        P : int, optional
+            Сезонный порядок авторегрессии.
+        D : int, optional
+            Сезонная степень дифференцирования.
+        Q : int, optional
+            Сезонный порядок скользящего среднего.
+        s : int, optional
+            Количество периодов в сезоне.
+        trend : str, optional
+            Тип трендовой компоненты ('n', 'c', 't', 'ct').
+        enforce_stationarity : bool, optional
+            Принудительное соблюдение стационарности модели.
+        enforce_invertibility : bool, optional
+            Принудительное соблюдение обратимости модели.
+        """
         self.settings = {
             "order": (p, d, q),
             "seasonal_order": (P, D, Q, s),
@@ -62,20 +71,23 @@ class SARIMAXModel:
         self.model = None
 
     def fit(self, data: dict):
-        """Обучение модели SARIMAX на данных.
-
+        """
         Parameters
         ----------
-        data : List[float]
+        data : dict
             Данные временного ряда для обучения.
+
+        Returns
+        -------
+        SARIMAXResultsWrapper
+            Обученная модель.
         """
         self.model = SARIMAX(**data, **self.settings)
         self.model = self.model.fit()
         return self.model
 
     def forecast(self, steps: int):
-        """Прогнозирование значений на заданное количество шагов вперёд.
-
+        """
         Parameters
         ----------
         steps : int
@@ -83,15 +95,13 @@ class SARIMAXModel:
 
         Returns
         -------
-        List[float]
-            Список прогнозируемых значений.
+        ndarray
+            Прогнозируемые значения.
         """
         return self.model.forecast(steps=steps)
 
     def detailed_forecast(self, steps: int): 
-        """Прогнозирование значений на заданное количество шагов вперёд, 
-        а также доверительных интервалов и метрик точности.
-
+        """
         Parameters
         ----------
         steps : int
@@ -100,25 +110,23 @@ class SARIMAXModel:
         Returns
         -------
         PredictionResults
-            Результаты прогнозирования.
+            Результаты прогноза с доверительными интервалами.
         """
         return self.model.get_forecast(steps=steps)
 
 
 class ExponentialSmoothingModel:
-    """Модель тройного экспоненциального сглаживания Холта-Винтерса для прогнозирования временных рядов.
+    """
+    Модель тройного экспоненциального сглаживания Холта-Винтерса.
 
-    Attributes
-    ----------
-    model : ExponentialSmoothing
-        Объект модели после её подгонки.
+    Параметры инициализируются в конструкторе (инициализация, тренд, сезонность и др.).
 
     Methods
     -------
     fit(data)
-        Обучение модели на данных.
-    forecast(steps=10)
-        Прогнозирование на заданное количество шагов вперёд.
+        Обучение модели.
+    forecast(steps)
+        Прогнозирование.
     """
 
     def __init__(
@@ -163,16 +171,15 @@ class ExponentialSmoothingModel:
         self.model = None
 
     def fit(self, data: dict):
-        """Обучение модели ExponentialSmoothing на данных.
-
+        """
         Parameters
         ----------
         data : dict
-            Словарь с ключом 'endog' - одномерный массив данных временного ряда.
+            Данные временного ряда для обучения.
 
         Returns
         -------
-        ExponentialSmoothing
+        ExponentialSmoothingResultsWrapper
             Обученная модель.
         """
         self.model = ExponentialSmoothing(**data, **self.settings)
@@ -180,8 +187,7 @@ class ExponentialSmoothingModel:
         return self.model
 
     def forecast(self, steps: int = 1):
-        """Прогнозирование значений на заданное количество шагов вперёд.
-
+        """
         Parameters
         ----------
         steps : int, optional
@@ -189,7 +195,7 @@ class ExponentialSmoothingModel:
 
         Returns
         -------
-        array
-            Массив прогнозируемых значений.
+        ndarray
+            Прогнозируемые значения.
         """
         return self.model.forecast(steps=steps)

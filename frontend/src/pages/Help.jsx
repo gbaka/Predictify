@@ -1,9 +1,17 @@
 import { useTranslation } from "react-i18next";
 import createI18nText from "../i18n/createI18nText";
 
+
 const I18nNamespace = "help";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Help — страница "Помощь".
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент.
+ */
 export default function Help() {
   useTranslation(I18nNamespace);
 

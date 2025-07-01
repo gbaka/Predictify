@@ -1,24 +1,35 @@
-from datetime import timedelta
+"""
+Утилиты для обработки параметров и временных рядов.
+
+Содержит функции для расширения дат, проверки NaN, преобразования camelCase и валидации входных данных.
+"""
+
+import re
 import numpy as np
 from typing import List, Dict
-import re
 
 
 def extend_dates(data: Dict, steps: int) -> List:
     """
     Расширяет список дат на заданное количество шагов вперёд.
 
-    Если `dates` равен None, возвращает список индексов.
+    Если "dates" отсутствует или равен None, возвращается список числовых индексов.
 
-    Параметры:
-        data (dict): Данные временного ряда с ключами:
+    Parameters
+    ----------
+    data : dict
+        Словарь с данными временного ряда. Ожидаемые ключи:
             - "dates" (Optional[List[datetime]]): Список дат или None.
             - "endog" (List[float]): Значения временного ряда.
-        steps (int): Количество шагов для расширения.
+    steps : int
+        Количество шагов для расширения вперёд.
 
-    Возвращает:
-        List: Расширенный список дат или индексов.
+    Returns
+    -------
+    List
+        Расширенный список дат или числовых индексов.
     """
+
     dates = data["dates"]
    
     if dates:
@@ -34,19 +45,19 @@ def extend_dates(data: Dict, steps: int) -> List:
 
 def is_camel_case(s: str) -> bool:
     """
-    Проверяет, является ли строка написанной в стиле camelCase.
+    Проверяет, написана ли строка в стиле camelCase.
 
-    Строка считается camelCase, если:
-    - Первый символ в нижнем регистре
-    - Нет подчёркиваний
-    - Содержит хотя бы одну заглавную букву внутри слова
+    Parameters
+    ----------
+    s : str
+        Строка для проверки.
 
-    Параметры:
-        s (str): Строка для проверки.
-
-    Возвращает:
-        bool: True если строка в camelCase, иначе False.
+    Returns
+    -------
+    bool
+        True, если строка в стиле camelCase, иначе False.
     """
+
     if not s or '_' in s or s[0].isupper():
         return False
     return any(c.isupper() for c in s[1:])
@@ -54,17 +65,21 @@ def is_camel_case(s: str) -> bool:
 
 def camel_to_snake(s: str) -> str:
     """
-    Транслирует строку из camelCase в snake_case.
+    Преобразует строку из camelCase в snake_case.
 
-    Преобразует заглавные буквы в нижний регистр и добавляет перед ними подчёркивание.
-    Первая буква всегда остаётся в нижнем регистре.
+    Заглавные буквы становятся строчными с добавлением подчёркивания перед ними.
 
-    Параметры:
-        s (str): Строка в camelCase для преобразования.
+    Parameters
+    ----------
+    s : str
+        Строка в стиле camelCase.
 
-    Возвращает:
-        str: Строка в snake_case.
+    Returns
+    -------
+    str
+        Строка, преобразованная в snake_case.
     """
+
     if not is_camel_case(s):
         return s
 
@@ -75,17 +90,19 @@ def camel_to_snake(s: str) -> str:
 
 def validate_no_nans(data: np.ndarray, message: str) -> None:
     """
-    Проверяет np.array массив на наличие NaN значение, если таковые найдены - генерирует ValueError с сообщением message.
-    
+    Проверяет массив на наличие NaN значений и выбрасывает исключение, если они найдены.
+
     Parameters
     ----------
     data : np.ndarray
-        Данные для проверки 
-    
+        Массив значений для проверки.
+    message : str
+        Сообщение исключения при обнаружении NaN.
+
     Raises
     ------
     ValueError
-        Если обнаружены NaN значения
+        Если в массиве найдены NaN значения.
     """
   
     if np.isnan(data).any():

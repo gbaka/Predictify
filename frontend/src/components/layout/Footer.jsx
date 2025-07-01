@@ -9,6 +9,19 @@ import createI18nText from "../../i18n/createI18nText";
 const I18nNamespace = "common";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Footer — компонент нижней части сайта с переключателями темы и языка, контактной информацией,
+ * полезными ссылками и социальными сетями.
+ *
+ * Компонент управляет выбором языка и темы, сохраняя настройки в localStorage,
+ * обеспечивает переключение и отображение актуального состояния.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент
+ * @example
+ * return <Footer />;
+ */
 export default function Footer() {
   // useTranslation(I18nNamespace);
   const { t, i18n } = useTranslation(I18nNamespace);

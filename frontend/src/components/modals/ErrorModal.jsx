@@ -1,7 +1,23 @@
 import { useTranslation } from "react-i18next";
 
+
 const I18nNamespace = "common";
 
+
+/**
+ * ErrorModal — модальное окно для отображения сообщений об ошибке.
+ * 
+ * Показывает заголовок ошибки, описание и дополнительные детали (если переданы),
+ * с возможностью закрытия. Поддерживает темную и светлую тему.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen Флаг отображения модального окна.
+ * @param {{ title: string, detail?: string }} props.message Объект с текстом ошибки.
+ * @param {Function} props.onClose Колбэк закрытия модального окна
+ * @param {"dark"|"light"} props.theme Тема оформления (тёмная или светлая).
+ * @returns {JSX.Element|null} JSX элемент или null, если окно не открыто.
+ */
 export default function ErrorModal({ isOpen, message, onClose, theme }) {
   const { t } = useTranslation(I18nNamespace);
   const isDarkMode = theme === "dark";

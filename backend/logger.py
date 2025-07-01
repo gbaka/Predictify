@@ -1,7 +1,12 @@
-import logging
+"""
+Настраиваемый логгер приложения с выводом в консоль и логфайл.
+"""
+
 import sys
+import logging
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
+
 
 class Logger:
     def __init__(self, name: str = "app", log_dir: str = "logs", log_file: str = "app.log"):

@@ -1,3 +1,10 @@
+"""
+Модели базы данных для хранения прогнозов.
+
+Содержит базовый класс ForecastBase и конкретные модели
+для различных типов прогнозов: температуры, влажности, скорости ветра и осадков.
+"""
+
 from sqlalchemy import Column, Float, Integer, Text, TIMESTAMP
 from sqlalchemy.sql import func
 from database import Base

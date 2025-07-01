@@ -9,6 +9,17 @@ import { API_CONFIG } from "../../api/apiConfig";
 
 const I18nNamespace = "common";
 
+
+/**
+ * Компонент, отображающий сетку плиток с краткосрочными прогнозами.
+ * Получает данные с сервера, обрабатывает и визуализирует их в виде плиток с графиками.
+ * Поддерживает кликабельность плиток для отображения полной информации в полноэкранном режиме.
+ * 
+ * @component
+ * @param {Object} props - Свойства компонента.
+ * @param {"dark"|"light"} props.theme - Тема оформления (тёмная или светлая).
+ * @returns {JSX.Element} Сетка плиток с прогнозами.
+ */
 export default function ForecastTiles({ theme }) {
   const { t } = useTranslation(I18nNamespace);
   const [selectedData, setSelectedData] = useState(null);
@@ -24,7 +35,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(2, 2, 1)x(2, 1, 1, 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.temp-details")
@@ -36,7 +47,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(2, 2, 2)x(0, 2, 2, 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.humidity-details")
@@ -48,7 +59,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(1, 2, 2)x(1, 1, [1], 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.wind-details")
@@ -60,7 +71,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "MA(0, 0, 1)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.precipitation-details")

@@ -1,3 +1,9 @@
+"""
+Утилиты для обработки данных и валидации в API.
+
+Содержит функции для форматирования результатов из базы данных и проверки размера загружаемых файлов.
+"""
+
 from typing import Dict, Any
 from datetime import datetime
 from fastapi import UploadFile
@@ -5,17 +11,21 @@ from fastapi import UploadFile
 
 def format_db_forecast_data(instances: list) -> Dict[str, Any]:
     """
-    Преобразует список прогнозных объектов из БД в словарь для API-ответа.
+    Преобразует список объектов прогноза из БД в формат API-ответа.
 
-    Параметры
+    Сортирует данные по дате и извлекает основные поля: прогноз, интервалы,
+    ошибки, уровень доверия и дату обновления.
+
+    Parameters
     ----------
     instances : list
-        Список экземпляров модели прогноза с атрибутами (date, endog, predict, ci_low, ci_up и др.).
+        Список ORM-объектов с полями date, endog, predict, ci_low, ci_up,
+        conf_level, absolute_error и last_summary.
 
-    Возвращает
+    Returns
     -------
-    Dict[str, Any]
-        Структурированный словарь с временными метками, значениями прогноза, интервалами, ошибками и метаданными.
+    dict
+        Словарь с информацией о прогонзе, пригодный для обработки на фронтенде.
     """
     
     if not instances:
@@ -48,19 +58,20 @@ def format_db_forecast_data(instances: list) -> Dict[str, Any]:
 
 
 def validate_file_size(uploaded_file: UploadFile, max_size):
-    """Проверяет, не превышает ли размер загруженного файла заданный лимит.
+    """
+    Проверяет, не превышает ли размер загруженного файла допустимый предел.
 
-    Параметры
+    Parameters
     ----------
     uploaded_file : UploadFile
-        Загруженный файл для проверки.
+        Загруженный пользователем файл.
     max_size : int
-        Максимально допустимый размер файла в байтах.
+        Максимально разрешённый размер файла (в байтах).
 
-    Исключения
-    ----------
+    Raises
+    ------
     ValueError
-        Если размер файла превышает допустимое значение.
+        Если файл превышает установленный лимит.
     """
 
     if uploaded_file.size is not None and uploaded_file.size > max_size:

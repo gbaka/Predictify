@@ -2,9 +2,17 @@ import { Wrench, BarChart2, Cpu } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import createI18nText from "../i18n/createI18nText";
 
+
 const I18nNamespace = "home";
 const I18nText = createI18nText(I18nNamespace);
 
+
+/**
+ * Home — Главная страница.
+ * 
+ * @component
+ * @returns {JSX.Element} JSX элемент.
+ */
 export default function Home() {
   useTranslation(I18nNamespace);
 

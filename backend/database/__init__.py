@@ -1,3 +1,10 @@
+"""
+Инициализация и настройка подключения к базе данных.
+
+Модуль создает движок SQLAlchemy, конфигурирует сессию для работы с БД, а также
+содержит функции для получения сессии и инициализации базы данных.
+"""
+
 import os
 
 from sqlalchemy import create_engine
@@ -32,6 +39,14 @@ Base = declarative_base()
 
 
 def get_db_session():
+    """
+    Генератор (генераторная функция) сессий базы данных SQLAlchemy.
+
+    Returns
+    -------
+    Session
+        Объект сессии для работы с базой данных.
+    """
     db_session = SessionLocal()
     try:
         yield db_session
