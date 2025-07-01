@@ -94,13 +94,13 @@
 
   "forecasting-tiles.min": "min.",
   "forecasting-tiles.temp": "Temperature",
-  "forecasting-tiles.temp-details": "Air temperature at point 55.7558 37.6176 (Above ULK)",
+  "forecasting-tiles.temp-details": "Air temperature at point 55.7558 37.6176 (Above ELC)",
   "forecasting-tiles.humidity": "Relative Humidity",
-  "forecasting-tiles.humidity-details": "Humidity at point 55.7558 37.6176 (Above ULK)",
+  "forecasting-tiles.humidity-details": "Humidity at point 55.7558 37.6176 (Above ELC)",
   "forecasting-tiles.wind": "Wind Speed",
-  "forecasting-tiles.wind-details": "Wind speed at point 55.7558 37.6176 (Above ULK)",
+  "forecasting-tiles.wind-details": "Wind speed at point 55.7558 37.6176 (Above ELC)",
   "forecasting-tiles.precipitation": "Precipitation",
-  "forecasting-tiles.precipitation-details": "Precipitation at point 55.7558 37.6176 (Above ULK)",
+  "forecasting-tiles.precipitation-details": "Precipitation at point 55.7558 37.6176 (Above ELC)",
 
   "fullscreen-tile.parser-info": "Parser Info",
   "fullscreen-tile.status": "Status:",

@@ -35,7 +35,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(2, 2, 1)x(2, 1, 1, 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.temp-details")
@@ -47,7 +47,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(2, 2, 2)x(0, 2, 2, 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.humidity-details")
@@ -59,7 +59,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "SARIMA(1, 2, 2)x(1, 1, [1], 24)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.wind-details")
@@ -71,7 +71,7 @@ export default function ForecastTiles({ theme }) {
         status: "online",
         source: "Open Meteo API",
         updateInterval: `15 ${t("forecasting-tiles.min")}`,
-        model: "ARIMA(5,0,2)",
+        model: "MA(0, 0, 1)",
         lastUpdate: null,
         dataPoints: 0,
         details: t("forecasting-tiles.precipitation-details")
