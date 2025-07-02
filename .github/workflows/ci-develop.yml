@@ -56,7 +56,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./database
-          file: database/Dockerfile.dev
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/predictify-database:develop
           cache-from: type=gha
