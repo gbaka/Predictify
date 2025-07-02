@@ -1,0 +1,58 @@
+name: CI/CD Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build & Push Backend
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-backend:latest ./backend
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-backend:latest
+
+      - name: Build & Push Frontend
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-frontend:latest ./frontend
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-frontend:latest
+
+      - name: Build & Push Scheduler
+        run: |
+          docker build -f scheduler/Dockerfile -t ghcr.io/${{ github.repository_owner }}/predictify-scheduler:latest .
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-scheduler:latest
+        
+      - name: Build & Push Database
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-database:latest ./database
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-database:latest
+       
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+            cd /dumbpath
+            docker-compose pull
+            docker-compose up -d

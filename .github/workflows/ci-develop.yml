@@ -13,22 +13,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build & Push Backend
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-backend:develop ./backend
+          docker build -f frontend/Dockerfile.dev -t ghcr.io/${{ github.repository_owner }}/predictify-backend:develop ./backend
           docker push ghcr.io/${{ github.repository_owner }}/predictify-backend:develop
 
       - name: Build & Push Frontend
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-frontend:develop ./frontend
+          docker build -f frontend/Dockerfile.dev -t ghcr.io/${{ github.repository_owner }}/predictify-frontend:develop ./frontend
           docker push ghcr.io/${{ github.repository_owner }}/predictify-frontend:develop
-      
+
       - name: Build & Push Scheduler
         run: |
-          docker build -f scheduler/Dockerfile -t ghcr.io/${{ github.repository_owner }}/predictify-scheduler:develop .
+          docker build -f scheduler/Dockerfile.dev -t ghcr.io/${{ github.repository_owner }}/predictify-scheduler:develop .
           docker push ghcr.io/${{ github.repository_owner }}/predictify-scheduler:develop
+      
+      - name: Build & Push Database
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/predictify-database:develop ./database
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-database:develop
+       
