@@ -28,18 +28,18 @@ jobs:
           context: ./backend
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/predictify-backend:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-backend:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-backend:buildcache,mode=max
-
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
       - name: Build & Push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/predictify-frontend:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-frontend:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-frontend:buildcache,mode=max
-
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
       - name: Build & Push Scheduler
         uses: docker/build-push-action@v5
         with:
@@ -47,18 +47,18 @@ jobs:
           file: scheduler/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/predictify-scheduler:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-scheduler:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-scheduler:buildcache,mode=max
-
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
       - name: Build & Push Database
         uses: docker/build-push-action@v5
         with:
           context: ./database
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/predictify-database:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-database:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/predictify-database:buildcache,mode=max
-
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
