@@ -46,7 +46,7 @@ services:
     image: ghcr.io/gbaka/predictify-frontend:latest
     build: ./frontend
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
 
