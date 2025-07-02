@@ -21,7 +21,7 @@ jobs:
 
       - name: Build & Push Backend
         run: |
-          docker build -f frontend/Dockerfile.dev -t ghcr.io/${{ github.repository_owner }}/predictify-backend:develop ./backend
+          docker build -f backend/Dockerfile.dev -t ghcr.io/${{ github.repository_owner }}/predictify-backend:develop ./backend
           docker push ghcr.io/${{ github.repository_owner }}/predictify-backend:develop
 
       - name: Build & Push Frontend
