@@ -15,7 +15,7 @@ services:
     image: ghcr.io/gbaka/predictify-backend:latest
     build: ./backend
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - DB_USER=admin
@@ -46,7 +46,7 @@ services:
     image: ghcr.io/gbaka/predictify-frontend:latest
     build: ./frontend
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     depends_on:
       - backend
 
