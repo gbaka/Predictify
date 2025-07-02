@@ -87,7 +87,7 @@ jobs:
           target: "/home/${{ secrets.VPS_USER }}/project/"
 
       - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
       - name: Deploy on VPS
         uses: appleboy/ssh-action@v0.1.7
