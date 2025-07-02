@@ -21,7 +21,7 @@ backend/logs
 /frontend/*.local
 
 # Scripts
-/scripts
+/scripts/venv
 
 # Editor directories and files
 .vscode/*
