@@ -37,15 +37,24 @@ jobs:
       - name: Build & Push Database
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/predictify-database:latest ./database
-          docker push ghcr.io/${{ github.repository_owner }}/predictify-database:latest
-       
+          docker push ghcr.io/${{ github.repository_owner }}/predictify-database:latest      
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to VPS via SSH
+      - name: Copy docker-compose.yml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          source: "docker-compose.yml"
+          target: "/home/${{ secrets.VPS_USER }}/project/docker-compose.yml"
+
+      - name: Deploy on VPS
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -53,6 +62,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
-            cd /dumbpath
+            cd /home/${{ secrets.VPS_USER }}/project
+            docker-compose down
             docker-compose pull
             docker-compose up -d
