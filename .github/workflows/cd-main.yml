@@ -65,6 +65,6 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             cd /home/${{ secrets.VPS_USER }}/project
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            docker compose down
+            docker compose pull
+            docker compose up -d
