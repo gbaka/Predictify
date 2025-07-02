@@ -1,5 +1,6 @@
 services:
   database:
+    image: ghcr.io/gbaka/predictify-database:develop
     build: ./database
     ports:
       - "5432:5432"
@@ -11,6 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend-dev:
+    image: ghcr.io/gbaka/predictify-backend:develop
     build:
       context: ./backend
       dockerfile: Dockerfile.dev  
@@ -29,6 +31,7 @@ services:
       - database
 
   scheduler-dev:
+    image: ghcr.io/gbaka/predictify-scheduler:develop
     build: 
       context: .
       dockerfile: scheduler/Dockerfile.dev
@@ -49,6 +52,7 @@ services:
       - database
 
   frontend-dev:
+    image: ghcr.io/gbaka/predictify-frontend:develop
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
