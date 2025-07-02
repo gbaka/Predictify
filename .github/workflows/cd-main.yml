@@ -45,6 +45,7 @@ jobs:
 
     steps:
       - name: Copy docker-compose.yml to VPS
+        uses: actions/checkout@v4
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
