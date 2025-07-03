@@ -10,6 +10,7 @@ services:
       - POSTGRES_DB=forecast_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   backend:
     image: ghcr.io/gbaka/predictify-backend:latest
@@ -25,6 +26,7 @@ services:
       - DB_NAME=forecast_db
     depends_on:
       - database
+    restart: unless-stopped
 
   scheduler:
     image: ghcr.io/gbaka/predictify-scheduler:latest
@@ -41,6 +43,7 @@ services:
       - DB_NAME=forecast_db
     depends_on:
       - database
+    restart: unless-stopped
 
   frontend:
     image: ghcr.io/gbaka/predictify-frontend:latest
@@ -49,6 +52,7 @@ services:
       - "127.0.0.1:8080:80"
     depends_on:
       - backend
+    restart: unless-stopped
 
 
 volumes:
