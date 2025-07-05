@@ -14,6 +14,36 @@ from typing import List, Dict, Any
 import yaml
 
 
+class LazyDateExpression:
+    """
+    Класс для ленивого вычисления даты/времени.
+
+    Используется для отложенного вычисления выражений, указанных в YAML с тегом !py3.
+    При обращении к объекту через str() возвращается строковое представление результата.
+    """
+    def __init__(self, expression: str):
+        self.expression = expression.strip()
+
+    def evaluate(self) -> str:
+        try:
+            return str(eval(
+                self.expression,
+                {
+                    'datetime': datetime,
+                    'timedelta': timedelta,
+                    'now': datetime.now
+                }
+            ))
+        except Exception as e:
+            raise ValueError(f"Ошибка при вычислении LazyDateExpression '{self.expression}': {e}")
+
+    def __str__(self) -> str:
+        return self.evaluate()
+
+    def __repr__(self) -> str:
+        return f"LazyDateExpression({self.expression!r})"
+
+
 class ConfigLoader:
     """
     Класс для загрузки и управления YAML-конфигурацией задач.
@@ -39,40 +69,39 @@ class ConfigLoader:
 
     def _py3_constructor(self, loader: yaml.SafeLoader, node: yaml.Node) -> Any:
         """
-        Обработчик пользовательского YAML-тега `!py3`.
+        Конструктор пользовательского YAML-тега `!py3`.
 
-        Позволяет использовать выражения Python (datetime, timedelta, now)
-        прямо в конфигурационном файле.
+        Позволяет задавать в YAML-файле выражения Python (например, на с использованием `datetime` или `timedelta`), 
+        которые интерпретируются и вычисляются лениво при необходимости. Вместо немедленного вычисления 
+        значение преобразуется в объект `LazyDateExpression`, который будет вычислен только при явном 
+        приведении к строке или вызове метода.
+
+        Это обеспечивает возможность пересчёта значений каждый раз при их использовании, что особенно полезно 
+        для динамических дат и временных диапазонов, используемых при планировании задач.
 
         Parameters
         ----------
         loader : yaml.SafeLoader
-            YAML загрузчик.
+            YAML-загрузчик, используемый для парсинга конфигурационного файла.
+
         node : yaml.Node
-            Узел с !py3-значением.
+            Узел YAML-документа, содержащий строковое представление выражения Python, 
+            аннотированного тегом `!py3`.
 
         Returns
         -------
         Any
-            Результат выполнения выражения.
+            Экземпляр `LazyDateExpression`, содержащий переданное выражение в виде строки.
 
         Raises
         ------
-        ValueError
-            В случае ошибки выполнения выражения.
+        None
+            Исключения на данном этапе не выбрасываются — выражение сохраняется в ленивом виде.
+            Исключение может возникнуть позже при попытке вычислить выражение.
         """
         value = loader.construct_scalar(node)
-        try:
-            return eval(
-                value.strip(),
-                {
-                    'datetime': datetime,
-                    'timedelta': timedelta,
-                    'now': datetime.now
-                }
-            )
-        except Exception as e:
-            raise ValueError(f"Error evaluating !py3 expression '{value}': {str(e)}")
+        return LazyDateExpression(value)
+
 
     def load(self) -> None:
         """
