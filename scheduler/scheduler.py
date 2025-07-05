@@ -109,7 +109,7 @@ class Scheduler:
         Raises:
             ValueError: Если недостаточно данных для обучения модели или произошла ошибка во время выполнения.
         """
-        logger.info(f"\n{'='*50}")
+        logger.info(f"{'='*50}")
         logger.info(f"🔧 Starting task: {task_config['name']} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
         logger.info(f"📌 Table: {task_config['database']['tablename']}")
         logger.info(f"🔮 Model: {task_config['model']['type']}")
