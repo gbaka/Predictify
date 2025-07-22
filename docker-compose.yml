@@ -3,7 +3,7 @@ services:
     image: ghcr.io/gbaka/predictify-database:latest
     build: ./database
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
